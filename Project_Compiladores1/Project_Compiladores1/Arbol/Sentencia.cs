@@ -56,7 +56,7 @@ namespace Project_Compiladores1.Arbol
         public Sentencia S;
     }
 
-    class Cases : Expresiones
+    class Cases : Sentencia
     {
         public Expresiones Expr;
         public Sentencia S;
@@ -65,7 +65,7 @@ namespace Project_Compiladores1.Arbol
 
     class S_Switch : Sentencia
     {
-        public Variable Id;
+        public Expresiones Var;
         public Expresiones Casos;
         public Sentencia sdefault;
     }

@@ -284,6 +284,7 @@ namespace Project_Compiladores1.Sintactico
                 if (currentToken.Tipo == TipoToken.TK_FINSENTENCIA)
                 {
                     currentToken = lex.NextToken();
+                    return sReturn;
                 }
                 else
                 {
@@ -297,7 +298,9 @@ namespace Project_Compiladores1.Sintactico
                 currentToken = lex.NextToken();
                 if (currentToken.Tipo == TipoToken.TK_FINSENTENCIA)
                 {
+                    S_Break sBreak = new S_Break();
                     currentToken = lex.NextToken();
+                    return sBreak;
                 }
                 else
                 {
@@ -309,10 +312,12 @@ namespace Project_Compiladores1.Sintactico
             {
                 #region Id
                 currentToken = lex.NextToken();
-                StatementP();
+                Sentencia S = new Sentencia();
+                S = StatementP();
                 if (currentToken.Tipo == TipoToken.TK_FINSENTENCIA)
                 {
                     currentToken = lex.NextToken();
+                    return S;
                 }
                 else
                 {
@@ -323,7 +328,7 @@ namespace Project_Compiladores1.Sintactico
             }
             else if (currentToken.Tipo == TipoToken.TK_CHAR || currentToken.Tipo == TipoToken.TK_BOOL || currentToken.Tipo == TipoToken.TK_STRING || currentToken.Tipo == TipoToken.TK_FLOAT || currentToken.Tipo == TipoToken.TK_INT || currentToken.Tipo == TipoToken.TK_PRIVATE || currentToken.Tipo == TipoToken.TK_PUBLIC)
             {
-                Declaration();
+                Campos Declaration();
             }
             else if (this.currentToken.Tipo == Lexico.TipoToken.TK_SWITCH)
             {
@@ -331,7 +336,8 @@ namespace Project_Compiladores1.Sintactico
                 if (this.currentToken.Tipo != Lexico.TipoToken.TK_OPENPAR)
                     throw new Exception("Error Sintactico - Se esperaba un (");
                 this.currentToken = lex.NextToken();
-                Expr();
+                S_Switch sSwitch = new S_Switch();
+                sSwitch.Var = Expr();
 
                 if (this.currentToken.Tipo != Lexico.TipoToken.TK_CLOSEPAR)
                     throw new Exception("Error Sintactico - Se esperaba una )");
@@ -341,39 +347,9 @@ namespace Project_Compiladores1.Sintactico
                 if (this.currentToken.Tipo != Lexico.TipoToken.TK_OPENLLAVE)
                     throw new Exception("Error Sintactico - Se esperaba una {");
 
-                this.currentToken = lex.NextToken();
-                if (this.currentToken.Tipo != Lexico.TipoToken.TK_CASE)
-                    throw new Exception("Error Sintactico - Se esperaba la palabra reservada CASE");
+                this.currentToken = lex.NextToken();                
 
-                this.currentToken = lex.NextToken();
-                if (this.currentToken.Tipo != Lexico.TipoToken.TK_CHAR_LIT &&
-                    this.currentToken.Tipo != Lexico.TipoToken.TK_FLOAT_LIT &&
-                    this.currentToken.Tipo != Lexico.TipoToken.TK_INT_LIT)
-                    throw new Exception("Error Sintactico - Se esperaba un numero o un char");
-
-                this.currentToken = lex.NextToken();
-                if (this.currentToken.Tipo != Lexico.TipoToken.TK_DOSPUNTOS)
-                    throw new Exception("Error Sintactico - Se esperaba el simbolo :");
-                currentToken = lex.NextToken();
-                StatementList();
-
-
-                /*while (this.currentToken.Tipo == Lexico.TipoToken.TK_CASE)
-                {
-                    this.currentToken = lex.NextToken();
-                    if (this.currentToken.Tipo != Lexico.TipoToken.TK_CHAR_LIT &&
-                        this.currentToken.Tipo != Lexico.TipoToken.TK_FLOAT_LIT &&
-                        this.currentToken.Tipo != Lexico.TipoToken.TK_INT_LIT)
-                        throw new Exception("Se esperaba un numero o un char");
-
-                    this.currentToken = lex.NextToken();
-                    if (this.currentToken.Tipo != Lexico.TipoToken.TK_DOSPUNTOS)
-                        throw new Exception("Se esperaba el simbolo :");
-                    currentToken = lex.NextToken();
-                    StatementList();
-                }*/
-
-                Cases();
+                sSwitch.Casos = Cases();
 
                 if (this.currentToken.Tipo != Lexico.TipoToken.TK_DEFAULT)
                     throw new Exception("Error Sintactico - Se esperaba la palabra reservada DEFAULT");
