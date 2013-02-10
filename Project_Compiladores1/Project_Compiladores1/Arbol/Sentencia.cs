@@ -78,11 +78,12 @@ namespace Project_Compiladores1.Arbol
         public Sentencia S;
     }
 
-    class Campos : Expresiones
+    class Campos : Sentencia
     {
         public Tipo Tip;
-        public Variable var;
+        public Variable Var;
         public Campos Sig;
+        public Expresiones Valor;
     }
 
     class S_Break: Sentencia

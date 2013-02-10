@@ -387,8 +387,9 @@ namespace Project_Compiladores1.Sintactico
                     if (currentToken.Tipo == TipoToken.TK_DOSPUNTOS)
                     {
                         currentToken = lex.NextToken();
-                        StatementList();
-                        Cases();
+                        C.S = StatementList();
+                        C.sig = Cases();
+                        return C;
                     }
                     else
                     {
@@ -399,6 +400,10 @@ namespace Project_Compiladores1.Sintactico
                 {
                     throw new Exception("Error Sintactico - Se esperaba un numero o un char");
                 }
+            }
+            else
+            {
+                return null;
             }
         }
 
