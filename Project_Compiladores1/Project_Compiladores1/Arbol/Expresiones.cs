@@ -94,13 +94,24 @@ namespace Project_Compiladores1.Arbol
         }
     }
 
+    class Mod : OperacionBinaria
+    {
+        public Mod(Expresiones izq, Expresiones der)
+            : base(izq, der)
+        {
+        }
+    }
+
     class Condicion : OperacionBinaria
     {
+        public string OperadorL { get; set; }
         public string Operador { get; set; }
         public Condicion(Expresiones izq, Expresiones der)
             : base(izq, der)
         {
         }
+
+        public Condicion sig;
     }
 
 
