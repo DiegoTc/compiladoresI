@@ -328,55 +328,61 @@ namespace Project_Compiladores1.Sintactico
             }
             else if (currentToken.Tipo == TipoToken.TK_CHAR || currentToken.Tipo == TipoToken.TK_BOOL || currentToken.Tipo == TipoToken.TK_STRING || currentToken.Tipo == TipoToken.TK_FLOAT || currentToken.Tipo == TipoToken.TK_INT || currentToken.Tipo == TipoToken.TK_PRIVATE || currentToken.Tipo == TipoToken.TK_PUBLIC)
             {
-                Campos Declaration();
+                Sentencia S = new Sentencia();
+                S = Declaration();
+                return S;
             }
-            else if (this.currentToken.Tipo == Lexico.TipoToken.TK_SWITCH)
+            else if (currentToken.Tipo == Lexico.TipoToken.TK_SWITCH)
             {
-                this.currentToken = lex.NextToken();
-                if (this.currentToken.Tipo != Lexico.TipoToken.TK_OPENPAR)
+                currentToken = lex.NextToken();
+                if (currentToken.Tipo != Lexico.TipoToken.TK_OPENPAR)
                     throw new Exception("Error Sintactico - Se esperaba un (");
-                this.currentToken = lex.NextToken();
+                currentToken = lex.NextToken();
                 S_Switch sSwitch = new S_Switch();
                 sSwitch.Var = Expr();
 
-                if (this.currentToken.Tipo != Lexico.TipoToken.TK_CLOSEPAR)
+                if (currentToken.Tipo != Lexico.TipoToken.TK_CLOSEPAR)
                     throw new Exception("Error Sintactico - Se esperaba una )");
 
-                this.currentToken = lex.NextToken();
+                currentToken = lex.NextToken();
 
-                if (this.currentToken.Tipo != Lexico.TipoToken.TK_OPENLLAVE)
+                if (currentToken.Tipo != Lexico.TipoToken.TK_OPENLLAVE)
                     throw new Exception("Error Sintactico - Se esperaba una {");
 
-                this.currentToken = lex.NextToken();                
+                currentToken = lex.NextToken();                
 
                 sSwitch.Casos = Cases();
 
-                if (this.currentToken.Tipo != Lexico.TipoToken.TK_DEFAULT)
+                if (currentToken.Tipo != Lexico.TipoToken.TK_DEFAULT)
                     throw new Exception("Error Sintactico - Se esperaba la palabra reservada DEFAULT");
 
-                this.currentToken = lex.NextToken();
-                if (this.currentToken.Tipo != Lexico.TipoToken.TK_DOSPUNTOS)
+                currentToken = lex.NextToken();
+                if (currentToken.Tipo != Lexico.TipoToken.TK_DOSPUNTOS)
                     throw new Exception("Error Sintactico - Se esperaba el simbolo :");
-                this.currentToken = lex.NextToken();
-                StatementList();
+                currentToken = lex.NextToken();
+                sSwitch.sdefault = StatementList();
 
 
-                if (this.currentToken.Tipo != Lexico.TipoToken.TK_CLOSELLAVE)
+                if (currentToken.Tipo != Lexico.TipoToken.TK_CLOSELLAVE)
                     throw new Exception("Error Sintactico - Se esperaba una }");
 
-                this.currentToken = lex.NextToken();
+                currentToken = lex.NextToken();
+                return sSwitch;
             }
         }
 
-        public void Cases()
+        public Cases Cases()
         {
             if (currentToken.Tipo == Lexico.TipoToken.TK_CASE)
             {                
                 currentToken = lex.NextToken();
-                if (this.currentToken.Tipo != Lexico.TipoToken.TK_CHAR_LIT &&
-                        this.currentToken.Tipo != Lexico.TipoToken.TK_FLOAT_LIT &&
-                        this.currentToken.Tipo != Lexico.TipoToken.TK_INT_LIT)
+                Cases C = new Cases();
+                
+                if (currentToken.Tipo != Lexico.TipoToken.TK_CHAR_LIT &&
+                        currentToken.Tipo != Lexico.TipoToken.TK_FLOAT_LIT &&
+                        currentToken.Tipo != Lexico.TipoToken.TK_INT_LIT)
                 {
+                    C.Valor = currentToken.Lexema;
                     currentToken = lex.NextToken();
                     if (currentToken.Tipo == TipoToken.TK_DOSPUNTOS)
                     {
