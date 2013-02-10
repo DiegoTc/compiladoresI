@@ -38,6 +38,7 @@ namespace Project_Compiladores1.Sintactico
 
         public void Statement()
         {
+#region
             if(this.currentToken.Tipo==Lexico.TipoToken.TK_PRINT)
             {
                 this.currentToken = lex.NextToken();
@@ -51,7 +52,7 @@ namespace Project_Compiladores1.Sintactico
                 if (currentToken.Tipo != Lexico.TipoToken.TK_FINSENTENCIA)
                     throw new Exception("Se esperaba un ;");
                 this.currentToken = lex.NextToken();
-
+#endregion
             }
             else if (this.currentToken.Tipo == Lexico.TipoToken.TK_READ)
             {
