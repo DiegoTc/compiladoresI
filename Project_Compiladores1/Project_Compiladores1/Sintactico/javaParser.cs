@@ -279,8 +279,8 @@ namespace Project_Compiladores1.Sintactico
             {
                 #region Return
                 currentToken = lex.NextToken();
-                S
-                Expr();
+                S_Return sReturn = new S_Return();
+                sReturn.Expr = Expr();
                 if (currentToken.Tipo == TipoToken.TK_FINSENTENCIA)
                 {
                     currentToken = lex.NextToken();
