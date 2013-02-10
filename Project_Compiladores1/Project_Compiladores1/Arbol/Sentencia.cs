@@ -66,6 +66,7 @@ namespace Project_Compiladores1.Arbol
     {
         public Variable Id;
         public Expresiones Casos;
+        public Sentencia sdefault;
     }
 
     class S_Functions : Sentencia
