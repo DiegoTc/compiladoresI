@@ -245,9 +245,9 @@ namespace Project_Compiladores1.Sintactico
             else if (currentToken.Tipo == Lexico.TipoToken.TK_ID)
             {
                 Sentencia S = new Sentencia();
-                
+                string id = currentToken.Lexema;
                 currentToken = lex.NextToken();
-                S=StatementP();
+                S=StatementP(id);
                 if (currentToken.Tipo != Lexico.TipoToken.TK_FINSENTENCIA)
                     throw new Exception("Se esperaba el simbolo ;");
                 currentToken = lex.NextToken();
@@ -412,30 +412,41 @@ namespace Project_Compiladores1.Sintactico
         }
 
 
-        public Sentencia StatementP()
+        public Sentencia StatementP(string id)
         {
             if (currentToken.Tipo == Lexico.TipoToken.TK_OPENPAR)
             {
+                S_LlamadaFunc sfunc = new S_LlamadaFunc();
+                sfunc.Var.id=id;
                 currentToken = lex.NextToken();
-                ExpreList();
+                sfunc.VarList= ExpreList();
                 if (currentToken.Tipo == Lexico.TipoToken.TK_CLOSEPAR)
                 {
                     currentToken = lex.NextToken();
+                    return sfunc;
                 }
+                else
+                    throw new Exception("Se esperaba el token )");
+                
             }
             else
             {
-                StatementP2();
+                Sentencia S = new Sentencia();
+                S=StatementP2(id);
+                return S;
             }
         }
 
-        public void StatementP2()
+        public Sentencia StatementP2(String id)
         {
             if (currentToken.Tipo == Lexico.TipoToken.TK_ASSIGN || currentToken.Tipo == Lexico.TipoToken.TK_MASIGUAL || currentToken.Tipo == Lexico.TipoToken.TK_MENOSIGUAL ||
                 currentToken.Tipo == Lexico.TipoToken.TK_PORIGUAL || currentToken.Tipo == Lexico.TipoToken.TK_ENTREIGUAL)
             {
+                S_Asignacion sasign = new S_Asignacion();
+                sasign.id.id = id;
                 currentToken = lex.NextToken();
-                Expression();
+                sasign.Valor= Expression();
+                return 
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_OPENCOR)
             {
