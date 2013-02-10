@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Project_Compiladores1.Arbol;
 
 namespace Project_Compiladores1.Sintactico
 {
@@ -13,38 +14,45 @@ namespace Project_Compiladores1.Sintactico
         }
 
 
-        public void parse()
+        public Sentencia parse()
         {
-            StatementList();
-            if(currentToken.Tipo != Lexico.TipoToken.TK_FINFLUJO)
+            Sentencia S = StatementList();
+            if (currentToken.Tipo != Lexico.TipoToken.TK_FINFLUJO)
                 throw new Exception("Se esperaba fin flujo");
             Console.WriteLine("Proyecto Terminado\n");
+            return S;
         }
 
-        public void StatementList()
+        public Sentencia StatementList()
         {
-            if (currentToken.Tipo == Lexico.TipoToken.TK_PRINT || currentToken.Tipo == Lexico.TipoToken.TK_READ||currentToken.Tipo == Lexico.TipoToken.TK_IF||
-                currentToken.Tipo == Lexico.TipoToken.TK_WHILE || currentToken.Tipo == Lexico.TipoToken.TK_DO ||currentToken.Tipo == Lexico.TipoToken.TK_FOR||
-                currentToken.Tipo == Lexico.TipoToken.TK_BREAK|| currentToken.Tipo == Lexico.TipoToken.TK_SWITCH || currentToken.Tipo == Lexico.TipoToken.TK_RETURN||
-                currentToken.Tipo == Lexico.TipoToken.TK_ID || currentToken.Tipo == Lexico.TipoToken.TK_PRIVATE || currentToken.Tipo == Lexico.TipoToken.TK_PUBLIC||
-                currentToken.Tipo == Lexico.TipoToken.TK_INT || currentToken.Tipo == Lexico.TipoToken.TK_FLOAT || currentToken.Tipo == Lexico.TipoToken.TK_CHAR||
+            if (currentToken.Tipo == Lexico.TipoToken.TK_PRINT || currentToken.Tipo == Lexico.TipoToken.TK_READ || currentToken.Tipo == Lexico.TipoToken.TK_IF ||
+                currentToken.Tipo == Lexico.TipoToken.TK_WHILE || currentToken.Tipo == Lexico.TipoToken.TK_DO || currentToken.Tipo == Lexico.TipoToken.TK_FOR ||
+                currentToken.Tipo == Lexico.TipoToken.TK_BREAK || currentToken.Tipo == Lexico.TipoToken.TK_SWITCH || currentToken.Tipo == Lexico.TipoToken.TK_RETURN ||
+                currentToken.Tipo == Lexico.TipoToken.TK_ID || currentToken.Tipo == Lexico.TipoToken.TK_PRIVATE || currentToken.Tipo == Lexico.TipoToken.TK_PUBLIC ||
+                currentToken.Tipo == Lexico.TipoToken.TK_INT || currentToken.Tipo == Lexico.TipoToken.TK_FLOAT || currentToken.Tipo == Lexico.TipoToken.TK_CHAR ||
                 currentToken.Tipo == Lexico.TipoToken.TK_TRUE || currentToken.Tipo == Lexico.TipoToken.TK_FALSE)
             {
-                Statement();
-                StatementList();
+                Sentencia s = Statement();
+                s.sig = StatementList();
+                return s;
             }
-            
+            else
+            {
+                return null;
+            }
+
         }
 
-        public void Statement()
+        public Sentencia Statement()
         {
-#region
-            if(this.currentToken.Tipo==Lexico.TipoToken.TK_PRINT)
+
+            if (this.currentToken.Tipo == Lexico.TipoToken.TK_PRINT)
             {
                 this.currentToken = lex.NextToken();
-                if(currentToken.Tipo != Lexico.TipoToken.TK_OPENPAR)
+                if (currentToken.Tipo != Lexico.TipoToken.TK_OPENPAR)
                     throw new Exception("Se esperaba un (");
-                Expression();
+                S_Print sprint = new S_Print();
+                sprint.Expr = Expression();
 
                 if (currentToken.Tipo != Lexico.TipoToken.TK_CLOSEPAR)
                     throw new Exception("Se esperaba un )");
@@ -52,7 +60,8 @@ namespace Project_Compiladores1.Sintactico
                 if (currentToken.Tipo != Lexico.TipoToken.TK_FINSENTENCIA)
                     throw new Exception("Se esperaba un ;");
                 this.currentToken = lex.NextToken();
-#endregion
+                return sprint;
+
             }
             else if (this.currentToken.Tipo == Lexico.TipoToken.TK_READ)
             {
@@ -60,10 +69,12 @@ namespace Project_Compiladores1.Sintactico
                 if (currentToken.Tipo != Lexico.TipoToken.TK_OPENPAR)
                     throw new Exception("Se esperaba un (");
                 this.currentToken = lex.NextToken();
-                
-                if(currentToken.Tipo != Lexico.TipoToken.TK_ID)
+
+                if (currentToken.Tipo != Lexico.TipoToken.TK_ID)
                     throw new Exception("Se esperaba un ID");
 
+                S_Read sread = new S_Read();
+                sread.var.id = currentToken.Lexema;
                 this.currentToken = lex.NextToken();
                 if (currentToken.Tipo != Lexico.TipoToken.TK_CLOSEPAR)
                     throw new Exception("Se esperaba un )");
@@ -71,45 +82,50 @@ namespace Project_Compiladores1.Sintactico
                 if (currentToken.Tipo != Lexico.TipoToken.TK_FINSENTENCIA)
                     throw new Exception("Se esperaba un ;");
                 this.currentToken = lex.NextToken();
+                return sread;
 
             }
             else if (this.currentToken.Tipo == Lexico.TipoToken.TK_IF)
             {
-                this.currentToken = lex.NextToken();
-                if(this.currentToken.Tipo!=Lexico.TipoToken.TK_OPENPAR)
-                    throw new Exception("Se esperaba un (");
-
-                this.currentToken = lex.NextToken();
-                Expression();
-
-                if(this.currentToken.Tipo != Lexico.TipoToken.TK_CLOSEPAR)
-                    throw new Exception("Se esperaba un )");
-
-                this.currentToken = lex.NextToken();
-                CompoundStatement();
-                Else();
-
-            }
-            else if(this.currentToken.Tipo == Lexico.TipoToken.TK_WHILE)
-            {
+                S_If sif = new S_If();
                 this.currentToken = lex.NextToken();
                 if (this.currentToken.Tipo != Lexico.TipoToken.TK_OPENPAR)
                     throw new Exception("Se esperaba un (");
 
                 this.currentToken = lex.NextToken();
-                Expression();
+                sif.Condicion = Expression();
 
                 if (this.currentToken.Tipo != Lexico.TipoToken.TK_CLOSEPAR)
                     throw new Exception("Se esperaba un )");
 
                 this.currentToken = lex.NextToken();
-                CompoundStatement();
+                sif.Cierto = CompoundStatement();
+                sif.Falso = Else();
+                return sif;
 
             }
-            else if(this.currentToken.Tipo == Lexico.TipoToken.TK_DO)
+            else if (this.currentToken.Tipo == Lexico.TipoToken.TK_WHILE)
             {
+                S_While swhile = new S_While();
                 this.currentToken = lex.NextToken();
-                CompoundStatement();
+                if (this.currentToken.Tipo != Lexico.TipoToken.TK_OPENPAR)
+                    throw new Exception("Se esperaba un (");
+
+                this.currentToken = lex.NextToken();
+                swhile.Condicion = Expression();
+
+                if (this.currentToken.Tipo != Lexico.TipoToken.TK_CLOSEPAR)
+                    throw new Exception("Se esperaba un )");
+
+                this.currentToken = lex.NextToken();
+                swhile.S = CompoundStatement();
+                return swhile;
+            }
+            else if (this.currentToken.Tipo == Lexico.TipoToken.TK_DO)
+            {
+                S_Do sdo = new S_Do();
+                this.currentToken = lex.NextToken();
+                sdo.S = CompoundStatement();
 
                 if (this.currentToken.Tipo == Lexico.TipoToken.TK_WHILE)
                 {
@@ -118,7 +134,7 @@ namespace Project_Compiladores1.Sintactico
                         throw new Exception("Se esperaba un (");
 
                     this.currentToken = lex.NextToken();
-                    Expression();
+                    sdo.Condicion = Expression();
 
                     if (this.currentToken.Tipo != Lexico.TipoToken.TK_CLOSEPAR)
                         throw new Exception("Se esperaba un )");
@@ -127,69 +143,78 @@ namespace Project_Compiladores1.Sintactico
                     if (this.currentToken.Tipo != Lexico.TipoToken.TK_FINSENTENCIA)
                         throw new Exception("Se esperaba un ;");
                     this.currentToken = lex.NextToken();
+                    return sdo;
                 }
                 else
                     throw new Exception("Se esperaba la palabra reservada WHILE");
-                
+
             }
-            else if(this.currentToken.Tipo == Lexico.TipoToken.TK_FOR)
+            else if (this.currentToken.Tipo == Lexico.TipoToken.TK_FOR)
             {
+                S_For sfor = new S_For();
                 this.currentToken = lex.NextToken();
                 if (this.currentToken.Tipo != Lexico.TipoToken.TK_OPENPAR)
                     throw new Exception("Se esperaba un (");
 
                 this.currentToken = lex.NextToken();
-                if(this.currentToken.Tipo != Lexico.TipoToken.TK_ID)
+                if (this.currentToken.Tipo != Lexico.TipoToken.TK_ID)
                     throw new Exception("Se esperaba un ID");
 
+                sfor.id.var = this.currentToken.Lexema;
                 this.currentToken = lex.NextToken();
                 if (this.currentToken.Tipo != Lexico.TipoToken.TK_ASSIGN)
                     throw new Exception("Se esperaba el simbolo =");
 
                 this.currentToken = lex.NextToken();
-                Expression();
-                if (this.currentToken.Tipo != Lexico.TipoToken.TK_FINSENTENCIA)
-                        throw new Exception("Se esperaba un ;");
-                
-                this.currentToken = lex.NextToken();
-                Expression();
+                sfor.Inicio = Expression();
                 if (this.currentToken.Tipo != Lexico.TipoToken.TK_FINSENTENCIA)
                     throw new Exception("Se esperaba un ;");
 
                 this.currentToken = lex.NextToken();
-                Expression();
+                sfor.Condicion = Expression();
+                if (this.currentToken.Tipo != Lexico.TipoToken.TK_FINSENTENCIA)
+                    throw new Exception("Se esperaba un ;");
+
+                this.currentToken = lex.NextToken();
+                sfor.Iteracion = Expression();
                 if (this.currentToken.Tipo != Lexico.TipoToken.TK_CLOSEPAR)
                     throw new Exception("Se esperaba un )");
-                
+
                 this.currentToken = lex.NextToken();
-                CompoundStatement();
+                sfor.S = CompoundStatement();
+                return sfor;
             }
             else if (this.currentToken.Tipo == Lexico.TipoToken.TK_RETURN)
             {
+                S_Return sreturn = new S_Return();
                 this.currentToken = lex.NextToken();
-                Expression();
+                sreturn.Expr=Expression();
                 if (this.currentToken.Tipo != Lexico.TipoToken.TK_FINSENTENCIA)
                     throw new Exception("Se esperaba un ;");
 
                 this.currentToken = lex.NextToken();
+                return sreturn;
             }
             else if (this.currentToken.Tipo == Lexico.TipoToken.TK_BREAK)
             {
+                S_Break sbreak = new S_Break();
                 this.currentToken = lex.NextToken();
                 if (this.currentToken.Tipo != Lexico.TipoToken.TK_FINSENTENCIA)
                     throw new Exception("Se esperaba un ;");
 
                 this.currentToken = lex.NextToken();
+                return sbreak;
             }
             else if (this.currentToken.Tipo == Lexico.TipoToken.TK_SWITCH)
             {
+                S_Switch sSwitch = new S_Switch();
                 this.currentToken = lex.NextToken();
                 if (this.currentToken.Tipo != Lexico.TipoToken.TK_OPENPAR)
                     throw new Exception("Se esperaba un (");
                 this.currentToken = lex.NextToken();
-                Expression();
+                sSwitch.Casos= Expression();
 
-                if(this.currentToken.Tipo!=Lexico.TipoToken.TK_CLOSEPAR)
+                if (this.currentToken.Tipo != Lexico.TipoToken.TK_CLOSEPAR)
                     throw new Exception("Se esperaba una )");
 
                 this.currentToken = lex.NextToken();
@@ -198,21 +223,7 @@ namespace Project_Compiladores1.Sintactico
                     throw new Exception("Se esperaba una {");
 
                 this.currentToken = lex.NextToken();
-                if(this.currentToken.Tipo != Lexico.TipoToken.TK_CASE)
-                    throw new Exception("Se esperaba la palabra reservada CASE");
-
-                this.currentToken = lex.NextToken();
-                if (this.currentToken.Tipo != Lexico.TipoToken.TK_CHAR_LIT && this.currentToken.Tipo != Lexico.TipoToken.TK_FLOAT_LIT && this.currentToken.Tipo != Lexico.TipoToken.TK_INT_LIT)
-                    throw new Exception("Se esperaba un numero o un char");
-
-                this.currentToken = lex.NextToken();
-                if (this.currentToken.Tipo != Lexico.TipoToken.TK_DOSPUNTOS)
-                    throw new Exception("Se esperaba el simbolo :");
-                currentToken = lex.NextToken();
-                StatementList();
-
-
-                Cases();
+                sSwitch.Casos= Cases();
 
                 if (this.currentToken.Tipo != Lexico.TipoToken.TK_DEFAULT)
                     throw new Exception("Se esperaba la palabra reservada DEFAULT");
@@ -221,20 +232,22 @@ namespace Project_Compiladores1.Sintactico
                 if (this.currentToken.Tipo != Lexico.TipoToken.TK_DOSPUNTOS)
                     throw new Exception("Se esperaba el simbolo :");
                 this.currentToken = lex.NextToken();
-                StatementList();
-                
+               sSwitch.sdefault=StatementList();
+
 
                 if (this.currentToken.Tipo != Lexico.TipoToken.TK_CLOSELLAVE)
                     throw new Exception("Se esperaba una }");
 
                 this.currentToken = lex.NextToken();
+                return sSwitch;
 
             }
-            else if(currentToken.Tipo == Lexico.TipoToken.TK_ID)
+            else if (currentToken.Tipo == Lexico.TipoToken.TK_ID)
             {
+
                 currentToken = lex.NextToken();
                 StatementP();
-                if(currentToken.Tipo != Lexico.TipoToken.TK_FINSENTENCIA)
+                if (currentToken.Tipo != Lexico.TipoToken.TK_FINSENTENCIA)
                     throw new Exception("Se esperaba el simbolo ;");
                 currentToken = lex.NextToken();
             }
@@ -244,9 +257,9 @@ namespace Project_Compiladores1.Sintactico
                 currentToken = lex.NextToken();
                 Tipo();
                 Declaration();
-                
+
             }
-            else if (currentToken.Tipo == Lexico.TipoToken.TK_INT || currentToken.Tipo == Lexico.TipoToken.TK_FLOAT || currentToken.Tipo == Lexico.TipoToken.TK_CHAR||
+            else if (currentToken.Tipo == Lexico.TipoToken.TK_INT || currentToken.Tipo == Lexico.TipoToken.TK_FLOAT || currentToken.Tipo == Lexico.TipoToken.TK_CHAR ||
                     currentToken.Tipo == Lexico.TipoToken.TK_TRUE || currentToken.Tipo == Lexico.TipoToken.TK_FALSE)
             {
                 currentToken = lex.NextToken();
@@ -273,7 +286,7 @@ namespace Project_Compiladores1.Sintactico
 
         public void Declaration()
         {
-        
+
             if (currentToken.Tipo != Lexico.TipoToken.TK_ID)
                 throw new Exception("Se esperaba el token ID");
 
@@ -281,7 +294,7 @@ namespace Project_Compiladores1.Sintactico
             DeclarationP();
             //AssignDecl();
 
-            
+
         }
 
         public void Tipo()
@@ -322,21 +335,21 @@ namespace Project_Compiladores1.Sintactico
                 Expression();
                 DeclarationP();
             }
-            else if(currentToken.Tipo == Lexico.TipoToken.TK_OPENPAR)
+            else if (currentToken.Tipo == Lexico.TipoToken.TK_OPENPAR)
             {
                 currentToken = lex.NextToken();
                 ParametroList();
                 if (currentToken.Tipo != Lexico.TipoToken.TK_CLOSEPAR)
                     throw new Exception("Se esperaba el token )");
                 currentToken = lex.NextToken();
-                CompoundStatement();   
+                CompoundStatement();
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_FINSENTENCIA)
                 currentToken = lex.NextToken();
 
             else
                 throw new Exception("Se esperaba el token ;");
-            
+
         }
 
         public void ParametroList()
@@ -345,7 +358,7 @@ namespace Project_Compiladores1.Sintactico
                 currentToken.Tipo == Lexico.TipoToken.TK_BOOL)
             {
                 Tipo();
-                if(currentToken.Tipo != Lexico.TipoToken.TK_ID)
+                if (currentToken.Tipo != Lexico.TipoToken.TK_ID)
                     throw new Exception("Se esperaba el token ID");
 
                 currentToken = lex.NextToken();
@@ -400,7 +413,7 @@ namespace Project_Compiladores1.Sintactico
                 currentToken = lex.NextToken();
                 Expression();
             }
-            else if(currentToken.Tipo == Lexico.TipoToken.TK_OPENCOR)
+            else if (currentToken.Tipo == Lexico.TipoToken.TK_OPENCOR)
             {
                 Expression();
                 StatementP2();
@@ -443,7 +456,7 @@ namespace Project_Compiladores1.Sintactico
 
         public void ExprelistP()
         {
-            if(currentToken.Tipo == Lexico.TipoToken.TK_COMA)
+            if (currentToken.Tipo == Lexico.TipoToken.TK_COMA)
             {
                 currentToken = lex.NextToken();
                 Expression();
@@ -464,7 +477,7 @@ namespace Project_Compiladores1.Sintactico
             }
         }
 
-        public void Else() 
+        public void Else()
         {
             if (currentToken.Tipo == Lexico.TipoToken.TK_ELSE)
             {
@@ -473,7 +486,7 @@ namespace Project_Compiladores1.Sintactico
             }
         }
 
-        public void Expression() 
+        public void Expression()
         {
             Andexp();
             Expression_prime();
@@ -488,7 +501,7 @@ namespace Project_Compiladores1.Sintactico
                 Expression_prime();
             }
         }
-        
+
         public void Andexp()
         {
             Relexp();
@@ -505,9 +518,9 @@ namespace Project_Compiladores1.Sintactico
             }
         }
 
-        public void Relexp() 
+        public void Relexp()
         {
-            Addexp(); 
+            Addexp();
             Relexp_prime();
         }
 
@@ -527,7 +540,7 @@ namespace Project_Compiladores1.Sintactico
             {
                 currentToken = lex.NextToken();
             }
-            else if(currentToken.Tipo == Lexico.TipoToken.TK_MAYORQUE)
+            else if (currentToken.Tipo == Lexico.TipoToken.TK_MAYORQUE)
             {
                 currentToken = lex.NextToken();
             }
@@ -565,10 +578,10 @@ namespace Project_Compiladores1.Sintactico
 
         public void Multexp()
         {
-            
+
             Parexp();
             Multexp_prime();
-            
+
         }
 
         public void Multexp_prime()
@@ -593,7 +606,7 @@ namespace Project_Compiladores1.Sintactico
             {
                 currentToken = lex.NextToken();
                 Expression();
-                if(currentToken.Tipo!=Lexico.TipoToken.TK_CLOSEPAR)
+                if (currentToken.Tipo != Lexico.TipoToken.TK_CLOSEPAR)
                     throw new Exception("Se esperaba un )");
 
                 currentToken = lex.NextToken();
@@ -617,9 +630,9 @@ namespace Project_Compiladores1.Sintactico
             else if (currentToken.Tipo == Lexico.TipoToken.TK_ID)
             {
                 currentToken = lex.NextToken();
-                
-                    StatementP();
-                
+
+                StatementP();
+
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_TRUE)
             {
