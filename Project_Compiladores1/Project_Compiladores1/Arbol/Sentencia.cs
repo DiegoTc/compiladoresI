@@ -17,7 +17,7 @@ namespace Project_Compiladores1.Arbol
 
     class S_Read : Sentencia
     {
-        public Expresiones Expr;        
+        public Variable var;        
     }
 
     class S_Asignacion : Sentencia
@@ -48,7 +48,8 @@ namespace Project_Compiladores1.Arbol
 
     class S_For : Sentencia
     {
-        public string id;
+        public Tipo Tip;
+        public Variable Var;
         public Expresiones Inicio;
         public Expresiones Condicion;
         public Expresiones Iteracion;
@@ -73,7 +74,7 @@ namespace Project_Compiladores1.Arbol
     {
         public Tipo Retorno;
         public Variable var;
-
+        public Campos Campo;
         public Sentencia S;
     }
 
@@ -84,9 +85,14 @@ namespace Project_Compiladores1.Arbol
         public Campos Sig;
     }
 
-    class Break: Sentencia
+    class S_Break: Sentencia
     {
         
+    }
+
+    class S_Return : Sentencia
+    {
+        public Expresiones Expr;
     }
 
 }
