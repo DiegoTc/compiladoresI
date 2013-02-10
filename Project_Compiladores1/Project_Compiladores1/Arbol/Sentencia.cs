@@ -84,4 +84,9 @@ namespace Project_Compiladores1.Arbol
         public Campos Sig;
     }
 
+    class Break: Sentencia
+    {
+        
+    }
+
 }
