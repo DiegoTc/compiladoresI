@@ -5,7 +5,8 @@ using System.Text;
 
 namespace Project_Compiladores1.Arbol
 {
-    class Sentencias
+    class Sentencia
     {
+        public Sentencia sig;
     }
 }
