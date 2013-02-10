@@ -9,8 +9,8 @@ namespace Project_Compiladores1.Sintactico
 {
     class Parser
     {
-        Lexico.Lexico lex;
-        Lexico.Token currentToken;
+        public Lexico.Lexico lex;
+        public Lexico.Token currentToken;
 
         public Parser(Lexico.Lexico lexer)
         {

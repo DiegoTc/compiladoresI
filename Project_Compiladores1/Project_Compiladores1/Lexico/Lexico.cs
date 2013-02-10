@@ -72,7 +72,11 @@ namespace Project_Compiladores1.Lexico
         TK_BEGIN,
         TK_END,
         TK_FUNCTION,
-        TK_OF
+        TK_OF,
+        TK_FLOAT_LIT,
+        TK_INT_LIT,
+        TK_RETURN,
+        TK_DEFAULT
     }
 
     public class Token
@@ -236,10 +240,10 @@ namespace Project_Compiladores1.Lexico
                         break;
 
                     case 6:
-                        return new Token(lexema, TipoToken.TK_FLOAT, Fil, Col); //Aqui regresa un numero flotante
+                        return new Token(lexema, TipoToken.TK_FLOAT_LIT, Fil, Col); //Aqui regresa un numero flotante
 
                     case 7:
-                        return new Token(lexema, TipoToken.TK_INT, Fil, Col); //Aqui regresa un numero entero
+                        return new Token(lexema, TipoToken.TK_INT_LIT, Fil, Col); //Aqui regresa un numero entero
 
                     case 8:
                         if (Operadores.ContainsKey(lexema.ToLower() + symbol.ToString().ToLower()))
