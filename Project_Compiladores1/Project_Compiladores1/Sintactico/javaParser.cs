@@ -22,6 +22,7 @@ namespace Project_Compiladores1.Sintactico
             StatementList();
             if (currentToken.Tipo != TipoToken.TK_FINFLUJO)
                 throw new Exception("Se esperaba fin flujo ");
+            Console.WriteLine("Evaluacion Sintactica Correcta");
         }
 
         public void StatementList()
@@ -30,7 +31,7 @@ namespace Project_Compiladores1.Sintactico
                 currentToken.Tipo == Lexico.TipoToken.TK_WHILE || currentToken.Tipo == Lexico.TipoToken.TK_DO || currentToken.Tipo == Lexico.TipoToken.TK_FOR ||
                 currentToken.Tipo == Lexico.TipoToken.TK_BREAK || currentToken.Tipo == Lexico.TipoToken.TK_SWITCH || currentToken.Tipo == Lexico.TipoToken.TK_RETURN ||
                 currentToken.Tipo == Lexico.TipoToken.TK_ID || currentToken.Tipo == TipoToken.TK_CHAR || currentToken.Tipo == TipoToken.TK_BOOL ||
-                currentToken.Tipo == TipoToken.TK_STRING || currentToken.Tipo == TipoToken.TK_FLOAT || currentToken.Tipo == TipoToken.TK_INT)
+                currentToken.Tipo == TipoToken.TK_STRING || currentToken.Tipo == TipoToken.TK_FLOAT || currentToken.Tipo == TipoToken.TK_INT || currentToken.Tipo == TipoToken.TK_PRIVATE || currentToken.Tipo == TipoToken.TK_PUBLIC)
             {
                 Statement();
                 StatementList();
@@ -295,29 +296,114 @@ namespace Project_Compiladores1.Sintactico
 
                 #endregion
             }
-            else if (currentToken.Tipo == TipoToken.TK_CHAR || currentToken.Tipo == TipoToken.TK_BOOL || currentToken.Tipo == TipoToken.TK_STRING || currentToken.Tipo == TipoToken.TK_FLOAT || currentToken.Tipo == TipoToken.TK_INT)
+            else if (currentToken.Tipo == TipoToken.TK_CHAR || currentToken.Tipo == TipoToken.TK_BOOL || currentToken.Tipo == TipoToken.TK_STRING || currentToken.Tipo == TipoToken.TK_FLOAT || currentToken.Tipo == TipoToken.TK_INT || currentToken.Tipo == TipoToken.TK_PRIVATE || currentToken.Tipo == TipoToken.TK_PUBLIC)
             {
                 Declaration();
             }
+            else if (this.currentToken.Tipo == Lexico.TipoToken.TK_SWITCH)
+            {
+                this.currentToken = lex.NextToken();
+                if (this.currentToken.Tipo != Lexico.TipoToken.TK_OPENPAR)
+                    throw new Exception("Error Sintactico - Se esperaba un (");
+                this.currentToken = lex.NextToken();
+                Expr();
 
+                if (this.currentToken.Tipo != Lexico.TipoToken.TK_CLOSEPAR)
+                    throw new Exception("Error Sintactico - Se esperaba una )");
+
+                this.currentToken = lex.NextToken();
+
+                if (this.currentToken.Tipo != Lexico.TipoToken.TK_OPENLLAVE)
+                    throw new Exception("Error Sintactico - Se esperaba una {");
+
+                this.currentToken = lex.NextToken();
+                if (this.currentToken.Tipo != Lexico.TipoToken.TK_CASE)
+                    throw new Exception("Error Sintactico - Se esperaba la palabra reservada CASE");
+
+                this.currentToken = lex.NextToken();
+                if (this.currentToken.Tipo != Lexico.TipoToken.TK_CHAR_LIT &&
+                    this.currentToken.Tipo != Lexico.TipoToken.TK_FLOAT_LIT &&
+                    this.currentToken.Tipo != Lexico.TipoToken.TK_INT_LIT)
+                    throw new Exception("Error Sintactico - Se esperaba un numero o un char");
+
+                this.currentToken = lex.NextToken();
+                if (this.currentToken.Tipo != Lexico.TipoToken.TK_DOSPUNTOS)
+                    throw new Exception("Error Sintactico - Se esperaba el simbolo :");
+                currentToken = lex.NextToken();
+                StatementList();
+
+
+                /*while (this.currentToken.Tipo == Lexico.TipoToken.TK_CASE)
+                {
+                    this.currentToken = lex.NextToken();
+                    if (this.currentToken.Tipo != Lexico.TipoToken.TK_CHAR_LIT &&
+                        this.currentToken.Tipo != Lexico.TipoToken.TK_FLOAT_LIT &&
+                        this.currentToken.Tipo != Lexico.TipoToken.TK_INT_LIT)
+                        throw new Exception("Se esperaba un numero o un char");
+
+                    this.currentToken = lex.NextToken();
+                    if (this.currentToken.Tipo != Lexico.TipoToken.TK_DOSPUNTOS)
+                        throw new Exception("Se esperaba el simbolo :");
+                    currentToken = lex.NextToken();
+                    StatementList();
+                }*/
+
+                Cases();
+
+                if (this.currentToken.Tipo != Lexico.TipoToken.TK_DEFAULT)
+                    throw new Exception("Error Sintactico - Se esperaba la palabra reservada DEFAULT");
+
+                this.currentToken = lex.NextToken();
+                if (this.currentToken.Tipo != Lexico.TipoToken.TK_DOSPUNTOS)
+                    throw new Exception("Error Sintactico - Se esperaba el simbolo :");
+                this.currentToken = lex.NextToken();
+                StatementList();
+
+
+                if (this.currentToken.Tipo != Lexico.TipoToken.TK_CLOSELLAVE)
+                    throw new Exception("Error Sintactico - Se esperaba una }");
+
+                this.currentToken = lex.NextToken();
+            }
+        }
+
+        public void Cases()
+        {
+            if (currentToken.Tipo == Lexico.TipoToken.TK_CASE)
+            {                
+                currentToken = lex.NextToken();
+                if (this.currentToken.Tipo != Lexico.TipoToken.TK_CHAR_LIT &&
+                        this.currentToken.Tipo != Lexico.TipoToken.TK_FLOAT_LIT &&
+                        this.currentToken.Tipo != Lexico.TipoToken.TK_INT_LIT)
+                {
+                    currentToken = lex.NextToken();
+                    if (currentToken.Tipo == TipoToken.TK_DOSPUNTOS)
+                    {
+                        currentToken = lex.NextToken();
+                        StatementList();
+                        Cases();
+                    }
+                    else
+                    {
+                        throw new Exception("Error Sintactico - Se esperaba el simbolo :");   
+                    }
+                }
+                else
+                {
+                    throw new Exception("Error Sintactico - Se esperaba un numero o un char");
+                }
+            }
         }
 
         public void Declaration()
         {
+            VARTYPE();
             Type();
             if (currentToken.Tipo == TipoToken.TK_ID)
             {
                 currentToken = lex.NextToken();
                 DeclarationP();
-                AssignDeclaration();
-                if (currentToken.Tipo == TipoToken.TK_FINSENTENCIA)
-                {
-                    currentToken = lex.NextToken();
-                }
-                else
-                {
-                    throw new Exception("Error Sintactico - Se esperaba un fin sentencia");
-                }
+
             }
             else
             {
@@ -325,9 +411,17 @@ namespace Project_Compiladores1.Sintactico
             }
         }
 
+        public void VARTYPE()
+        {
+            if (currentToken.Tipo == TipoToken.TK_PRIVATE || currentToken.Tipo == TipoToken.TK_PUBLIC)
+            {
+                currentToken = lex.NextToken();
+            }
+        }
+
         public void Type()
         {
-            if (currentToken.Tipo == TipoToken.TK_CHAR || currentToken.Tipo == TipoToken.TK_BOOL || currentToken.Tipo == TipoToken.TK_STRING || currentToken.Tipo == TipoToken.TK_FLOAT || currentToken.Tipo == TipoToken.TK_INT)
+            if (currentToken.Tipo == TipoToken.TK_CHAR || currentToken.Tipo == TipoToken.TK_BOOL || currentToken.Tipo == TipoToken.TK_STRING || currentToken.Tipo == TipoToken.TK_FLOAT || currentToken.Tipo == TipoToken.TK_INT || currentToken.Tipo == TipoToken.TK_VOID)
             {
                 currentToken = lex.NextToken();
             }
@@ -348,7 +442,69 @@ namespace Project_Compiladores1.Sintactico
                     throw new Exception("Error Sintactico - Se esperaba un identificador");
                 }
             }
+            else if (currentToken.Tipo == TipoToken.TK_ASSIGN)
+            {
+                AssignDeclaration();
+            }
+            else if (currentToken.Tipo == TipoToken.TK_OPENPAR)
+            {
+                currentToken = lex.NextToken();
+                ParameterList();
+                if (currentToken.Tipo == TipoToken.TK_CLOSEPAR)
+                {
+                    currentToken = lex.NextToken();
+                    CompoundStatement();
+                }
+                else
+                {
+                    throw new Exception("Error Sintactico - Se esperaba simbolo )");
+                }
+            }
+            else if (currentToken.Tipo == TipoToken.TK_FINSENTENCIA)
+            {
+                currentToken = lex.NextToken();
+            }
+            else
+            {
+                throw new Exception("Error Sintactico - Se esperaba un fin sentencia");
+            }
+        }
 
+
+
+        public void ParameterList()
+        {
+            if (currentToken.Tipo == TipoToken.TK_CHAR || currentToken.Tipo == TipoToken.TK_BOOL || currentToken.Tipo == TipoToken.TK_STRING || currentToken.Tipo == TipoToken.TK_FLOAT || currentToken.Tipo == TipoToken.TK_INT)
+            {
+                Type();
+                if (currentToken.Tipo == TipoToken.TK_ID)
+                {
+                    currentToken = lex.NextToken();
+                    ParameterListP();
+                }
+                else
+                {
+                    throw new Exception("Error Sintactico - Se esperaba un identificador");
+                }
+            }
+        }
+
+        public void ParameterListP()
+        {
+            if (currentToken.Tipo == TipoToken.TK_COMA)
+            {
+                currentToken = lex.NextToken();
+                Type();
+                if (currentToken.Tipo == TipoToken.TK_ID)
+                {
+                    currentToken = lex.NextToken();
+                    ParameterListP();
+                }
+                else
+                {
+                    throw new Exception("Error Sintactico - Se esperaba un identificador");
+                }
+            }
         }
 
         public void AssignDeclaration()
@@ -357,6 +513,8 @@ namespace Project_Compiladores1.Sintactico
             {
                 currentToken = lex.NextToken();
                 Expr();
+                DeclarationP();
+
             }
         }
 
@@ -407,6 +565,10 @@ namespace Project_Compiladores1.Sintactico
                 {
                     throw new Exception("Error Sintactico - Se esperaba simbolo ]");
                 }
+            }
+            else if (currentToken.Tipo == TipoToken.TK_MASMAS || currentToken.Tipo == TipoToken.TK_MENOSMENOS)
+            {
+                Expr();
             }
         }
 
@@ -580,6 +742,10 @@ namespace Project_Compiladores1.Sintactico
                 {
                     throw new Exception("Error Sintactico - Se esperaba simbolo )");
                 }
+            }
+            else if (currentToken.Tipo == TipoToken.TK_MASMAS || currentToken.Tipo == TipoToken.TK_MENOSMENOS)
+            {
+                currentToken = lex.NextToken();
             }
         }
 
