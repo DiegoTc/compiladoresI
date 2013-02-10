@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Project_Compiladores1.Lexico
 {
-    class LexicoJava: Lexico
+    class LexicoJava : Lexico
     {
         public LexicoJava(string Cad)
             : base(Cad)
@@ -42,8 +42,8 @@ namespace Project_Compiladores1.Lexico
             Operadores.Add(".", TipoToken.TK_PUNTO);
             Operadores.Add(",", TipoToken.TK_COMA);
             Operadores.Add(":", TipoToken.TK_DOSPUNTOS);
-            
-            
+
+
 
             PalabrasReservadas.Add("int", TipoToken.TK_INT);
             PalabrasReservadas.Add("float", TipoToken.TK_FLOAT);
@@ -60,9 +60,12 @@ namespace Project_Compiladores1.Lexico
             PalabrasReservadas.Add("case", TipoToken.TK_CASE);
             PalabrasReservadas.Add("break", TipoToken.TK_BREAK);
             PalabrasReservadas.Add("class", TipoToken.TK_CLASS);
-            PalabrasReservadas.Add("void", TipoToken.TK_VOID);            
+            PalabrasReservadas.Add("void", TipoToken.TK_VOID);
             PalabrasReservadas.Add("println", TipoToken.TK_PRINT);
-            PalabrasReservadas.Add("array", TipoToken.TK_ARRAY);
+            PalabrasReservadas.Add("return", TipoToken.TK_RETURN);
+            PalabrasReservadas.Add("default", TipoToken.TK_DEFAULT);
+            PalabrasReservadas.Add("public", TipoToken.TK_PUBLIC);
+            PalabrasReservadas.Add("private", TipoToken.TK_PRIVATE);
 
 
             symbol = nextSymbol();
