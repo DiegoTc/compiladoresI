@@ -23,6 +23,7 @@ namespace Project_Compiladores1.Arbol
 
     class S_Asignacion : Sentencia
     {
+        public Operadores Op;
         public Variable id;
         public Expresiones Valor;
     }

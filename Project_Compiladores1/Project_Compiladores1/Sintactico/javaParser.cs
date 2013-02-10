@@ -569,22 +569,31 @@ namespace Project_Compiladores1.Sintactico
                 if (currentToken.Tipo == TipoToken.TK_CLOSEPAR)
                 {
                     currentToken = lex.NextToken();
-
+                    return sLlamadaFunc;
+                }
+                else
+                {
+                    throw new Exception("Error Sintactico - Falta simbolo )");
                 }
             }
             else
             {
-                StatementP2();
+                Sentencia S =new Sentencia();
+                S = StatementP2(Id);
+                return S;
             }
         }
 
-        public void StatementP2()
+        public Sentencia StatementP2(string Id)
         {
             if (currentToken.Tipo == TipoToken.TK_ASSIGN || currentToken.Tipo == TipoToken.TK_MASIGUAL || currentToken.Tipo == TipoToken.TK_MENOSIGUAL || currentToken.Tipo == TipoToken.TK_PORIGUAL || currentToken.Tipo == TipoToken.TK_ENTREIGUAL)
             {
+                var Tip = currentToken.Tipo;
                 currentToken = lex.NextToken();
                 if (currentToken.Tipo == TipoToken.TK_READ)
                 {
+                    S_Read sRead = new S_Read();
+                    sRead.var.id = Id;
                     #region Read
 
                     currentToken = lex.NextToken();
@@ -597,6 +606,7 @@ namespace Project_Compiladores1.Sintactico
                             if (currentToken.Tipo == TipoToken.TK_FINSENTENCIA)
                             {
                                 currentToken = lex.NextToken();
+                                return sRead;
                             }
                             else
                             {
@@ -617,7 +627,13 @@ namespace Project_Compiladores1.Sintactico
                 }
                 else
                 {
-                    Expr();    
+                    Expresiones E = Expr();                    
+                    S_Asignacion sAsignacion = new S_Asignacion();
+                    sAsignacion.id.id = Id;
+                    sAsignacion.
+
+                    
+                        
                 }
                 
 
