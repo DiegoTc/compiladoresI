@@ -70,7 +70,17 @@ namespace Project_Compiladores1.Arbol
 
     class S_Functions : Sentencia
     {
-        public 
+        public Tipo Retorno;
+        public Variable var;
+
+        public Sentencia S;
+    }
+
+    class Campos : Expresiones
+    {
+        public Tipo Tip;
+        public Variable var;
+        public Campos Sig;
     }
 
 }
