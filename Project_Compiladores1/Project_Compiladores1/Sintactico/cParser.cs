@@ -281,14 +281,16 @@ namespace Project_Compiladores1.Sintactico
                 if (this.currentToken.Tipo != Lexico.TipoToken.TK_CHAR_LIT && this.currentToken.Tipo != Lexico.TipoToken.TK_FLOAT_LIT && this.currentToken.Tipo != Lexico.TipoToken.TK_INT_LIT)
                     throw new Exception("Se esperaba un numero o un char");
 
-                cas.Expr = currentToken
+                cas.Valor = currentToken.Lexema;
                 this.currentToken = lex.NextToken();
                 if (this.currentToken.Tipo != Lexico.TipoToken.TK_DOSPUNTOS)
                     throw new Exception("Se esperaba el simbolo :");
                 currentToken = lex.NextToken();
-                StatementList();
-                Cases();
+                cas.S= StatementList();
+                cas.sig=Cases();
+                return cas;
             }
+            return null;
         }
 
         public void Declaration()
