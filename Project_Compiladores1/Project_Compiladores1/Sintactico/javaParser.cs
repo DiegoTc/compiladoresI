@@ -201,6 +201,10 @@ namespace Project_Compiladores1.Sintactico
                 if (currentToken.Tipo == TipoToken.TK_OPENPAR)
                 {
                     currentToken = lex.NextToken();
+                    if (currentToken.Tipo == TipoToken.TK_CHAR || currentToken.Tipo == TipoToken.TK_FLOAT || currentToken.Tipo == TipoToken.TK_INT)
+                    {
+                        Type();
+                    }
                     if (currentToken.Tipo == TipoToken.TK_ID)
                     {
                         currentToken = lex.NextToken();
@@ -215,6 +219,7 @@ namespace Project_Compiladores1.Sintactico
                                 if (currentToken.Tipo == TipoToken.TK_FINSENTENCIA)
                                 {
                                     currentToken = lex.NextToken();
+                                    Expr();                                
                                     if (currentToken.Tipo == TipoToken.TK_CLOSEPAR)
                                     {
                                         currentToken = lex.NextToken();
@@ -224,6 +229,7 @@ namespace Project_Compiladores1.Sintactico
                                     {
                                         throw new Exception("Error Sintactico - Se esperaba simbolo )");
                                     }
+
                                 }
                                 else
                                 {
@@ -470,8 +476,6 @@ namespace Project_Compiladores1.Sintactico
             }
         }
 
-
-
         public void ParameterList()
         {
             if (currentToken.Tipo == TipoToken.TK_CHAR || currentToken.Tipo == TipoToken.TK_BOOL || currentToken.Tipo == TipoToken.TK_STRING || currentToken.Tipo == TipoToken.TK_FLOAT || currentToken.Tipo == TipoToken.TK_INT)
@@ -517,7 +521,6 @@ namespace Project_Compiladores1.Sintactico
 
             }
         }
-
 
         public void StatementP()
         {
@@ -587,7 +590,6 @@ namespace Project_Compiladores1.Sintactico
                 ExprListP();
             }
         }
-
 
         public void ELSE()
         {

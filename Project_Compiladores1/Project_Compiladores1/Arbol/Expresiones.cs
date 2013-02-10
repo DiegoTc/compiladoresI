@@ -9,19 +9,19 @@ namespace Project_Compiladores1.Arbol
     {
     }
 
-    class NumeroEntero : Expresiones
+    class LiteralEntero : Expresiones
     {
         public int Valor { get; set; }
-        public NumeroEntero(int valor)
+        public LiteralEntero(int valor)
         {
             Valor = valor;
         }
     }
 
-    class NumeroFlotante : Expresiones
+    class  LiteralFlotante : Expresiones
     {
         public float Valor { get; set; }
-        public NumeroFlotante(float valor)
+        public LiteralFlotante(float valor)
         {
             Valor = valor;
         }
@@ -102,17 +102,85 @@ namespace Project_Compiladores1.Arbol
         }
     }
 
-    class Condicion : OperacionBinaria
+    class And : Expresiones
     {
-        public string OperadorL { get; set; }
-        public string Operador { get; set; }
-        public Condicion(Expresiones izq, Expresiones der)
-            : base(izq, der)
+        public Expresiones Izq { get; set; }
+        public Expresiones Der { get; set; }
+        public And(Expresiones izq, Expresiones der)
         {
+            Izq = izq;
+            Der = der;
         }
-
-        public Condicion sig;
     }
 
+    class Or : Expresiones
+    {
+        public Expresiones Izq { get; set; }
+        public Expresiones Der { get; set; }
+        public Or(Expresiones izq, Expresiones der)
+        {
+            Izq = izq;
+            Der = der;
+        }
+    }
 
+    class Equal : Expresiones
+    {
+        public Expresiones Izq { get; set; }
+        public Expresiones Der { get; set; }
+        public Equal(Expresiones izq, Expresiones der)
+        {
+            Izq = izq;
+            Der = der;
+        }
+    }
+
+    class MayorQue : Expresiones
+    {
+        public Expresiones Izq { get; set; }
+        public Expresiones Der { get; set; }
+        public MayorQue(Expresiones izq, Expresiones der)
+        {
+            Izq = izq;
+            Der = der;
+        }
+    }
+
+    class MenorQue : Expresiones
+    {
+        public Expresiones Izq { get; set; }
+        public Expresiones Der { get; set; }
+        public MenorQue(Expresiones izq, Expresiones der)
+        {
+            Izq = izq;
+            Der = der;
+        }
+    }
+
+    class MayorIgual : Expresiones
+    {
+        public Expresiones Izq { get; set; }
+        public Expresiones Der { get; set; }
+        public MayorIgual(Expresiones izq, Expresiones der)
+        {
+            Izq = izq;
+            Der = der;
+        }
+    }
+
+    class MenorIgual : Expresiones
+    {
+        public Expresiones Izq { get; set; }
+        public Expresiones Der { get; set; }
+        public MenorIgual(Expresiones izq, Expresiones der)
+        {
+            Izq = izq;
+            Der = der;
+        }
+    }
+
+    class Variable : Expresiones
+    {
+        public string id { get; set; }
+    }
 }
