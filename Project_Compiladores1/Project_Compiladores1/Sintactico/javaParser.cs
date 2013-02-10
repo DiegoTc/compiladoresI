@@ -311,9 +311,11 @@ namespace Project_Compiladores1.Sintactico
             else if (currentToken.Tipo == TipoToken.TK_ID)
             {
                 #region Id
-                currentToken = lex.NextToken();
                 Sentencia S = new Sentencia();
-                S = StatementP();
+                string Id = currentToken.Lexema;
+                currentToken = lex.NextToken();
+                
+                S = StatementP(Id);
                 if (currentToken.Tipo == TipoToken.TK_FINSENTENCIA)
                 {
                     currentToken = lex.NextToken();
@@ -407,15 +409,17 @@ namespace Project_Compiladores1.Sintactico
             }
         }
 
-        public void Declaration()
+        public Sentencia Declaration()
         {
             VARTYPE();
-            Type();
+            Campos C = new Campos();
+            C.Tip = Type();
             if (currentToken.Tipo == TipoToken.TK_ID)
             {
+                C.Var.id = currentToken.Lexema;                
                 currentToken = lex.NextToken();
-                DeclarationP();
-
+                DeclarationP(C);
+                return C;
             }
             else
             {
@@ -439,15 +443,19 @@ namespace Project_Compiladores1.Sintactico
             }
         }
 
-        public void DeclarationP()
+        public Sentencia DeclarationP(Sentencia C)
         {
             if (currentToken.Tipo == TipoToken.TK_COMA)
             {
                 currentToken = lex.NextToken();
+                Campos CP = new Campos();
                 if (currentToken.Tipo == TipoToken.TK_ID)
-                {
+                {                    
+                    CP.Var.id = currentToken.Lexema;
                     currentToken = lex.NextToken();
-                    DeclarationP();
+                    DeclarationP(CP);
+                    C.sig = CP;
+                    return C;
                 }
                 else
                 {
@@ -456,16 +464,21 @@ namespace Project_Compiladores1.Sintactico
             }
             else if (currentToken.Tipo == TipoToken.TK_ASSIGN)
             {
-                AssignDeclaration();
+                return AssignDeclaration(C);
+
             }
             else if (currentToken.Tipo == TipoToken.TK_OPENPAR)
             {
                 currentToken = lex.NextToken();
-                ParameterList();
+                S_Functions sFunctions = new S_Functions();
+                sFunctions.Retorno = ((Campos)C).Tip;
+                sFunctions.var.id = ((Campos)C).Var.id;
+                sFunctions.Campo = ParameterList();
                 if (currentToken.Tipo == TipoToken.TK_CLOSEPAR)
                 {
                     currentToken = lex.NextToken();
-                    CompoundStatement();
+                    sFunctions.S = CompoundStatement();
+                    return sFunctions;
                 }
                 else
                 {
@@ -475,6 +488,7 @@ namespace Project_Compiladores1.Sintactico
             else if (currentToken.Tipo == TipoToken.TK_FINSENTENCIA)
             {
                 currentToken = lex.NextToken();
+                return C;
             }
             else
             {
@@ -482,58 +496,76 @@ namespace Project_Compiladores1.Sintactico
             }
         }
 
-        public void ParameterList()
+        public Campos ParameterList()
         {
             if (currentToken.Tipo == TipoToken.TK_CHAR || currentToken.Tipo == TipoToken.TK_BOOL || currentToken.Tipo == TipoToken.TK_STRING || currentToken.Tipo == TipoToken.TK_FLOAT || currentToken.Tipo == TipoToken.TK_INT)
             {
-                Type();
+                Campos C = new Campos();
+                C.Tip = Type();
                 if (currentToken.Tipo == TipoToken.TK_ID)
                 {
+                    C.Var.id = currentToken.Lexema;
                     currentToken = lex.NextToken();
-                    ParameterListP();
+                    C.Sig = ParameterListP();
+                    return C;
                 }
                 else
                 {
                     throw new Exception("Error Sintactico - Se esperaba un identificador");
                 }
             }
+            else
+            {
+                return null;
+            }
         }
 
-        public void ParameterListP()
+        public Campos ParameterListP()
         {
             if (currentToken.Tipo == TipoToken.TK_COMA)
             {
+                Campos C1 = new Campos();
                 currentToken = lex.NextToken();
-                Type();
+                C1.Tip = Type();
                 if (currentToken.Tipo == TipoToken.TK_ID)
                 {
+                    C1.Var.id = currentToken.Lexema;
                     currentToken = lex.NextToken();
-                    ParameterListP();
+                    C1.Sig = ParameterListP();
+                    return C1;
                 }
                 else
                 {
                     throw new Exception("Error Sintactico - Se esperaba un identificador");
                 }
             }
+            else
+            {
+                return null;
+            }
         }
 
-        public void AssignDeclaration()
+        public Sentencia AssignDeclaration(Sentencia S)
         {
             if (currentToken.Tipo == TipoToken.TK_ASSIGN)
             {
+                S_Asignacion sAsignacion = new S_Asignacion();
                 currentToken = lex.NextToken();
-                Expr();
-                DeclarationP();
+                sAsignacion.id.id = ((Campos)S).Var.id;
+                sAsignacion.Valor = Expr();
+                return DeclarationP(sAsignacion);
 
             }
         }
 
-        public void StatementP()
+        public Sentencia StatementP(string Id)
         {
             if (currentToken.Tipo == TipoToken.TK_OPENPAR)
             {
+                S_LlamadaFunc sLlamadaFunc = new S_LlamadaFunc();
+                sLlamadaFunc.Var.id = Id;
                 currentToken = lex.NextToken();
-                ExprList();
+                sLlamadaFunc.VarList = ExprList();
                 if (currentToken.Tipo == TipoToken.TK_CLOSEPAR)
                 {
                     currentToken = lex.NextToken();

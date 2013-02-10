@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -95,5 +96,12 @@ namespace Project_Compiladores1.Arbol
     {
         public Expresiones Expr;
     }
+    
 
+    class S_LlamadaFunc : Sentencia
+    {
+        public Variable Var;
+        public Expresiones VarList;
+    }
+        
 }
