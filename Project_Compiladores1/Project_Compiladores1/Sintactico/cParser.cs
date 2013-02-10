@@ -209,20 +209,9 @@ namespace Project_Compiladores1.Sintactico
                     throw new Exception("Se esperaba el simbolo :");
                 currentToken = lex.NextToken();
                 StatementList();
-               
 
-                while (this.currentToken.Tipo == Lexico.TipoToken.TK_CASE)
-                {
-                    this.currentToken = lex.NextToken();
-                    if (this.currentToken.Tipo != Lexico.TipoToken.TK_CHAR_LIT && this.currentToken.Tipo != Lexico.TipoToken.TK_FLOAT_LIT && this.currentToken.Tipo != Lexico.TipoToken.TK_INT_LIT)
-                        throw new Exception("Se esperaba un numero o un char");
 
-                    this.currentToken = lex.NextToken();
-                    if (this.currentToken.Tipo != Lexico.TipoToken.TK_DOSPUNTOS)
-                        throw new Exception("Se esperaba el simbolo :");
-                    currentToken = lex.NextToken();
-                    StatementList();
-                }
+                Cases();
 
                 if (this.currentToken.Tipo != Lexico.TipoToken.TK_DEFAULT)
                     throw new Exception("Se esperaba la palabra reservada DEFAULT");
@@ -261,6 +250,23 @@ namespace Project_Compiladores1.Sintactico
             {
                 currentToken = lex.NextToken();
                 Declaration();
+            }
+        }
+
+        public void Cases()
+        {
+            if (this.currentToken.Tipo == Lexico.TipoToken.TK_CASE)
+            {
+                this.currentToken = lex.NextToken();
+                if (this.currentToken.Tipo != Lexico.TipoToken.TK_CHAR_LIT && this.currentToken.Tipo != Lexico.TipoToken.TK_FLOAT_LIT && this.currentToken.Tipo != Lexico.TipoToken.TK_INT_LIT)
+                    throw new Exception("Se esperaba un numero o un char");
+
+                this.currentToken = lex.NextToken();
+                if (this.currentToken.Tipo != Lexico.TipoToken.TK_DOSPUNTOS)
+                    throw new Exception("Se esperaba el simbolo :");
+                currentToken = lex.NextToken();
+                StatementList();
+                Cases();
             }
         }
 
