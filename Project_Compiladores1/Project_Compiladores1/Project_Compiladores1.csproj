@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Arbol\Expresiones.cs" />
     <Compile Include="Arbol\Sentencia.cs" />
+    <Compile Include="Arbol\Tipo.cs" />
     <Compile Include="Lexico\Lexico.cs" />
     <Compile Include="Lexico\LexicoC.cs" />
     <Compile Include="Lexico\LexicoJava.cs" />

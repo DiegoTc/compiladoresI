@@ -55,4 +55,22 @@ namespace Project_Compiladores1.Arbol
         public Sentencia S;
     }
 
+    class Cases : Expresiones
+    {
+        public Expresiones Expr;
+        public Sentencia S;
+        Cases Sig;
+    }
+
+    class S_Switch : Sentencia
+    {
+        public Variable Id;
+        public Expresiones Casos;
+    }
+
+    class S_Functions : Sentencia
+    {
+        public 
+    }
+
 }
