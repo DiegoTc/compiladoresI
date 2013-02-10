@@ -212,7 +212,7 @@ namespace Project_Compiladores1.Sintactico
                 if (this.currentToken.Tipo != Lexico.TipoToken.TK_OPENPAR)
                     throw new Exception("Se esperaba un (");
                 this.currentToken = lex.NextToken();
-                sSwitch.Casos= Expression();
+                sSwitch.Var= Expression();
 
                 if (this.currentToken.Tipo != Lexico.TipoToken.TK_CLOSEPAR)
                     throw new Exception("Se esperaba una )");
@@ -244,37 +244,44 @@ namespace Project_Compiladores1.Sintactico
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_ID)
             {
-
+                Sentencia S = new Sentencia();
                 currentToken = lex.NextToken();
-                StatementP();
+                S=StatementP();
                 if (currentToken.Tipo != Lexico.TipoToken.TK_FINSENTENCIA)
                     throw new Exception("Se esperaba el simbolo ;");
                 currentToken = lex.NextToken();
+                return S;
             }
 
             else if (currentToken.Tipo == Lexico.TipoToken.TK_PUBLIC || currentToken.Tipo == Lexico.TipoToken.TK_PRIVATE)
             {
                 currentToken = lex.NextToken();
                 Tipo();
-                Declaration();
+                Sentencia s = new Sentencia();
+                s=Declaration();
+                return s;
 
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_INT || currentToken.Tipo == Lexico.TipoToken.TK_FLOAT || currentToken.Tipo == Lexico.TipoToken.TK_CHAR ||
                     currentToken.Tipo == Lexico.TipoToken.TK_TRUE || currentToken.Tipo == Lexico.TipoToken.TK_FALSE)
             {
                 currentToken = lex.NextToken();
-                Declaration();
+                Sentencia s = new Sentencia();
+                s = Declaration();
+                return s;
             }
         }
 
-        public void Cases()
+        public Cases Cases()
         {
             if (this.currentToken.Tipo == Lexico.TipoToken.TK_CASE)
             {
+                Cases cas = new Cases();
                 this.currentToken = lex.NextToken();
                 if (this.currentToken.Tipo != Lexico.TipoToken.TK_CHAR_LIT && this.currentToken.Tipo != Lexico.TipoToken.TK_FLOAT_LIT && this.currentToken.Tipo != Lexico.TipoToken.TK_INT_LIT)
                     throw new Exception("Se esperaba un numero o un char");
 
+                cas.Expr = currentToken
                 this.currentToken = lex.NextToken();
                 if (this.currentToken.Tipo != Lexico.TipoToken.TK_DOSPUNTOS)
                     throw new Exception("Se esperaba el simbolo :");
