@@ -61,8 +61,8 @@ namespace Project_Compiladores1.Lexico
             PalabrasReservadas.Add("void", TipoToken.TK_VOID);
             PalabrasReservadas.Add("struct", TipoToken.TK_STRUCT);
             PalabrasReservadas.Add("printf", TipoToken.TK_PRINT);
-            PalabrasReservadas.Add("printf", TipoToken.TK_DEFAULT);
-            PalabrasReservadas.Add("printf", TipoToken.TK_RETURN);
+            PalabrasReservadas.Add("default", TipoToken.TK_DEFAULT);
+            PalabrasReservadas.Add("return", TipoToken.TK_RETURN);
 
 
             symbol = nextSymbol();

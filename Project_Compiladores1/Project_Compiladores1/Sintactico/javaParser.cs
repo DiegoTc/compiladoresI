@@ -6,9 +6,10 @@ using Project_Compiladores1.Lexico;
 
 namespace Project_Compiladores1.Sintactico
 {
+    /*
     class javaParser:Parser
     {
-
+        
         public Token currentToken;
         public LexicoJava Lex;
         public javaParser (Lexico.LexicoJava lexer) : base(lexer)
@@ -262,5 +263,5 @@ namespace Project_Compiladores1.Sintactico
         {
             
         }
-    }
+    }*/
 }

@@ -13,15 +13,23 @@ namespace Project_Compiladores1.Sintactico
         }
 
 
-        public override void parse()
+        public void parse()
         {
             StatementList();
+            if(currentToken.Tipo != Lexico.TipoToken.TK_FINFLUJO)
+                throw new Exception("Se esperaba fin flujo");
         }
 
         public void StatementList()
         {
-            Statement();
-            StatementList();
+            if (currentToken.Tipo == Lexico.TipoToken.TK_PRINT || currentToken.Tipo == Lexico.TipoToken.TK_READ||currentToken.Tipo == Lexico.TipoToken.TK_IF||
+                currentToken.Tipo == Lexico.TipoToken.TK_WHILE || currentToken.Tipo == Lexico.TipoToken.TK_DO ||currentToken.Tipo == Lexico.TipoToken.TK_FOR||
+                currentToken.Tipo == Lexico.TipoToken.TK_BREAK|| currentToken.Tipo == Lexico.TipoToken.TK_SWITCH || currentToken.Tipo == Lexico.TipoToken.TK_RETURN||
+                currentToken.Tipo == Lexico.TipoToken.TK_ID){
+                Statement();
+                StatementList();
+            }
+            
         }
 
         public void Statement()
@@ -72,6 +80,7 @@ namespace Project_Compiladores1.Sintactico
                 if(this.currentToken.Tipo != Lexico.TipoToken.TK_CLOSEPAR)
                     throw new Exception("Se esperaba un )");
 
+                this.currentToken = lex.NextToken();
                 CompoundStatement();
                 Else();
 
@@ -132,9 +141,10 @@ namespace Project_Compiladores1.Sintactico
                 if (this.currentToken.Tipo != Lexico.TipoToken.TK_ASSIGN)
                     throw new Exception("Se esperaba el simbolo =");
 
+                this.currentToken = lex.NextToken();
                 Expression();
                 if (this.currentToken.Tipo != Lexico.TipoToken.TK_FINSENTENCIA)
-                    throw new Exception("Se esperaba un ;");
+                        throw new Exception("Se esperaba un ;");
                 
                 this.currentToken = lex.NextToken();
                 Expression();
@@ -213,12 +223,103 @@ namespace Project_Compiladores1.Sintactico
                 StatementList();
                 this.currentToken = lex.NextToken();
             }
+            else if(currentToken.Tipo == Lexico.TipoToken.TK_ID)
+            {
+                currentToken = lex.NextToken();
+                StatementP();
+                if(currentToken.Tipo != Lexico.TipoToken.TK_FINSENTENCIA)
+                    throw new Exception("Se esperaba el simbolo ;");
+                currentToken = lex.NextToken();
+            }
+                /*
+            else if(currentToken.Tipo == Lexico.TipoToken.)
+            {
+
+            }*/
+        }
+
+        public void Declaration()
+        {
+
+        }
+
+        public void StatementP()
+        {
+            if (currentToken.Tipo == Lexico.TipoToken.TK_OPENPAR)
+            {
+                currentToken = lex.NextToken();
+                ExpreList();
+                if (currentToken.Tipo == Lexico.TipoToken.TK_CLOSEPAR)
+                {
+                    currentToken = lex.NextToken();
+                }
+            }
+            else
+            {
+                StatementP2();
+            }
+        }
+
+        public void StatementP2()
+        {
+            if (currentToken.Tipo == Lexico.TipoToken.TK_ASSIGN || currentToken.Tipo == Lexico.TipoToken.TK_MASIGUAL || currentToken.Tipo == Lexico.TipoToken.TK_MENOSIGUAL ||
+                currentToken.Tipo == Lexico.TipoToken.TK_PORIGUAL || currentToken.Tipo == Lexico.TipoToken.TK_ENTREIGUAL)
+            {
+                currentToken = lex.NextToken();
+                Expression();
+            }
+            else if(currentToken.Tipo == Lexico.TipoToken.TK_OPENCOR)
+            {
+                Expression();
+                StatementP2();
+            }
+        }
+
+        public void AssignOp()
+        {
+            if (currentToken.Tipo == Lexico.TipoToken.TK_ASSIGN)
+            {
+                currentToken = lex.NextToken();
+            }
+            else if (currentToken.Tipo == Lexico.TipoToken.TK_MASIGUAL)
+            {
+                currentToken = lex.NextToken();
+            }
+            else if (currentToken.Tipo == Lexico.TipoToken.TK_MENOSIGUAL)
+            {
+                currentToken = lex.NextToken();
+            }
+            else if (currentToken.Tipo == Lexico.TipoToken.TK_PORIGUAL)
+            {
+                currentToken = lex.NextToken();
+            }
+            else if (currentToken.Tipo == Lexico.TipoToken.TK_ENTREIGUAL)
+            {
+                currentToken = lex.NextToken();
+            }
+        }
+
+        public void ExpreList()
+        {
+            Expression();
+            ExprelistP();
+        }
+
+        public void ExprelistP()
+        {
+            if(currentToken.Tipo == Lexico.TipoToken.TK_COMA)
+            {
+                currentToken = lex.NextToken();
+                Expression();
+                ExprelistP();
+            }
         }
 
         public void CompoundStatement()
         {
             if (currentToken.Tipo == Lexico.TipoToken.TK_OPENLLAVE)
             {
+                currentToken = lex.NextToken();
                 StatementList();
                 if (currentToken.Tipo != Lexico.TipoToken.TK_CLOSELLAVE)
                     throw new Exception("Se esperaba una }");
@@ -231,11 +332,166 @@ namespace Project_Compiladores1.Sintactico
         {
             if (currentToken.Tipo == Lexico.TipoToken.TK_ELSE)
             {
-                
+                currentToken = lex.NextToken();
+                CompoundStatement();
             }
         }
 
-        public void Expression() { }
+        public void Expression() 
+        {
+            Andexp();
+            Expression_prime();
+        }
+
+        public void Expression_prime()
+        {
+            if (currentToken.Tipo == Lexico.TipoToken.TK_OR)
+            {
+                currentToken = lex.NextToken();
+                Expression();
+                Expression_prime();
+            }
+        }
+        
+        public void Andexp()
+        {
+            Relexp();
+            Andexp_prime();
+        }
+
+        public void Andexp_prime()
+        {
+            if (currentToken.Tipo == Lexico.TipoToken.TK_AND)
+            {
+                currentToken = lex.NextToken();
+                Addexp();
+                Andexp_prime();
+            }
+        }
+
+        public void Relexp() 
+        {
+            Addexp(); 
+            Relexp_prime();
+        }
+
+        public void Relexp_prime()
+        {
+            Relop();
+            Addexp();
+        }
+
+        public void Relop()
+        {
+            if (currentToken.Tipo == Lexico.TipoToken.TK_IGUALDAD)
+            {
+                currentToken = lex.NextToken();
+            }
+            else if (currentToken.Tipo == Lexico.TipoToken.TK_DISTINTO)
+            {
+                currentToken = lex.NextToken();
+            }
+            else if(currentToken.Tipo == Lexico.TipoToken.TK_MAYORQUE)
+            {
+                currentToken = lex.NextToken();
+            }
+            else if (currentToken.Tipo == Lexico.TipoToken.TK_MAYORIGUAL)
+            {
+                currentToken = lex.NextToken();
+            }
+            else if (currentToken.Tipo == Lexico.TipoToken.TK_MENORQUE)
+            {
+                currentToken = lex.NextToken();
+            }
+            else if (currentToken.Tipo == Lexico.TipoToken.TK_MENORIGUAL)
+            {
+                currentToken = lex.NextToken();
+            }
+        }
+
+        public void Addexp()
+        {
+            Multexp();
+            Addexp_prime();
+        }
+
+        public void Addexp_prime()
+        {
+            if (currentToken.Tipo == Lexico.TipoToken.TK_SUMA)
+            {
+                currentToken = lex.NextToken();
+            }
+            else if (currentToken.Tipo == Lexico.TipoToken.TK_RESTA)
+            {
+                currentToken = lex.NextToken();
+            }
+        }
+
+        public void Multexp()
+        {
+            
+            Parexp();
+            Multexp_prime();
+            
+        }
+
+        public void Multexp_prime()
+        {
+            if (currentToken.Tipo == Lexico.TipoToken.TK_MULT)
+            {
+                currentToken = lex.NextToken();
+            }
+            else if (currentToken.Tipo == Lexico.TipoToken.TK_DIV)
+            {
+                currentToken = lex.NextToken();
+            }
+            else if (currentToken.Tipo == Lexico.TipoToken.TK_MOD)
+            {
+                currentToken = lex.NextToken();
+            }
+        }
+
+        public void Parexp()
+        {
+            if (currentToken.Tipo == Lexico.TipoToken.TK_OPENPAR)
+            {
+                currentToken = lex.NextToken();
+                Expression();
+                if(currentToken.Tipo!=Lexico.TipoToken.TK_CLOSEPAR)
+                    throw new Exception("Se esperaba un )");
+
+                currentToken = lex.NextToken();
+            }
+            else if (currentToken.Tipo == Lexico.TipoToken.TK_INT_LIT)
+            {
+                currentToken = lex.NextToken();
+            }
+            else if (currentToken.Tipo == Lexico.TipoToken.TK_FLOAT_LIT)
+            {
+                currentToken = lex.NextToken();
+            }
+            else if (currentToken.Tipo == Lexico.TipoToken.TK_CHAR_LIT)
+            {
+                currentToken = lex.NextToken();
+            }
+            else if (currentToken.Tipo == Lexico.TipoToken.TK_STRING_LIT)
+            {
+                currentToken = lex.NextToken();
+            }
+            else if (currentToken.Tipo == Lexico.TipoToken.TK_ID)
+            {
+                currentToken = lex.NextToken();
+                StatementP();
+            }
+            else if (currentToken.Tipo == Lexico.TipoToken.TK_TRUE)
+            {
+                currentToken = lex.NextToken();
+            }
+            else if (currentToken.Tipo == Lexico.TipoToken.TK_FALSE)
+            {
+                currentToken = lex.NextToken();
+            }
+        }
 
     }
 }

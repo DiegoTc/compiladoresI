@@ -76,7 +76,9 @@ namespace Project_Compiladores1.Lexico
         TK_FLOAT_LIT,
         TK_INT_LIT,
         TK_RETURN,
-        TK_DEFAULT
+        TK_DEFAULT,
+        TK_PUBLIC,
+        TK_PRIVATE
     }
 
     public class Token
