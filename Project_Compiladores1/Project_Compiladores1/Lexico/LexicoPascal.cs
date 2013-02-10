@@ -30,9 +30,9 @@ namespace Project_Compiladores1.Lexico
              Operadores.Add("(", TipoToken.TK_OPENPAR);
              Operadores.Add(")", TipoToken.TK_CLOSEPAR);
              Operadores.Add("[", TipoToken.TK_OPENCOR);
-             Operadores.Add("]", TipoToken.TK_CLOSECOR);
+             Operadores.Add("]", TipoToken.TK_CLOSECOR);/*
              Operadores.Add("{", TipoToken.TK_OPENLLAVE);
-             Operadores.Add("}", TipoToken.TK_CLOSELLAVE);
+             Operadores.Add("}", TipoToken.TK_CLOSELLAVE);*/
              Operadores.Add(":=", TipoToken.TK_ASSIGN);
              //Operadores.Add(".", TipoToken.TK_PUNTO);
              Operadores.Add(",", TipoToken.TK_COMA);
@@ -67,6 +67,11 @@ namespace Project_Compiladores1.Lexico
              PalabrasReservadas.Add("of", TipoToken.TK_OF);
              PalabrasReservadas.Add("to", TipoToken.TK_TO);
              PalabrasReservadas.Add("mod", TipoToken.TK_MOD);
+             PalabrasReservadas.Add("repeat", TipoToken.TK_REPEAT);
+             PalabrasReservadas.Add("until", TipoToken.TK_UNTIL);
+             PalabrasReservadas.Add("continue", TipoToken.TK_CONTINUE);
+             PalabrasReservadas.Add("exit", TipoToken.TK_EXIT);
+             PalabrasReservadas.Add("record", TipoToken.TK_RECORD);
 
              symbol = nextSymbol();
          }
