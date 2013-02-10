@@ -63,7 +63,8 @@ namespace Project_Compiladores1.Lexico
             PalabrasReservadas.Add("printf", TipoToken.TK_PRINT);
             PalabrasReservadas.Add("default", TipoToken.TK_DEFAULT);
             PalabrasReservadas.Add("return", TipoToken.TK_RETURN);
-
+            PalabrasReservadas.Add("public",TipoToken.TK_PUBLIC);
+            PalabrasReservadas.Add("private", TipoToken.TK_PRIVATE);
 
             symbol = nextSymbol();
         }      
