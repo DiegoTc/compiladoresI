@@ -439,14 +439,30 @@ namespace Project_Compiladores1.Sintactico
 
         public Sentencia StatementP2(String id)
         {
-            if (currentToken.Tipo == Lexico.TipoToken.TK_ASSIGN || currentToken.Tipo == Lexico.TipoToken.TK_MASIGUAL || currentToken.Tipo == Lexico.TipoToken.TK_MENOSIGUAL ||
-                currentToken.Tipo == Lexico.TipoToken.TK_PORIGUAL || currentToken.Tipo == Lexico.TipoToken.TK_ENTREIGUAL)
+            if (currentToken.Tipo == Lexico.TipoToken.TK_ASSIGN)
             {
                 S_Asignacion sasign = new S_Asignacion();
+                sasign.Op= 
                 sasign.id.id = id;
                 currentToken = lex.NextToken();
                 sasign.Valor= Expression();
-                return 
+                
+            }
+            else if(currentToken.Tipo == Lexico.TipoToken.TK_MASIGUAL)
+            {
+
+            }
+            else if(currentToken.Tipo == Lexico.TipoToken.TK_MENOSIGUAL)
+            {
+
+            }
+            else if(currentToken.Tipo == Lexico.TipoToken.TK_PORIGUAL)
+            {
+
+            }
+            else if(currentToken.Tipo == Lexico.TipoToken.TK_ENTREIGUAL)
+            {
+
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_OPENCOR)
             {
