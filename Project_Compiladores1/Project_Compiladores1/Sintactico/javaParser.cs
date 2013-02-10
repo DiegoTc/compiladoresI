@@ -630,10 +630,19 @@ namespace Project_Compiladores1.Sintactico
                     Expresiones E = Expr();                    
                     S_Asignacion sAsignacion = new S_Asignacion();
                     sAsignacion.id.id = Id;
-                    sAsignacion.
+                    if (Tip == TipoToken.TK_ASSIGN)
+                        sAsignacion.Op = new Igual();
+                    else if (Tip == TipoToken.TK_MASIGUAL)
+                        sAsignacion.Op = new MasIgual();
+                    else if (Tip == TipoToken.TK_MENOSIGUAL)
+                        sAsignacion.Op = new MenosIgual();
+                    else if (Tip == TipoToken.TK_PORIGUAL)
+                        sAsignacion.Op = new PorIgual();
+                    else if (Tip == TipoToken.TK_ENTREIGUAL)
+                        sAsignacion.Op = new EntreIgual();
+                    sAsignacion.Valor = E;
 
-                    
-                        
+
                 }
                 
 

@@ -9,6 +9,11 @@ namespace Project_Compiladores1.Arbol
     {
     }
 
+    class Igual : Operadores
+    {
+
+    }
+
     class MasIgual : Operadores
     {
         
