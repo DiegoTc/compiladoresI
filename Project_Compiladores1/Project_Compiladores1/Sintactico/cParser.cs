@@ -245,6 +245,7 @@ namespace Project_Compiladores1.Sintactico
             else if (currentToken.Tipo == Lexico.TipoToken.TK_ID)
             {
                 Sentencia S = new Sentencia();
+                
                 currentToken = lex.NextToken();
                 S=StatementP();
                 if (currentToken.Tipo != Lexico.TipoToken.TK_FINSENTENCIA)
@@ -256,7 +257,7 @@ namespace Project_Compiladores1.Sintactico
             else if (currentToken.Tipo == Lexico.TipoToken.TK_PUBLIC || currentToken.Tipo == Lexico.TipoToken.TK_PRIVATE)
             {
                 currentToken = lex.NextToken();
-                Tipo();
+                
                 Sentencia s = new Sentencia();
                 s=Declaration();
                 return s;
@@ -265,7 +266,7 @@ namespace Project_Compiladores1.Sintactico
             else if (currentToken.Tipo == Lexico.TipoToken.TK_INT || currentToken.Tipo == Lexico.TipoToken.TK_FLOAT || currentToken.Tipo == Lexico.TipoToken.TK_CHAR ||
                     currentToken.Tipo == Lexico.TipoToken.TK_TRUE || currentToken.Tipo == Lexico.TipoToken.TK_FALSE)
             {
-                currentToken = lex.NextToken();
+                
                 Sentencia s = new Sentencia();
                 s = Declaration();
                 return s;
@@ -293,17 +294,18 @@ namespace Project_Compiladores1.Sintactico
             return null;
         }
 
-        public void Declaration()
+        public Campos Declaration()
         {
-
+            Campos campos = new Campos();
+            campos.Tip= Tipo();
             if (currentToken.Tipo != Lexico.TipoToken.TK_ID)
                 throw new Exception("Se esperaba el token ID");
 
+            campos.Var.id = currentToken.Lexema;
             currentToken = lex.NextToken();
-            DeclarationP();
-            //AssignDecl();
+            DeclarationP(campos);
 
-
+            return campos;
         }
 
         public void Tipo()
@@ -326,78 +328,91 @@ namespace Project_Compiladores1.Sintactico
             }
         }
 
-        public void DeclarationP()
+        public Sentencia DeclarationP(Sentencia campos)
         {
             if (currentToken.Tipo == Lexico.TipoToken.TK_COMA)
             {
                 currentToken = lex.NextToken();
-
+                Campos c = new Campos();
                 if (currentToken.Tipo != Lexico.TipoToken.TK_ID)
                     throw new Exception("Se esperaba el token ID");
 
+                c.Var.id = currentToken.Lexema;
                 currentToken = lex.NextToken();
-                DeclarationP();
+               
+                campos.sig=DeclarationP(c);
+                return campos;
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_ASSIGN)
             {
+                S_Asignacion sasignacion = new S_Asignacion();
+                
+                sasignacion.id.id = ((Campos)campos).Var.id;
                 currentToken = lex.NextToken();
-                Expression();
-                DeclarationP();
+                sasignacion.Valor= Expression();
+                return DeclarationP(sasignacion);
+                
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_OPENPAR)
             {
+                S_Functions sfunciones = new S_Functions();
                 currentToken = lex.NextToken();
-                ParametroList();
+                sfunciones.Retorno = ((Campos)campos).Tip;
+                sfunciones.var.id = ((Campos)campos).Var.id;
+                sfunciones.Campo= ParametroList();
                 if (currentToken.Tipo != Lexico.TipoToken.TK_CLOSEPAR)
                     throw new Exception("Se esperaba el token )");
                 currentToken = lex.NextToken();
-                CompoundStatement();
+                sfunciones.S= CompoundStatement();
+                
+                return sfunciones;
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_FINSENTENCIA)
+            {
                 currentToken = lex.NextToken();
-
+                return campos;
+            }
             else
                 throw new Exception("Se esperaba el token ;");
 
         }
 
-        public void ParametroList()
+        public Campos ParametroList()
         {
             if (currentToken.Tipo == Lexico.TipoToken.TK_CHAR || currentToken.Tipo == Lexico.TipoToken.TK_INT || currentToken.Tipo == Lexico.TipoToken.TK_FLOAT ||
                 currentToken.Tipo == Lexico.TipoToken.TK_BOOL)
             {
-                Tipo();
+                Campos c = new Campos();
+                c.Tip= Tipo();
                 if (currentToken.Tipo != Lexico.TipoToken.TK_ID)
                     throw new Exception("Se esperaba el token ID");
-
+                c.Var.id = currentToken.Lexema;
                 currentToken = lex.NextToken();
-                ParametroListP();
+                c.Sig= ParametroListP();
+                return c;
             }
         }
 
-        public void ParametroListP()
+        public Campos ParametroListP()
         {
             if (currentToken.Tipo == Lexico.TipoToken.TK_COMA)
             {
+                Campos c = new Campos();
                 currentToken = lex.NextToken();
-                Tipo();
+                c.Tip= Tipo();
                 if (currentToken.Tipo != Lexico.TipoToken.TK_ID)
                     throw new Exception("Se esperaba el token ID");
 
+                c.Var.id = currentToken.Lexema;
                 currentToken = lex.NextToken();
-                ParametroListP();
+                c.Sig= ParametroListP();
+                return c;
             }
+            return null;
         }
 
-        public void AssignDecl()
-        {
-            if (currentToken.Tipo != Lexico.TipoToken.TK_ASSIGN)
-                throw new Exception("Se esperaba el token =");
-            currentToken = lex.NextToken();
-            Expression();
-        }
 
-        public void StatementP()
+        public Sentencia StatementP()
         {
             if (currentToken.Tipo == Lexico.TipoToken.TK_OPENPAR)
             {
