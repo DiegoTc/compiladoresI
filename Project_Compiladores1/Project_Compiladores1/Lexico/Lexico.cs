@@ -78,6 +78,11 @@ namespace Project_Compiladores1.Lexico
         TK_RETURN,
         TK_DEFAULT,
         TK_PUBLIC,
+        TK_REPEAT,
+        TK_UNTIL,
+        TK_CONTINUE,
+        TK_EXIT,
+        TK_RECORD,
         TK_PRIVATE
     }
 
