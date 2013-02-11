@@ -527,80 +527,117 @@ namespace Project_Compiladores1.Sintactico
             return ExprelistP(E);
         }
 
-        public Expresiones ExprelistP()
+        public ListaExpre ExprelistP(Expresiones E)
         {
             if (currentToken.Tipo == Lexico.TipoToken.TK_COMA)
             {
                 currentToken = lex.NextToken();
-                Expression();
-                ExprelistP();
+                Expresiones E1= Expression();
+                return ExprelistP(E1);
             }
         }
 
-        public void CompoundStatement()
+        public Sentencia CompoundStatement()
         {
             if (currentToken.Tipo == Lexico.TipoToken.TK_OPENLLAVE)
             {
                 currentToken = lex.NextToken();
-                StatementList();
+                Sentencia S = new Sentencia();
+                S=StatementList();
                 if (currentToken.Tipo != Lexico.TipoToken.TK_CLOSELLAVE)
                     throw new Exception("Se esperaba una }");
 
                 currentToken = lex.NextToken();
+                return S;
             }
+            return null;
         }
 
-        public void Else()
+        public Sentencia Else()
         {
             if (currentToken.Tipo == Lexico.TipoToken.TK_ELSE)
             {
                 currentToken = lex.NextToken();
-                CompoundStatement();
+                Sentencia S= CompoundStatement();
+                return S;
             }
+            return null;
         }
 
-        public void Expression()
+        public Expresiones Expression()
         {
-            Andexp();
-            Expression_prime();
+            Expresiones E1= Andexp();
+            return Expression_prime(E1);
         }
 
-        public void Expression_prime()
+        public Expresiones Expression_prime(Expresiones E)
         {
             if (currentToken.Tipo == Lexico.TipoToken.TK_OR)
             {
                 currentToken = lex.NextToken();
-                Expression();
-                Expression_prime();
+                Expresiones E1 = Expression();
+                Or eor = new Or(E, Expression_prime(E1));
+                return eor;
             }
+            return E;
         }
 
-        public void Andexp()
+        public Expresiones Andexp()
         {
-            Relexp();
-            Andexp_prime();
+            Expresiones E1= Relexp();
+            return Andexp_prime(E1);
         }
 
-        public void Andexp_prime()
+        public Expresiones Andexp_prime(Expresiones E1)
         {
             if (currentToken.Tipo == Lexico.TipoToken.TK_AND)
             {
                 currentToken = lex.NextToken();
-                Addexp();
-                Andexp_prime();
+                Expresiones E= Addexp();
+                And eAnd= new And(E1, Andexp_prime(E));
+                return eAnd;
             }
+            return E1;
         }
 
-        public void Relexp()
+        public Expresiones Relexp()
         {
-            Addexp();
-            Relexp_prime();
+            Expresiones E= Addexp();
+            return Relexp_prime(E);
         }
 
-        public void Relexp_prime()
+        public Expresiones Relexp_prime(Expresiones E)
         {
-            Relop();
-            Addexp();
+
+            if (currentToken.Tipo == Lexico.TipoToken.TK_IGUALDAD)
+            {
+                Equal equal = new Equal(E, Addexp());
+                currentToken = lex.NextToken();
+                return equal;
+            }
+            else if (currentToken.Tipo == Lexico.TipoToken.TK_DISTINTO)
+            {
+                Equal equal = new Equal(E, Addexp());
+                currentToken = lex.NextToken();
+                return equal;
+            }
+            else if (currentToken.Tipo == Lexico.TipoToken.TK_MAYORQUE)
+            {
+                currentToken = lex.NextToken();
+            }
+            else if (currentToken.Tipo == Lexico.TipoToken.TK_MAYORIGUAL)
+            {
+                currentToken = lex.NextToken();
+            }
+            else if (currentToken.Tipo == Lexico.TipoToken.TK_MENORQUE)
+            {
+                currentToken = lex.NextToken();
+            }
+            else if (currentToken.Tipo == Lexico.TipoToken.TK_MENORIGUAL)
+            {
+                currentToken = lex.NextToken();
+            }
+
         }
 
         public void Relop()
@@ -631,7 +668,7 @@ namespace Project_Compiladores1.Sintactico
             }
         }
 
-        public void Addexp()
+        public Expresiones Addexp()
         {
             Multexp();
             Addexp_prime();
