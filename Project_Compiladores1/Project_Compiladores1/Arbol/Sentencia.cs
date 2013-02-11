@@ -86,6 +86,7 @@ namespace Project_Compiladores1.Arbol
         public Variable Var;
         public Campos Sig;
         public Expresiones Valor;
+        public int Dimension;
     }
 
     class S_Break: Sentencia
@@ -103,6 +104,12 @@ namespace Project_Compiladores1.Arbol
     {
         public Variable Var;
         public Expresiones VarList;
+    }
+
+    class S_LlamadaArreglo : Sentencia
+    {
+        public Variable Var;
+        public Expresiones Posicion;
     }
         
 }

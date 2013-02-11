@@ -421,9 +421,40 @@ namespace Project_Compiladores1.Sintactico
                 DeclarationP(C);
                 return C;
             }
-            else
+            else if (currentToken.Tipo == TipoToken.TK_OPENCOR)
             {
-                throw new Exception("Error Sintactico - Se esperaba un identificador");
+                currentToken = lex.NextToken();
+                if (currentToken.Tipo == TipoToken.TK_CLOSECOR)
+                {
+                    currentToken = lex.NextToken();
+                    if (currentToken.Tipo == TipoToken.TK_ID)
+                    {
+                        C.Dimension = 1;
+                        currentToken = lex.NextToken();
+                        if (currentToken.Tipo == TipoToken.TK_FINSENTENCIA)
+                        {
+                            currentToken = lex.NextToken();
+                            return C;
+                        }
+                        else
+                        {
+                            throw new Exception("Error Sintactico - Se esperaba fin sentencia ;");
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception("Error Sintactico - Se esperaba un identificador");
+                    }
+                }
+                else
+                {
+                    throw new Exception("Error Sintactico - Se esperaba un simbolo ]");
+                }
+            }
+            else
+            
+            {
+                throw new Exception("Error Sintactico - Se esperaba un identificador o simbolo [");
             }
         }
 
@@ -641,22 +672,22 @@ namespace Project_Compiladores1.Sintactico
                     else if (Tip == TipoToken.TK_ENTREIGUAL)
                         sAsignacion.Op = new EntreIgual();
                     sAsignacion.Valor = E;
-
-
+                    return sAsignacion;
                 }
-                
-
             }
             else if (currentToken.Tipo == TipoToken.TK_OPENCOR)
             {
                 currentToken = lex.NextToken();
-                Expr();
+                S_LlamadaArreglo sLlamadaArreglo = new S_LlamadaArreglo();
+                sLlamadaArreglo.Var.id = Id;
+                sLlamadaArreglo.Posicion = Expr();
                 if (currentToken.Tipo == TipoToken.TK_CLOSECOR)
                 {
                     currentToken = lex.NextToken();
                     if (currentToken.Tipo == TipoToken.TK_FINSENTENCIA)
                     {
                         currentToken = lex.NextToken();
+                        return sLlamadaArreglo;
                     }
                     else
                     {
