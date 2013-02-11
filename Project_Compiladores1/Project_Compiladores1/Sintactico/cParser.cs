@@ -309,24 +309,32 @@ namespace Project_Compiladores1.Sintactico
             return campos;
         }
 
-        public void Tipo()
+        public Tipo Tipo()
         {
             if (currentToken.Tipo == Lexico.TipoToken.TK_INT)
             {
                 currentToken = lex.NextToken();
+                return new Entero();
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_CHAR)
             {
                 currentToken = lex.NextToken();
+                return new Caracter();
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_FLOAT)
             {
                 currentToken = lex.NextToken();
+                return new Flotante();
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_STRING)
             {
-
+                return new Cadena();
             }
+            else if (currentToken.Tipo == Lexico.TipoToken.TK_VOID)
+            {
+                return new ();
+            }
+            return null;
         }
 
         public Sentencia DeclarationP(Sentencia campos)
@@ -392,6 +400,7 @@ namespace Project_Compiladores1.Sintactico
                 c.Sig= ParametroListP();
                 return c;
             }
+            return null;
         }
 
         public Campos ParametroListP()
@@ -508,12 +517,12 @@ namespace Project_Compiladores1.Sintactico
            else if (currentToken.Tipo == Lexico.TipoToken.TK_MENOSMENOS || currentToken.Tipo == Lexico.TipoToken.TK_MASMAS)
             {
                 S_Asignacion sAsignacion = new S_Asignacion();
-                sAsignacion.id = Id;
-                if (currentToken.Tipo == TipoToken.TK_MASMAS)
+                sAsignacion.id = id;
+                if (currentToken.Tipo == Lexico.TipoToken.TK_MASMAS)
                     sAsignacion.Op = new MasMas();
-                else if (currentToken.Tipo == TipoToken.TK_MENOSMENOS)
+                else if (currentToken.Tipo == Lexico.TipoToken.TK_MENOSMENOS)
                     sAsignacion.Op = new MenosMenos();
-                Expresiones Ex = Expr();
+                Expresiones Ex = Expression();
                 sAsignacion.Valor = Ex;
                 return sAsignacion;
             }
@@ -535,6 +544,7 @@ namespace Project_Compiladores1.Sintactico
                 Expresiones E1= Expression();
                 return ExprelistP(E1);
             }
+            return E;
         }
 
         public Sentencia CompoundStatement()
@@ -727,27 +737,33 @@ namespace Project_Compiladores1.Sintactico
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_CHAR_LIT)
             {
-                LitChar
+                LitChar lit = new LitChar(currentToken.Lexema);
                 currentToken = lex.NextToken();
+                return lit;
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_STRING_LIT)
             {
+                LitString lit = new LitString(currentToken.Lexema);
                 currentToken = lex.NextToken();
+                return lit;
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_ID)
             {
                 currentToken = lex.NextToken();
-
                 StatementP();
 
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_TRUE)
             {
+                LitBool lit = new LitBool(true);
                 currentToken = lex.NextToken();
+                return lit;
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_FALSE)
             {
+                LitBool lit = new LitBool(false);
                 currentToken = lex.NextToken();
+                return lit;
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_MASMAS)
             {
