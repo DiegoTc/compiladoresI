@@ -524,10 +524,10 @@ namespace Project_Compiladores1.Sintactico
         public Expresiones ExpreList()
         {
             Expresiones E= Expression();
-            ExprelistP();
+            return ExprelistP(E);
         }
 
-        public void ExprelistP()
+        public Expresiones ExprelistP()
         {
             if (currentToken.Tipo == Lexico.TipoToken.TK_COMA)
             {
