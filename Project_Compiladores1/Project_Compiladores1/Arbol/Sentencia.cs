@@ -97,15 +97,6 @@ namespace Project_Compiladores1.Arbol
     class S_Return : Sentencia
     {
         public Expresiones Expr;
-    }
-    
-
-    class S_LlamadaFunc : Sentencia
-    {
-        public Variable Var;
-        public Expresiones VarList;
-    }
-
-    
+    }       
         
 }
