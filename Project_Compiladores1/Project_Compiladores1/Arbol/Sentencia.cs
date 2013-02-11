@@ -24,7 +24,7 @@ namespace Project_Compiladores1.Arbol
     class S_Asignacion : Sentencia
     {
         public Operadores Op;
-        public Variable id;
+        public Variable id = new Variable();
         public Expresiones Valor;
     }
 
@@ -51,7 +51,7 @@ namespace Project_Compiladores1.Arbol
     class S_For : Sentencia
     {
         public Tipo Tip;
-        public Variable Var;
+        public Variable Var = new Variable();
         public Expresiones Inicio;
         public Expresiones Condicion;
         public Expresiones Iteracion;
@@ -75,7 +75,7 @@ namespace Project_Compiladores1.Arbol
     class S_Functions : Sentencia
     {
         public Tipo Retorno;
-        public Variable var;
+        public Variable var = new Variable();
         public Campos Campo;
         public Sentencia S;
     }
@@ -101,7 +101,7 @@ namespace Project_Compiladores1.Arbol
 
     internal class S_LlamadaFunc : Sentencia
     {
-        public Variable Var;
+        public Variable Var = new Variable();
         public Expresiones VarList;
     }
 
