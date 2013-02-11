@@ -160,7 +160,7 @@ namespace Project_Compiladores1.Sintactico
                 if (this.currentToken.Tipo != Lexico.TipoToken.TK_ID)
                     throw new Exception("Se esperaba un ID");
 
-                sfor.id.var = this.currentToken.Lexema;
+                sfor.Var.id = this.currentToken.Lexema;
                 this.currentToken = lex.NextToken();
                 if (this.currentToken.Tipo != Lexico.TipoToken.TK_ASSIGN)
                     throw new Exception("Se esperaba el simbolo =");
@@ -245,10 +245,10 @@ namespace Project_Compiladores1.Sintactico
             else if (currentToken.Tipo == Lexico.TipoToken.TK_ID)
             {
                 Sentencia S = new Sentencia();
-                Variable id;
-                id.id= currentToken.Lexema;
+                Variable Id = new Variable();
+                Id.id= currentToken.Lexema;
                 currentToken = lex.NextToken();
-                S=StatementP(id);
+                S=StatementP(Id);
                 if (currentToken.Tipo != Lexico.TipoToken.TK_FINSENTENCIA)
                     throw new Exception("Se esperaba el simbolo ;");
                 currentToken = lex.NextToken();
@@ -272,6 +272,7 @@ namespace Project_Compiladores1.Sintactico
                 s = Declaration();
                 return s;
             }
+            return null;
         }
 
         public Cases Cases()
@@ -328,11 +329,13 @@ namespace Project_Compiladores1.Sintactico
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_STRING)
             {
+                currentToken = lex.NextToken();
                 return new Cadena();
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_VOID)
             {
-                return new ();
+                currentToken = lex.NextToken();
+                return new Voids();
             }
             return null;
         }
@@ -526,6 +529,7 @@ namespace Project_Compiladores1.Sintactico
                 sAsignacion.Valor = Ex;
                 return sAsignacion;
             }
+            return null;
         }
 
        
@@ -541,10 +545,15 @@ namespace Project_Compiladores1.Sintactico
             if (currentToken.Tipo == Lexico.TipoToken.TK_COMA)
             {
                 currentToken = lex.NextToken();
-                Expresiones E1= Expression();
+                Expresiones E1 = Expression();
                 return ExprelistP(E1);
             }
-            return E;
+            else
+            {
+                ListaExpre LE = new ListaExpre();
+                LE.Ex.Add(E);
+                return LE;
+            }
         }
 
         public Sentencia CompoundStatement()
@@ -749,8 +758,11 @@ namespace Project_Compiladores1.Sintactico
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_ID)
             {
+                Variable v = new Variable();
+                v.id = currentToken.Lexema;
                 currentToken = lex.NextToken();
-                StatementP();
+                StatementP(v);
+                return v;
 
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_TRUE)
@@ -773,6 +785,7 @@ namespace Project_Compiladores1.Sintactico
             {
                 currentToken = lex.NextToken();
             }
+            return null;
         }
 
     }
