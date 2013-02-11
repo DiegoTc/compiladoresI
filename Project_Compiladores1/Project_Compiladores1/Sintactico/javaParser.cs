@@ -382,8 +382,8 @@ namespace Project_Compiladores1.Sintactico
                 currentToken = lex.NextToken();
                 Cases C = new Cases();
                 
-                if (currentToken.Tipo != Lexico.TipoToken.TK_CHAR_LIT &&
-                        currentToken.Tipo != Lexico.TipoToken.TK_FLOAT_LIT &&
+                if (currentToken.Tipo != Lexico.TipoToken.TK_CHAR_LIT ||
+                        currentToken.Tipo != Lexico.TipoToken.TK_FLOAT_LIT ||
                         currentToken.Tipo != Lexico.TipoToken.TK_INT_LIT)
                 {
                     C.Valor = currentToken.Lexema;
@@ -420,8 +420,8 @@ namespace Project_Compiladores1.Sintactico
             {
                 C.Var.id = currentToken.Lexema;                
                 currentToken = lex.NextToken();
-                DeclarationP(C);
-                return C;
+                Sentencia S = DeclarationP(C);
+                return S;
             }
             else if (currentToken.Tipo == TipoToken.TK_OPENCOR)
             {
@@ -432,6 +432,7 @@ namespace Project_Compiladores1.Sintactico
                     if (currentToken.Tipo == TipoToken.TK_ID)
                     {
                         C.Dimension = 1;
+                        C.Var.id = currentToken.Lexema;
                         currentToken = lex.NextToken();
                         if (currentToken.Tipo == TipoToken.TK_FINSENTENCIA)
                         {
@@ -514,13 +515,14 @@ namespace Project_Compiladores1.Sintactico
             if (currentToken.Tipo == TipoToken.TK_COMA)
             {
                 currentToken = lex.NextToken();
-                Campos CP = new Campos();
+                Campos CP = new Campos();                
                 if (currentToken.Tipo == TipoToken.TK_ID)
                 {                    
-                    CP.Var.id = currentToken.Lexema;
+                    Variable Var = new Variable();
+                    Var.id = currentToken.Lexema;
                     currentToken = lex.NextToken();
-                    DeclarationP(CP);
-                    C.sig = CP;
+                    C.sig = DeclarationP(CP);
+                    
                     return C;
                 }
                 else
@@ -619,7 +621,7 @@ namespace Project_Compiladores1.Sintactico
                 currentToken = lex.NextToken();
                 sAsignacion.id.id = ((Campos)S).Var.id;
                 sAsignacion.Valor = Expr();
-                return DeclarationP(sAsignacion);
+                return DeclarationP(sAsignacion);                
             }
             else
             {
@@ -726,15 +728,16 @@ namespace Project_Compiladores1.Sintactico
                     Sentencia S = new Sentencia();
                     S = StatementP2(sAsignacion.id);
                     sAsignacion.Valor = ((S_Asignacion) S).Valor;
-                    if (currentToken.Tipo == TipoToken.TK_FINSENTENCIA)
+                    /*if (currentToken.Tipo == TipoToken.TK_FINSENTENCIA)
                     {
                         currentToken = lex.NextToken();
                         return sAsignacion;
-                    }
-                    else
+                    }*/
+                    return sAsignacion;
+                    /*else
                     {
                         throw new Exception("Error Sintactico - Se esperaba simbolo ;");
-                    }
+                    }*/
                 }
                 else
                 {
@@ -872,38 +875,43 @@ namespace Project_Compiladores1.Sintactico
         {            
             if (currentToken.Tipo == TipoToken.TK_IGUALDAD)
             {
-                Equal eEqual = new Equal(E, AddExpr());
                 currentToken = lex.NextToken();
+                Equal eEqual = new Equal(E, AddExpr());
                 return eEqual;
             }
             else if (currentToken.Tipo == TipoToken.TK_DISTINTO)
             {
-                Distinto eDist = new Distinto(E, AddExpr());
                 currentToken = lex.NextToken();
+                Distinto eDist = new Distinto(E, AddExpr());
+                
                 return eDist;
             }
             else if (currentToken.Tipo == TipoToken.TK_MAYORQUE)
             {
-                MayorQue eMayQ = new MayorQue(E, AddExpr());
                 currentToken = lex.NextToken();
+                MayorQue eMayQ = new MayorQue(E, AddExpr());
+                
                 return eMayQ;
             }
             else if (currentToken.Tipo == TipoToken.TK_MENORQUE)
             {
-                MenorQue eMenQ = new MenorQue(E, AddExpr());
                 currentToken = lex.NextToken();
+                MenorQue eMenQ = new MenorQue(E, AddExpr());
+                
                 return eMenQ;
             }
             else if (currentToken.Tipo == TipoToken.TK_MENORIGUAL)
             {
-                MenorIgual eMenI = new MenorIgual(E, AddExpr());
                 currentToken = lex.NextToken();
+                MenorIgual eMenI = new MenorIgual(E, AddExpr());
+                
                 return eMenI;
             }
             else if (currentToken.Tipo == TipoToken.TK_MAYORIGUAL)
             {
-                MayorIgual eMayI = new MayorIgual(E, AddExpr());
                 currentToken = lex.NextToken();
+                MayorIgual eMayI = new MayorIgual(E, AddExpr());
+                
                 return eMayI;
             }
             else
