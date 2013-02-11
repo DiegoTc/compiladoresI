@@ -68,7 +68,7 @@ namespace Project_Compiladores1.Arbol
     class S_Switch : Sentencia
     {
         public Expresiones Var;
-        public Expresiones Casos;
+        public Cases Casos;
         public Sentencia sdefault;
     }
 
@@ -97,6 +97,12 @@ namespace Project_Compiladores1.Arbol
     class S_Return : Sentencia
     {
         public Expresiones Expr;
-    }       
-        
+    }
+
+    internal class S_LlamadaFunc : Sentencia
+    {
+        public Variable Var;
+        public Expresiones VarList;
+    }
+
 }

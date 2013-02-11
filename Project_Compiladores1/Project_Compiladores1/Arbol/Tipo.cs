@@ -33,5 +33,10 @@ namespace Project_Compiladores1.Arbol
     class Caracter : Tipo
     {
 
-    }        
+    }
+
+    class Voids : Tipo
+    {
+
+    }  
 }

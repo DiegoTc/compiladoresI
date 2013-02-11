@@ -178,7 +178,7 @@ namespace Project_Compiladores1.Sintactico
                     if (currentToken.Tipo == TipoToken.TK_OPENPAR)
                     {
                         currentToken = lex.NextToken();
-                        sDo.S = Expr();
+                        sDo.Condicion = Expr();
                         if (currentToken.Tipo == TipoToken.TK_CLOSEPAR)
                         {
                             currentToken = lex.NextToken();
@@ -467,11 +467,43 @@ namespace Project_Compiladores1.Sintactico
             }
         }
 
-        public void Type()
+        public Tipo Type()
         {
             if (currentToken.Tipo == TipoToken.TK_CHAR || currentToken.Tipo == TipoToken.TK_BOOL || currentToken.Tipo == TipoToken.TK_STRING || currentToken.Tipo == TipoToken.TK_FLOAT || currentToken.Tipo == TipoToken.TK_INT || currentToken.Tipo == TipoToken.TK_VOID)
             {
+                Caracter C = new Caracter();
                 currentToken = lex.NextToken();
+                return C;
+            }
+            else if (currentToken.Tipo == TipoToken.TK_BOOL)
+            {
+                Booleano B = new Booleano();
+                currentToken = lex.NextToken();
+                return B;
+            }
+            else if (currentToken.Tipo == TipoToken.TK_STRING)
+            {
+                Cadena C = new Cadena();
+                currentToken = lex.NextToken();
+                return C;
+            }
+            else if (currentToken.Tipo == TipoToken.TK_FLOAT)
+            {
+                Flotante F = new Flotante();
+                currentToken = lex.NextToken();
+                return F;
+            }
+            else if (currentToken.Tipo == TipoToken.TK_INT)
+            {
+                Entero C = new Entero();
+                currentToken = lex.NextToken();
+                return C;
+            }
+            else if (currentToken.Tipo == TipoToken.TK_VOID)
+            {
+                Voids V = new Voids();
+                currentToken = lex.NextToken();
+                return V;
             }
         }
 
@@ -733,7 +765,9 @@ namespace Project_Compiladores1.Sintactico
             }
             else
             {
-                return E;
+                ListaExpre LE = new ListaExpre();
+                LE.Ex.Add(E);
+                return LE;
             }
         }
 
@@ -941,8 +975,10 @@ namespace Project_Compiladores1.Sintactico
         {
             if (currentToken.Tipo == TipoToken.TK_ID)
             {
+                Variable V=new Variable();
+                V.id = currentToken.Lexema;
                 currentToken = lex.NextToken();
-                StatementP();
+                StatementP(V);
             }
             else if (currentToken.Tipo == TipoToken.TK_INT_LIT)
             {
@@ -964,24 +1000,30 @@ namespace Project_Compiladores1.Sintactico
             }
             else if (currentToken.Tipo == TipoToken.TK_CHAR_LIT)
             {
-                LitChar LC = new LitChar();
+                LitChar LC = new LitChar(currentToken.Lexema);
                 currentToken = lex.NextToken();
+                return LC;
             }
             else if (currentToken.Tipo == TipoToken.TK_TRUE)
             {
+                LitBool LB = new LitBool(true);
                 currentToken = lex.NextToken();
+                return LB;
             }
             else if (currentToken.Tipo == TipoToken.TK_FALSE)
             {
+                LitBool LB = new LitBool(false);
                 currentToken = lex.NextToken();
+                return LB;
             }
             else if (currentToken.Tipo == TipoToken.TK_OPENPAR)
             {
                 currentToken = lex.NextToken();
-                Expr();
+                Expresiones EX =Expr();
                 if (currentToken.Tipo == TipoToken.TK_CLOSEPAR)
-                {
+                {                    
                     currentToken = lex.NextToken();
+                    return EX;
                 }
                 else
                 {
