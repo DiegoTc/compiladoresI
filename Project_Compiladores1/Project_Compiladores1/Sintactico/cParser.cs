@@ -617,100 +617,92 @@ namespace Project_Compiladores1.Sintactico
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_DISTINTO)
             {
-                Equal equal = new Equal(E, Addexp());
+                Distinto dist = new Distinto(E, Addexp());
                 currentToken = lex.NextToken();
-                return equal;
+                return dist;
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_MAYORQUE)
             {
+                MayorQue mayorQ = new MayorQue(E, Addexp());
                 currentToken = lex.NextToken();
+                return mayorQ; ;
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_MAYORIGUAL)
             {
+                MayorIgual mayorI = new MayorIgual(E, Addexp());
                 currentToken = lex.NextToken();
+                return mayorI; 
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_MENORQUE)
             {
+                MenorQue menorQ = new MenorQue(E, Addexp());
                 currentToken = lex.NextToken();
+                return menorQ;
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_MENORIGUAL)
             {
+                MenorIgual menorI = new MenorIgual(E, Addexp());
                 currentToken = lex.NextToken();
+                return menorI;
             }
+            return E;
 
         }
 
-        public void Relop()
-        {
-            if (currentToken.Tipo == Lexico.TipoToken.TK_IGUALDAD)
-            {
-                currentToken = lex.NextToken();
-            }
-            else if (currentToken.Tipo == Lexico.TipoToken.TK_DISTINTO)
-            {
-                currentToken = lex.NextToken();
-            }
-            else if (currentToken.Tipo == Lexico.TipoToken.TK_MAYORQUE)
-            {
-                currentToken = lex.NextToken();
-            }
-            else if (currentToken.Tipo == Lexico.TipoToken.TK_MAYORIGUAL)
-            {
-                currentToken = lex.NextToken();
-            }
-            else if (currentToken.Tipo == Lexico.TipoToken.TK_MENORQUE)
-            {
-                currentToken = lex.NextToken();
-            }
-            else if (currentToken.Tipo == Lexico.TipoToken.TK_MENORIGUAL)
-            {
-                currentToken = lex.NextToken();
-            }
-        }
-
+       
         public Expresiones Addexp()
         {
-            Multexp();
-            Addexp_prime();
+            Expresiones Ex= Multexp();
+            return Addexp_prime(Ex);
         }
 
-        public void Addexp_prime()
+        public Expresiones Addexp_prime(Expresiones E)
         {
             if (currentToken.Tipo == Lexico.TipoToken.TK_SUMA)
             {
                 currentToken = lex.NextToken();
+                Suma sum = new Suma(E, Addexp_prime(Addexp()));
+                return sum;                
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_RESTA)
             {
                 currentToken = lex.NextToken();
+                Resta rest = new Resta(E, Addexp_prime(Addexp()));
+                return rest;
             }
+            return E;
         }
 
-        public void Multexp()
+        public Expresiones Multexp()
         {
-
-            Parexp();
-            Multexp_prime();
-
+            Expresiones Ex=Parexp();
+            return Multexp_prime(Ex);
         }
 
-        public void Multexp_prime()
+        public Expresiones Multexp_prime(Expresiones E)
         {
             if (currentToken.Tipo == Lexico.TipoToken.TK_MULT)
             {
                 currentToken = lex.NextToken();
+                Multiplicacion mult = new Multiplicacion(E,Multexp_prime(Multexp()));
+                return mult;
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_DIV)
             {
                 currentToken = lex.NextToken();
+                Division div = new Division(E, Multexp_prime(Multexp()));
+                return div;
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_MOD)
             {
                 currentToken = lex.NextToken();
+                Mod mod = new Mod(E, Multexp_prime(Multexp()));
+                return mod;
             }
+            return E;
         }
 
-        public void Parexp()
+        public Expresiones Parexp()
         {
             if (currentToken.Tipo == Lexico.TipoToken.TK_OPENPAR)
             {
@@ -723,14 +715,19 @@ namespace Project_Compiladores1.Sintactico
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_INT_LIT)
             {
+                LiteralEntero lit = new LiteralEntero(Convert.ToInt32(currentToken.Lexema));
                 currentToken = lex.NextToken();
+                return lit;
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_FLOAT_LIT)
             {
+                LiteralFlotante lit = new LiteralFlotante(float.Parse(currentToken.Lexema));
                 currentToken = lex.NextToken();
+                return lit;
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_CHAR_LIT)
             {
+                LitChar
                 currentToken = lex.NextToken();
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_STRING_LIT)
