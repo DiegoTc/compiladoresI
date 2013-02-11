@@ -245,7 +245,8 @@ namespace Project_Compiladores1.Sintactico
             else if (currentToken.Tipo == Lexico.TipoToken.TK_ID)
             {
                 Sentencia S = new Sentencia();
-                string id = currentToken.Lexema;
+                Variable id;
+                id.id= currentToken.Lexema;
                 currentToken = lex.NextToken();
                 S=StatementP(id);
                 if (currentToken.Tipo != Lexico.TipoToken.TK_FINSENTENCIA)
@@ -412,12 +413,12 @@ namespace Project_Compiladores1.Sintactico
         }
 
 
-        public Sentencia StatementP(string id)
+        public Sentencia StatementP(Variable id)
         {
             if (currentToken.Tipo == Lexico.TipoToken.TK_OPENPAR)
             {
                 S_LlamadaFunc sfunc = new S_LlamadaFunc();
-                sfunc.Var.id=id;
+                sfunc.Var=id;
                 currentToken = lex.NextToken();
                 sfunc.VarList= ExpreList();
                 if (currentToken.Tipo == Lexico.TipoToken.TK_CLOSEPAR)
@@ -437,13 +438,13 @@ namespace Project_Compiladores1.Sintactico
             }
         }
 
-        public Sentencia StatementP2(String id)
+        public Sentencia StatementP2(Variable id)
         {
             if (currentToken.Tipo == Lexico.TipoToken.TK_ASSIGN)
             {
                 S_Asignacion sasign = new S_Asignacion();
                 sasign.Op = new Igual();
-                sasign.id.id = id;
+                sasign.id = id;
                 currentToken = lex.NextToken();
                 sasign.Valor= Expression();
                 return sasign;
@@ -453,7 +454,7 @@ namespace Project_Compiladores1.Sintactico
             {
                 S_Asignacion sasign = new S_Asignacion();
                 sasign.Op = new MasIgual();
-                sasign.id.id = id;
+                sasign.id = id;
                 currentToken = lex.NextToken();
                 sasign.Valor = Expression();
                 return sasign;
@@ -462,7 +463,7 @@ namespace Project_Compiladores1.Sintactico
             {
                 S_Asignacion sasign = new S_Asignacion();
                 sasign.Op = new MenosIgual();
-                sasign.id.id = id;
+                sasign.id = id;
                 currentToken = lex.NextToken();
                 sasign.Valor = Expression();
                 return sasign;
@@ -471,7 +472,7 @@ namespace Project_Compiladores1.Sintactico
             {
                 S_Asignacion sasign = new S_Asignacion();
                 sasign.Op = new PorIgual();
-                sasign.id.id = id;
+                sasign.id = id;
                 currentToken = lex.NextToken();
                 sasign.Valor = Expression();
                 return sasign;
@@ -480,17 +481,17 @@ namespace Project_Compiladores1.Sintactico
             {
                 S_Asignacion sasign = new S_Asignacion();
                 sasign.Op = new EntreIgual();
-                sasign.id.id = id;
+                sasign.id = id;
                 currentToken = lex.NextToken();
                 sasign.Valor = Expression();
                 return sasign;
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_OPENCOR)
             {
-                Campos cam = new Campos();
-                cam.Valor=Expression();
-                cam.Var.id = id;
-                if (currentToken.Tipo != Lexico.TipoToken.TK_CLOSECOR)
+                
+                Expression();
+
+                 if (currentToken.Tipo != Lexico.TipoToken.TK_CLOSECOR)
                     throw new Exception("Se esperaba el token ]");
 
                 StatementP2(id);
