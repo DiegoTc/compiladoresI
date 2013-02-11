@@ -83,7 +83,7 @@ namespace Project_Compiladores1.Arbol
     class Campos : Sentencia
     {
         public Tipo Tip;
-        public Variable Var;
+        public Variable Var = new Variable();
         public Campos Sig;
         public Expresiones Valor;
         public int Dimension;
