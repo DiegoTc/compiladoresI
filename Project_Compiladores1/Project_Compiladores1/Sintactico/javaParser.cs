@@ -728,8 +728,8 @@ namespace Project_Compiladores1.Sintactico
             if (currentToken.Tipo == TipoToken.TK_COMA)
             {
                 currentToken = lex.NextToken();
-                Expresiones E = Expr();
-                return ExprListP(E);
+                Expresiones E1 = Expr();
+                return ExprListP(E1);
             }
             else
             {
