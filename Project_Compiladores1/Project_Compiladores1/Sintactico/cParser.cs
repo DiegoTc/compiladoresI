@@ -507,15 +507,23 @@ namespace Project_Compiladores1.Sintactico
             }
            else if (currentToken.Tipo == Lexico.TipoToken.TK_MENOSMENOS || currentToken.Tipo == Lexico.TipoToken.TK_MASMAS)
             {
-                Expression();
+                S_Asignacion sAsignacion = new S_Asignacion();
+                sAsignacion.id = Id;
+                if (currentToken.Tipo == TipoToken.TK_MASMAS)
+                    sAsignacion.Op = new MasMas();
+                else if (currentToken.Tipo == TipoToken.TK_MENOSMENOS)
+                    sAsignacion.Op = new MenosMenos();
+                Expresiones Ex = Expr();
+                sAsignacion.Valor = Ex;
+                return sAsignacion;
             }
         }
 
        
 
-        public void ExpreList()
+        public Expresiones ExpreList()
         {
-            Expression();
+            Expresiones E= Expression();
             ExprelistP();
         }
 
