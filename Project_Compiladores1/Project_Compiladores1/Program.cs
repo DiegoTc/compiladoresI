@@ -23,11 +23,11 @@ namespace Project_Compiladores1
             LexicoJava lj = new LexicoJava(text);
 
 
-            javaParser s = new javaParser(lj);           
+            javaParser s = new javaParser(lj);
 
             Sentencia raiz = s.parse();
             Console.ReadKey();
-           
+
 
         }
     }
