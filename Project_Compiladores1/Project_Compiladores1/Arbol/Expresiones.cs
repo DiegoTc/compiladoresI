@@ -39,8 +39,8 @@ namespace Project_Compiladores1.Arbol
 
     class LitChar : Expresiones
     {
-        public char Valor { get; set; }
-        public LitChar(char valor)
+        public string Valor { get; set; }
+        public LitChar(string valor)
         {
             Valor = valor;
         }
