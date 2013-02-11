@@ -442,32 +442,58 @@ namespace Project_Compiladores1.Sintactico
             if (currentToken.Tipo == Lexico.TipoToken.TK_ASSIGN)
             {
                 S_Asignacion sasign = new S_Asignacion();
-                sasign.Op= 
+                sasign.Op = new Igual();
                 sasign.id.id = id;
                 currentToken = lex.NextToken();
                 sasign.Valor= Expression();
+                return sasign;
                 
             }
             else if(currentToken.Tipo == Lexico.TipoToken.TK_MASIGUAL)
             {
-
+                S_Asignacion sasign = new S_Asignacion();
+                sasign.Op = new MasIgual();
+                sasign.id.id = id;
+                currentToken = lex.NextToken();
+                sasign.Valor = Expression();
+                return sasign;
             }
             else if(currentToken.Tipo == Lexico.TipoToken.TK_MENOSIGUAL)
             {
-
+                S_Asignacion sasign = new S_Asignacion();
+                sasign.Op = new MenosIgual();
+                sasign.id.id = id;
+                currentToken = lex.NextToken();
+                sasign.Valor = Expression();
+                return sasign;
             }
             else if(currentToken.Tipo == Lexico.TipoToken.TK_PORIGUAL)
             {
-
+                S_Asignacion sasign = new S_Asignacion();
+                sasign.Op = new PorIgual();
+                sasign.id.id = id;
+                currentToken = lex.NextToken();
+                sasign.Valor = Expression();
+                return sasign;
             }
             else if(currentToken.Tipo == Lexico.TipoToken.TK_ENTREIGUAL)
             {
-
+                S_Asignacion sasign = new S_Asignacion();
+                sasign.Op = new EntreIgual();
+                sasign.id.id = id;
+                currentToken = lex.NextToken();
+                sasign.Valor = Expression();
+                return sasign;
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_OPENCOR)
             {
-                Expression();
-                StatementP2();
+                Campos cam = new Campos();
+                cam.Valor=Expression();
+                cam.Var.id = id;
+                if (currentToken.Tipo != Lexico.TipoToken.TK_CLOSECOR)
+                    throw new Exception("Se esperaba el token ]");
+
+                StatementP2(id);
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_MENOSMENOS || currentToken.Tipo == Lexico.TipoToken.TK_MASMAS)
             {
