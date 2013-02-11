@@ -34,7 +34,7 @@ namespace Project_Compiladores1.Lexico
              Operadores.Add("{", TipoToken.TK_OPENLLAVE);
              Operadores.Add("}", TipoToken.TK_CLOSELLAVE);*/
              Operadores.Add(":=", TipoToken.TK_ASSIGN);
-             //Operadores.Add(".", TipoToken.TK_PUNTO);
+             Operadores.Add(".", TipoToken.TK_PUNTO);
              Operadores.Add(",", TipoToken.TK_COMA);
              Operadores.Add(":", TipoToken.TK_DOSPUNTOS);
 

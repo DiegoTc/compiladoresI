@@ -22,8 +22,28 @@ namespace Project_Compiladores1.Sintactico
 
         void SL()
         {
-            S();
-            SL();
+            switch (currentToken.Tipo)
+            {
+                case TipoToken.TK_ID:
+                case TipoToken.TK_IF:
+                case TipoToken.TK_WHILE:
+                case TipoToken.TK_FOR:
+                case TipoToken.TK_REPEAT:
+                case TipoToken.TK_CASE:
+                case TipoToken.TK_BREAK:
+                case TipoToken.TK_CONTINUE:
+                case TipoToken.TK_EXIT:
+                case TipoToken.TK_PRINT:
+                case TipoToken.TK_READ:
+                case TipoToken.TK_VAR:
+                case TipoToken.TK_VOID:
+                case TipoToken.TK_FUNCTION:
+                    S();
+                    SL();
+                    break;
+                default:
+                    break;
+            }
         }
 
         void S()
@@ -286,14 +306,19 @@ namespace Project_Compiladores1.Sintactico
             switch (currentToken.Tipo)
             {
                 case TipoToken.TK_INT:
+                    currentToken = lex.NextToken();
                     return;
                 case TipoToken.TK_FLOAT:
+                    currentToken = lex.NextToken();
                     return;
                 case TipoToken.TK_CHAR:
+                    currentToken = lex.NextToken();
                     return;
                 case TipoToken.TK_STRING:
+                    currentToken = lex.NextToken();
                     return;
                 case TipoToken.TK_BOOL:
+                    currentToken = lex.NextToken();
                     return;
                 default:
                     throw new Exception("Se esperaba un tipo primitivo");
@@ -449,7 +474,7 @@ namespace Project_Compiladores1.Sintactico
                     S_prime2();
                 }
             }
-            else throw new Exception("solo asignacion, llamada y declaracion pueden ser sentencias.");
+            //else throw new Exception("solo asignacion, llamada y declaracion pueden ser sentencias.");
         }
 
         void exprl()
