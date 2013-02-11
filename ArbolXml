@@ -1,0 +1,88 @@
+public class ArbolXml
+    {
+        //Funcion para leer y presentar el archivo Xml
+        public static void LeerXml()
+        {
+
+
+        }
+
+        //Funcion que una carpeta para contener los archivos xml
+        public static bool CrearCarpetaXml(string ruta)
+        {
+            {
+                var respuesta = false;
+                try
+                {
+                    if (Directory.Exists(ruta))
+                    {
+                        respuesta = true;
+                    }
+                    else
+                    {
+                        Directory.CreateDirectory(ruta);
+                        respuesta = true;
+                    }
+                    return true;
+                }
+                catch (Exception)
+                {
+                    //logger.Error("Error en CrearCarpetaXml, ClaseXml:" + ex.Message);  
+                    return respuesta;
+                    //No fue posible crear el directorio...  
+                }
+
+            }
+        }
+
+        //Funcion para verificar si existe el archivo
+        public static bool ArchivoExiste()
+        {
+            {
+                try
+                {
+                    return File.Exists("archivo.xml");
+                }
+                catch (Exception)
+                {
+                    //logger.Error("Error en ArchivoExiste, ClaseXml:" + ex.Message);  
+                    return false;
+                }
+            }
+        }
+
+        //Funcion que crea el documento XML
+        public static void CrearDocumentoXML(object arbol)
+        {
+            
+
+            // Crear el documento
+            var xmlDoc = new XmlDocument();
+            XmlNode rootNode = xmlDoc.CreateElement("Arbolito");
+            xmlDoc.AppendChild(rootNode);
+
+           
+
+            //PROBLEMAS AL RECORRER LA CLASE ARBOL
+            
+
+
+            // guardar el documento
+            if(ArchivoExiste())
+            {
+                try
+                {
+                    File.Delete("archivo.xml");
+                    xmlDoc.Save("archivo.xml");
+                }
+                catch (Exception)
+                {
+                    Console.Write("Ocurrio un error al Guardar el nuevo archivo!");
+                }
+            }
+            else
+            {
+                xmlDoc.Save("archivo.xml");
+            }
+        }
+    }
