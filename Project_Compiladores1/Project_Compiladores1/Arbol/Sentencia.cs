@@ -106,10 +106,6 @@ namespace Project_Compiladores1.Arbol
         public Expresiones VarList;
     }
 
-    class S_LlamadaArreglo : Sentencia
-    {
-        public Variable Var;
-        public Expresiones Posicion;
-    }
+    
         
 }

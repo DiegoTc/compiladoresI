@@ -312,7 +312,8 @@ namespace Project_Compiladores1.Sintactico
             {
                 #region Id
                 Sentencia S = new Sentencia();
-                string Id = currentToken.Lexema;
+                Variable Id = new Variable();
+                Id.id = currentToken.Lexema;
                 currentToken = lex.NextToken();
                 
                 S = StatementP(Id);
@@ -589,12 +590,12 @@ namespace Project_Compiladores1.Sintactico
             }
         }
 
-        public Sentencia StatementP(string Id)
+        public Sentencia StatementP(Variable Id)
         {
             if (currentToken.Tipo == TipoToken.TK_OPENPAR)
             {
                 S_LlamadaFunc sLlamadaFunc = new S_LlamadaFunc();
-                sLlamadaFunc.Var.id = Id;
+                sLlamadaFunc.Var = Id;
                 currentToken = lex.NextToken();
                 sLlamadaFunc.VarList = ExprList();
                 if (currentToken.Tipo == TipoToken.TK_CLOSEPAR)
@@ -615,7 +616,7 @@ namespace Project_Compiladores1.Sintactico
             }
         }
 
-        public Sentencia StatementP2(string Id)
+        public Sentencia StatementP2(Variable Id)
         {
             if (currentToken.Tipo == TipoToken.TK_ASSIGN || currentToken.Tipo == TipoToken.TK_MASIGUAL || currentToken.Tipo == TipoToken.TK_MENOSIGUAL || currentToken.Tipo == TipoToken.TK_PORIGUAL || currentToken.Tipo == TipoToken.TK_ENTREIGUAL)
             {
@@ -624,7 +625,7 @@ namespace Project_Compiladores1.Sintactico
                 if (currentToken.Tipo == TipoToken.TK_READ)
                 {
                     S_Read sRead = new S_Read();
-                    sRead.var.id = Id;
+                    sRead.var = Id;
                     #region Read
 
                     currentToken = lex.NextToken();
@@ -660,7 +661,7 @@ namespace Project_Compiladores1.Sintactico
                 {
                     Expresiones E = Expr();                    
                     S_Asignacion sAsignacion = new S_Asignacion();
-                    sAsignacion.id.id = Id;
+                    sAsignacion.id = Id;
                     if (Tip == TipoToken.TK_ASSIGN)
                         sAsignacion.Op = new Igual();
                     else if (Tip == TipoToken.TK_MASIGUAL)
@@ -678,16 +679,19 @@ namespace Project_Compiladores1.Sintactico
             else if (currentToken.Tipo == TipoToken.TK_OPENCOR)
             {
                 currentToken = lex.NextToken();
-                S_LlamadaArreglo sLlamadaArreglo = new S_LlamadaArreglo();
-                sLlamadaArreglo.Var.id = Id;
-                sLlamadaArreglo.Posicion = Expr();
+                S_Asignacion sAsignacion = new S_Asignacion();
+                sAsignacion.id = Id;
+                sAsignacion.id.acces = Expr();
                 if (currentToken.Tipo == TipoToken.TK_CLOSECOR)
                 {
                     currentToken = lex.NextToken();
+                    Sentencia S = new Sentencia();
+                    S = StatementP2(sAsignacion.id);
+                    sAsignacion.Valor = ((S_Asignacion) S).Valor;
                     if (currentToken.Tipo == TipoToken.TK_FINSENTENCIA)
                     {
                         currentToken = lex.NextToken();
-                        return sLlamadaArreglo;
+                        return sAsignacion;
                     }
                     else
                     {

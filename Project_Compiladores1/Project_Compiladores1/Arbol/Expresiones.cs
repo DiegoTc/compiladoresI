@@ -182,5 +182,6 @@ namespace Project_Compiladores1.Arbol
     class Variable : Expresiones
     {
         public string id { get; set; }
+        public Expresiones acces { get; set; }
     }
 }
