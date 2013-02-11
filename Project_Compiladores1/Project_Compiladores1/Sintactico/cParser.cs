@@ -488,43 +488,30 @@ namespace Project_Compiladores1.Sintactico
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_OPENCOR)
             {
-                
-                Expression();
+                currentToken = lex.NextToken();
+                S_Asignacion assig = new S_Asignacion();
+                assig.id = id;
+                assig.id.acces=Expression();
 
                  if (currentToken.Tipo != Lexico.TipoToken.TK_CLOSECOR)
                     throw new Exception("Se esperaba el token ]");
 
-                StatementP2(id);
+                 Sentencia S = new Sentencia();
+                 S=StatementP2(assig.id);
+                 assig.Valor = ((S_Asignacion)S).Valor;
+                if(currentToken.Tipo != Lexico.TipoToken.TK_FINSENTENCIA)
+                    throw new Exception("Se esperaba el token ;");
+
+                currentToken = lex.NextToken();
+                return assig;
             }
-            else if (currentToken.Tipo == Lexico.TipoToken.TK_MENOSMENOS || currentToken.Tipo == Lexico.TipoToken.TK_MASMAS)
+           if (currentToken.Tipo == Lexico.TipoToken.TK_MENOSMENOS || currentToken.Tipo == Lexico.TipoToken.TK_MASMAS)
             {
                 Expression();
             }
         }
 
-        public void AssignOp()
-        {
-            if (currentToken.Tipo == Lexico.TipoToken.TK_ASSIGN)
-            {
-                currentToken = lex.NextToken();
-            }
-            else if (currentToken.Tipo == Lexico.TipoToken.TK_MASIGUAL)
-            {
-                currentToken = lex.NextToken();
-            }
-            else if (currentToken.Tipo == Lexico.TipoToken.TK_MENOSIGUAL)
-            {
-                currentToken = lex.NextToken();
-            }
-            else if (currentToken.Tipo == Lexico.TipoToken.TK_PORIGUAL)
-            {
-                currentToken = lex.NextToken();
-            }
-            else if (currentToken.Tipo == Lexico.TipoToken.TK_ENTREIGUAL)
-            {
-                currentToken = lex.NextToken();
-            }
-        }
+       
 
         public void ExpreList()
         {
