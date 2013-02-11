@@ -505,7 +505,7 @@ namespace Project_Compiladores1.Sintactico
                 currentToken = lex.NextToken();
                 return assig;
             }
-           if (currentToken.Tipo == Lexico.TipoToken.TK_MENOSMENOS || currentToken.Tipo == Lexico.TipoToken.TK_MASMAS)
+           else if (currentToken.Tipo == Lexico.TipoToken.TK_MENOSMENOS || currentToken.Tipo == Lexico.TipoToken.TK_MASMAS)
             {
                 Expression();
             }
