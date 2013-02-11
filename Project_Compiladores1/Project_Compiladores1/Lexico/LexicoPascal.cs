@@ -72,6 +72,7 @@ namespace Project_Compiladores1.Lexico
              PalabrasReservadas.Add("continue", TipoToken.TK_CONTINUE);
              PalabrasReservadas.Add("exit", TipoToken.TK_EXIT);
              PalabrasReservadas.Add("record", TipoToken.TK_RECORD);
+             PalabrasReservadas.Add("array", TipoToken.TK_ARRAY);
 
              symbol = nextSymbol();
          }
