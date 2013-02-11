@@ -33,4 +33,14 @@ namespace Project_Compiladores1.Arbol
     {
 
     }
+
+    class MasMas : Operadores
+    {
+         
+    }
+
+    class MenosMenos : Operadores
+    {
+         
+    }
 }
