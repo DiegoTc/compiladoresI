@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -183,5 +184,10 @@ namespace Project_Compiladores1.Arbol
     {
         public string id { get; set; }
         public Expresiones acces { get; set; }
+    }
+
+    class ListaExpre: Expresiones
+    {
+        public ArrayList Ex = new ArrayList();
     }
 }

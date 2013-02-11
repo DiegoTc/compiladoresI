@@ -717,19 +717,23 @@ namespace Project_Compiladores1.Sintactico
             }
         }
 
-        public void ExprList()
-        {
-            Expr();
-            ExprListP();
+        public Expresiones ExprList()
+        {            
+            Expresiones E = Expr();
+            return ExprListP(E);
         }
 
-        public void ExprListP()
+        public ListaExpre ExprListP(Expresiones E)
         {
             if (currentToken.Tipo == TipoToken.TK_COMA)
             {
                 currentToken = lex.NextToken();
-                Expr();
-                ExprListP();
+                Expresiones E = Expr();
+                return ExprListP(E);
+            }
+            else
+            {
+                return E;
             }
         }
 
