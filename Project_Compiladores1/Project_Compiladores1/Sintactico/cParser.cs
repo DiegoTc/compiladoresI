@@ -51,6 +51,7 @@ namespace Project_Compiladores1.Sintactico
                 this.currentToken = lex.NextToken();
                 if (currentToken.Tipo != Lexico.TipoToken.TK_OPENPAR)
                     throw new Exception("Se esperaba un (");
+                this.currentToken = lex.NextToken();
                 S_Print sprint = new S_Print();
                 sprint.Expr = Expression();
 
@@ -296,7 +297,7 @@ namespace Project_Compiladores1.Sintactico
             return null;
         }
 
-        public Campos Declaration()
+        public Sentencia Declaration()
         {
             Campos campos = new Campos();
             campos.Tip= Tipo();
@@ -305,9 +306,10 @@ namespace Project_Compiladores1.Sintactico
 
             campos.Var.id = currentToken.Lexema;
             currentToken = lex.NextToken();
-            DeclarationP(campos);
+            
+            Sentencia s= DeclarationP(campos);
 
-            return campos;
+            return s;
         }
 
         public Tipo Tipo()
@@ -362,7 +364,9 @@ namespace Project_Compiladores1.Sintactico
                 sasignacion.id.id = ((Campos)campos).Var.id;
                 currentToken = lex.NextToken();
                 sasignacion.Valor= Expression();
-                return DeclarationP(sasignacion);
+                Sentencia s = new Sentencia();
+                s=DeclarationP(sasignacion);
+                return s;
                 
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_OPENPAR)
@@ -383,6 +387,25 @@ namespace Project_Compiladores1.Sintactico
             {
                 currentToken = lex.NextToken();
                 return campos;
+            }
+            else if (currentToken.Tipo == Lexico.TipoToken.TK_OPENCOR)
+            {
+                Campos c = new Campos();
+                currentToken = lex.NextToken();
+                LiteralEntero e = ((LiteralEntero)Expression());
+                c.Dimension = e.Valor;
+                c.Var.id = ((Campos)campos).Var.id;
+                if (currentToken.Tipo == Lexico.TipoToken.TK_CLOSECOR)
+                {
+                    currentToken = lex.NextToken();
+                    Sentencia s = new Sentencia();
+                    s = DeclarationP(c);
+                    return s;
+                }
+                else
+                {
+                    throw new Exception("Error Sintactico - Se esperaba un simbolo ]");
+                }
             }
             else
                 throw new Exception("Se esperaba el token ;");
@@ -630,38 +653,39 @@ namespace Project_Compiladores1.Sintactico
 
             if (currentToken.Tipo == Lexico.TipoToken.TK_IGUALDAD)
             {
-                Equal equal = new Equal(E, Addexp());
                 currentToken = lex.NextToken();
+                Equal equal = new Equal(E, Addexp());
                 return equal;
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_DISTINTO)
             {
-                Distinto dist = new Distinto(E, Addexp());
                 currentToken = lex.NextToken();
+                Distinto dist = new Distinto(E, Addexp());
                 return dist;
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_MAYORQUE)
             {
-                MayorQue mayorQ = new MayorQue(E, Addexp());
                 currentToken = lex.NextToken();
+                Expresiones x = Addexp();
+                MayorQue mayorQ = new MayorQue(E, x);
                 return mayorQ; ;
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_MAYORIGUAL)
             {
-                MayorIgual mayorI = new MayorIgual(E, Addexp());
                 currentToken = lex.NextToken();
+                MayorIgual mayorI = new MayorIgual(E, Addexp());
                 return mayorI; 
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_MENORQUE)
             {
-                MenorQue menorQ = new MenorQue(E, Addexp());
                 currentToken = lex.NextToken();
+                MenorQue menorQ = new MenorQue(E, Addexp());
                 return menorQ;
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_MENORIGUAL)
             {
-                MenorIgual menorI = new MenorIgual(E, Addexp());
                 currentToken = lex.NextToken();
+                MenorIgual menorI = new MenorIgual(E, Addexp());
                 return menorI;
             }
             return E;
@@ -726,11 +750,12 @@ namespace Project_Compiladores1.Sintactico
             if (currentToken.Tipo == Lexico.TipoToken.TK_OPENPAR)
             {
                 currentToken = lex.NextToken();
-                Expression();
+                Expresiones e= Expression();
                 if (currentToken.Tipo != Lexico.TipoToken.TK_CLOSEPAR)
                     throw new Exception("Se esperaba un )");
 
                 currentToken = lex.NextToken();
+                return e;
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_INT_LIT)
             {
