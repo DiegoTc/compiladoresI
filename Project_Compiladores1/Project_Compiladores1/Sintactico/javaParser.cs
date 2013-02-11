@@ -989,6 +989,8 @@ namespace Project_Compiladores1.Sintactico
                 V.id = currentToken.Lexema;
                 currentToken = lex.NextToken();
                 StatementP(V);
+                return V;
+               
             }
             else if (currentToken.Tipo == TipoToken.TK_INT_LIT)
             {
