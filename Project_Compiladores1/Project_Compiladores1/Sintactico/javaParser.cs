@@ -737,74 +737,134 @@ namespace Project_Compiladores1.Sintactico
             }
         }
 
-        public void ELSE()
+        public Sentencia ELSE()
         {
             if (currentToken.Tipo == TipoToken.TK_ELSE)
             {
                 currentToken = lex.NextToken();
-                CompoundStatement();
+                Sentencia S = CompoundStatement();
+                return S;
+            }
+            else
+            {
+                return null;
             }
         }
 
-        public void CompoundStatement()
+        public Sentencia CompoundStatement()
         {
             if (currentToken.Tipo == TipoToken.TK_OPENLLAVE)
             {
                 currentToken = lex.NextToken();
-                StatementList();
+                Sentencia S = new Sentencia();
+                S = StatementList();
+
                 if (currentToken.Tipo == TipoToken.TK_CLOSELLAVE)
                 {
                     currentToken = lex.NextToken();
+                    return S;
                 }
                 else
                 {
                     throw new Exception("Error Sintactico - Se esperaba simbolo }");
                 }
             }
-        }
-
-        public void Expr()
-        {
-            ANDExpr();
-            ExprP();
-        }
-
-        public void ExprP()
-        {
-            if (currentToken.Tipo == TipoToken.TK_OR)
+            else
             {
-                currentToken = lex.NextToken();
-                Expr();
-                ExprP();
+                return null;
             }
         }
 
-        public void ANDExpr()
+        public Expresiones Expr()
         {
-            RelExpr();
-            ANDExprP();
+            Expresiones E1 = ANDExpr();
+            return ExprP(E1);
         }
 
-        public void ANDExprP()
+        public Expresiones ExprP(Expresiones E)
+        {
+            if (currentToken.Tipo == TipoToken.TK_OR)
+            {
+                
+                currentToken = lex.NextToken();
+                Expresiones E1 = Expr();
+                Or eOr = new Or(E, ExprP(E1));
+                return eOr;
+            }
+            else
+            {
+                return E;
+            }
+        }
+
+        public Expresiones ANDExpr()
+        {
+            Expresiones E = RelExpr();
+            return ANDExprP(E);
+        }
+
+        public Expresiones ANDExprP(Expresiones E)
         {
             if (currentToken.Tipo == TipoToken.TK_AND)
             {
                 currentToken = lex.NextToken();
-                ANDExpr();
-                ANDExprP();
+                Expresiones E1 = ANDExpr();
+                And eAnd = new And(E, ANDExprP(E1));
+                return eAnd;
+            }
+            else
+            {
+                return E;
             }
         }
 
-        public void RelExpr()
+        public Expresiones RelExpr()
         {
-            AddExpr();
-            RelExprP();
+            Expresiones E = AddExpr();
+            return RelExprP(E);
         }
 
-        public void RelExprP()
+        public Expresiones RelExprP(Expresiones E)
         {
-            RelOP();
-            AddExpr();
+            
+
+            if (currentToken.Tipo == TipoToken.TK_IGUALDAD)
+            {
+                Equal eEqual = new Equal(E, AddExpr());
+                currentToken = lex.NextToken();
+                return eEqual;
+            }
+            else if (currentToken.Tipo == TipoToken.TK_DISTINTO)
+            {
+                Equal eEqual = new Equal(E, AddExpr());
+                currentToken = lex.NextToken();
+                return eEqual;
+            }
+            else if (currentToken.Tipo == TipoToken.TK_MAYORQUE)
+            {
+                Equal eEqual = new Equal(E, AddExpr());
+                currentToken = lex.NextToken();
+                return eEqual;
+            }
+            else if (currentToken.Tipo == TipoToken.TK_MENORQUE)
+            {
+                Equal eEqual = new Equal(E, AddExpr());
+                currentToken = lex.NextToken();
+                return eEqual;
+            }
+            else if (currentToken.Tipo == TipoToken.TK_MENORIGUAL)
+            {
+                Equal eEqual = new Equal(E, AddExpr());
+                currentToken = lex.NextToken();
+                return eEqual;
+            }
+            else if (currentToken.Tipo == TipoToken.TK_MAYORIGUAL)
+            {
+                Equal eEqual = new Equal(E, AddExpr());
+                currentToken = lex.NextToken();
+                return eEqual;
+            }
+
         }
 
         public void RelOP()

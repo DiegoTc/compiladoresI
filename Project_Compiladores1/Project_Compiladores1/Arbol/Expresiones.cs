@@ -136,6 +136,17 @@ namespace Project_Compiladores1.Arbol
         }
     }
 
+    class Distinto : Expresiones
+    {
+        public Expresiones Izq { get; set; }
+        public Expresiones Der { get; set; }
+        public Distinto(Expresiones izq, Expresiones der)
+        {
+            Izq = izq;
+            Der = der;
+        }
+    }
+
     class MayorQue : Expresiones
     {
         public Expresiones Izq { get; set; }
