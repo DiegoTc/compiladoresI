@@ -38,6 +38,7 @@ namespace Project_Compiladores1.Sintactico
                 case TipoToken.TK_VAR:
                 case TipoToken.TK_VOID:
                 case TipoToken.TK_FUNCTION:
+                case TipoToken.TK_TYPE:
                     S();
                     if (currentToken.Tipo == TipoToken.TK_FINSENTENCIA)
                     {
@@ -199,34 +200,44 @@ namespace Project_Compiladores1.Sintactico
             if (currentToken.Tipo == TipoToken.TK_ID)
             {
                 currentToken = lex.NextToken();
-                if (currentToken.Tipo == TipoToken.TK_ASSIGN)
+                if (currentToken.Tipo == TipoToken.TK_IGUALDAD)
                 {
                     currentToken = lex.NextToken();
                     if (currentToken.Tipo == TipoToken.TK_RECORD)
                     {
                         currentToken = lex.NextToken();
-                        PL();
-                        if (currentToken.Tipo == TipoToken.TK_FINSENTENCIA)
+                        FL();
+                        if (currentToken.Tipo == TipoToken.TK_END)
                         {
                             currentToken = lex.NextToken();
-                            if (currentToken.Tipo == TipoToken.TK_END)
-                            {
-                                currentToken = lex.NextToken();
-                                /*
-                                if (currentToken.Tipo == TipoToken.TK_FINSENTENCIA)
-                                    currentToken = lex.NextToken();
-                                else throw new Exception("Se esperaba ;");
-                                */
-                            }
-                            else throw new Exception("Se esperaba end");
                         }
-                        else throw new Exception("Se esperaba ;");
+                        else throw new Exception("Se esperaba end");
                     }
                     else throw new Exception("Se esperaba record");
                 }
-                else throw new Exception("Se esperaba :=");
+                else throw new Exception("Se esperaba =");
             }
             else throw new Exception("Se esperaba id");
+        }
+
+        void FL()
+        {
+            if (currentToken.Tipo == TipoToken.TK_ID)
+            {
+                IDL();
+                if (currentToken.Tipo == TipoToken.TK_DOSPUNTOS)
+                {
+                    currentToken = lex.NextToken();
+                    TYPE();
+                    if (currentToken.Tipo == TipoToken.TK_FINSENTENCIA)
+                    {
+                        currentToken = lex.NextToken();
+                        FL();
+                    }
+                    else throw new Exception("Se esperaba ;");
+                }
+                else throw new Exception("Se esperaba :");
+            }
         }
 
         void PL()

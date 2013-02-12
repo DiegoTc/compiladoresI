@@ -6,7 +6,6 @@ using System.Text;
 using Project_Compiladores1.Arbol;
 using Project_Compiladores1.Lexico;
 using Project_Compiladores1.Sintactico;
-using Project_Compiladores1.Arbol;
 
 
 namespace Project_Compiladores1
