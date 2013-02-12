@@ -45,6 +45,7 @@ namespace Project_Compiladores1.Sintactico
                         currentToken = lex.NextToken();
                         SL();
                     }
+                    else throw new Exception("Se esperaba ;");
                     break;
                 default:
                     break;
@@ -510,6 +511,15 @@ namespace Project_Compiladores1.Sintactico
                 currentToken = lex.NextToken();
                 expr();
                 if (currentToken.Tipo == TipoToken.TK_CLOSECOR)
+                {
+                    currentToken = lex.NextToken();
+                    S_prime2();
+                }
+            }
+            else if (currentToken.Tipo == TipoToken.TK_PUNTO)
+            {
+                currentToken = lex.NextToken();
+                if (currentToken.Tipo == TipoToken.TK_ID)
                 {
                     currentToken = lex.NextToken();
                     S_prime2();
