@@ -6,6 +6,7 @@ using System.Text;
 using Project_Compiladores1.Arbol;
 using Project_Compiladores1.Lexico;
 using Project_Compiladores1.Sintactico;
+using Project_Compiladores1.Arbol;
 
 
 namespace Project_Compiladores1
@@ -14,7 +15,6 @@ namespace Project_Compiladores1
     {
         static void Main(string[] args)
         {
-
             StreamReader streamReader = new StreamReader("C:\\Pascal.txt");
             string text = streamReader.ReadToEnd();
             streamReader.Close();
@@ -27,6 +27,18 @@ namespace Project_Compiladores1
 
             Sentencia raiz = s.parse();
             Console.ReadKey();
+            /*
+            StreamReader streamReader = new StreamReader("C:\\Pascal.txt");
+            string text = streamReader.ReadToEnd();
+            streamReader.Close();
+
+
+            LexicoC l = new LexicoC(text);
+            cParser s = new cParser(l);
+            Sentencia raiz = s.parse();
+            Console.ReadKey();
+
+            */
 
 
         }
