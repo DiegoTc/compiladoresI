@@ -392,8 +392,19 @@ namespace Project_Compiladores1.Sintactico
             {
                 Campos c = new Campos();
                 currentToken = lex.NextToken();
-                LiteralEntero e = ((LiteralEntero)Expression());
-                c.Dimension = e.Valor;
+                Expresiones E = Expression();
+
+                if (E is LiteralEntero)
+                {
+                    LiteralEntero e = ((LiteralEntero)Expression());
+                    c.Dimension = e.Valor;
+                    c.Ex = E;
+                }
+                else
+                {
+                    c.Ex = E;
+                }
+                
                 c.Var.id = ((Campos)campos).Var.id;
                 if (currentToken.Tipo == Lexico.TipoToken.TK_CLOSECOR)
                 {
@@ -531,13 +542,15 @@ namespace Project_Compiladores1.Sintactico
                  if (currentToken.Tipo != Lexico.TipoToken.TK_CLOSECOR)
                     throw new Exception("Se esperaba el token ]");
 
+                 currentToken = lex.NextToken();
                  Sentencia S = new Sentencia();
                  S=StatementP2(assig.id);
-                 assig.Valor = ((S_Asignacion)S).Valor;
-                if(currentToken.Tipo != Lexico.TipoToken.TK_FINSENTENCIA)
-                    throw new Exception("Se esperaba el token ;");
+                if(S!=null)
+                    assig.Valor = ((S_Asignacion)S).Valor;
+                //if(currentToken.Tipo != Lexico.TipoToken.TK_FINSENTENCIA)
+                  //  throw new Exception("Se esperaba el token ;");
 
-                currentToken = lex.NextToken();
+                //currentToken = lex.NextToken();
                 return assig;
             }
            else if (currentToken.Tipo == Lexico.TipoToken.TK_MENOSMENOS || currentToken.Tipo == Lexico.TipoToken.TK_MASMAS)
