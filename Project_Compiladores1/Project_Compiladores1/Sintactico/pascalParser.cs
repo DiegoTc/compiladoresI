@@ -320,12 +320,19 @@ namespace Project_Compiladores1.Sintactico
                                             currentToken = lex.NextToken();
                                             STYPE();
                                         }
+                                        else throw new Exception("Se esperaba of");
                                     }
+                                    else throw new Exception("Se esperaba ]");
                                 }
+                                else throw new Exception("Se esperaba un numero");
                             }
+                            else throw new Exception("Se esperaba ..");
                         }
+                        else throw new Exception("Se esperaba ..");
                     }
+                    else throw new Exception("Se esperaba un numero");
                 }
+                else throw new Exception("Se esperaba [");
             }
             else STYPE();
         }
