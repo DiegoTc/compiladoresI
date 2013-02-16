@@ -201,4 +201,14 @@ namespace Project_Compiladores1.Arbol
     {
         public ArrayList Ex = new ArrayList();
     }
+
+    class ExpMasMas : Expresiones
+    {
+        public Variable ID;       
+    }
+
+    class ExpMenosMenos : Expresiones
+    {
+        public Variable ID;
+    }
 }

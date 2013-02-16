@@ -420,7 +420,6 @@ namespace Project_Compiladores1.Sintactico
                 return null;
             }
         }
-
         
         public Sentencia Declaration()
         {
@@ -574,7 +573,6 @@ namespace Project_Compiladores1.Sintactico
                 throw new Exception("Error Sintactico - Se esperaba un fin sentencia");
             }
         }
-
 
         public Campos ParameterList()
         {
@@ -1008,6 +1006,20 @@ namespace Project_Compiladores1.Sintactico
                 Variable V = new Variable();
                 V.id = currentToken.Lexema;
                 currentToken = lex.NextToken();
+                if (currentToken.Tipo == TipoToken.TK_MASMAS)
+                {
+                    ExpMasMas expMasMas = new ExpMasMas();
+                    expMasMas.ID = V;
+                    currentToken = lex.NextToken();
+                    return expMasMas;
+                }
+                else if (currentToken.Tipo == TipoToken.TK_MASMAS)
+                {
+                    ExpMenosMenos expMenosMenos= new ExpMenosMenos();
+                    expMenosMenos.ID = V;
+                    currentToken = lex.NextToken();
+                    return expMenosMenos;
+                }
                 StatementP(V);
                 return V;
                
