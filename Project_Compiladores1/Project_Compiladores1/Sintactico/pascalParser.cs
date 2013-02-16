@@ -13,7 +13,7 @@ namespace Project_Compiladores1.Sintactico
             : base(lexer)
         {
         }
-
+/*
         public Sentencia parse()
         {
             Sentencia ret=SL();
@@ -580,7 +580,7 @@ namespace Project_Compiladores1.Sintactico
                         currentToken = lex.NextToken();
                     else throw new Exception("se esperaba ;");
                     */
-                }
+              /*  }
                 else throw new Exception("se esperaba end");
             }
             else throw new Exception("Se esperaba begin");
@@ -717,6 +717,6 @@ namespace Project_Compiladores1.Sintactico
                 S_prime();
             }
             else LIT();
-        }
+        }*/
     }
 }
