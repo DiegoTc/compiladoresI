@@ -14,15 +14,20 @@ namespace Project_Compiladores1
     {
         static void Main(string[] args)
         {
+
             StreamReader streamReader = new StreamReader("C:\\Pascal.txt");
             string text = streamReader.ReadToEnd();
             streamReader.Close();
 
 
-            LexicoC l = new LexicoC(text);
-            cParser s = new cParser(l);
+            LexicoJava lj = new LexicoJava(text);
+
+
+            javaParser s = new javaParser(lj);
+
             Sentencia raiz = s.parse();
             Console.ReadKey();
+
 
         }
     }
