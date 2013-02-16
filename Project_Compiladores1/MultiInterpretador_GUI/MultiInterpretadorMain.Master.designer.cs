@@ -7,33 +7,36 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace MultiInterpretador_GUI.Account
-{
-
-
-    public partial class RegisterExternalLogin
-    {
-
-
-
+namespace MultiInterpretador_GUI {
+    
+    
+    public partial class MultiInterpretadorMain {
+        
         /// <summary>
-        /// userNameForm control.
+        /// form1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.PlaceHolder userNameForm;
-
+        protected global::System.Web.UI.HtmlControls.HtmlForm form1;
+        
         /// <summary>
-        /// userName control.
+        /// Encabezado control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox userName;
-
-
+        protected global::System.Web.UI.WebControls.ContentPlaceHolder Encabezado;
+        
+        /// <summary>
+        /// Contenido control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ContentPlaceHolder Contenido;
     }
 }
