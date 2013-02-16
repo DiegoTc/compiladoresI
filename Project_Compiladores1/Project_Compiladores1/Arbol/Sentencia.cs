@@ -102,9 +102,17 @@ namespace Project_Compiladores1.Arbol
         
     }
 
+    class S_Continue : Sentencia { }
+
     class S_Return : Sentencia
     {
         public Expresiones Expr;
+    }
+
+    class S_Struct : Sentencia
+    {
+        public string nombre;
+        public Campos miembros;
     }
 
     internal class S_LlamadaFunc : Sentencia
