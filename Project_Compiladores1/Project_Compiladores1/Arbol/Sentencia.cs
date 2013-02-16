@@ -113,4 +113,10 @@ namespace Project_Compiladores1.Arbol
         public Expresiones VarList;
     }
 
+    class S_Class : Sentencia
+    {
+        public Variable Var = new Variable();
+        public Sentencia CamposClase;        
+    }
+
 }

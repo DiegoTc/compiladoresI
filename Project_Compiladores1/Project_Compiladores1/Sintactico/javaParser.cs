@@ -33,7 +33,7 @@ namespace Project_Compiladores1.Sintactico
                 currentToken.Tipo == Lexico.TipoToken.TK_WHILE || currentToken.Tipo == Lexico.TipoToken.TK_DO || currentToken.Tipo == Lexico.TipoToken.TK_FOR ||
                 currentToken.Tipo == Lexico.TipoToken.TK_BREAK || currentToken.Tipo == Lexico.TipoToken.TK_SWITCH || currentToken.Tipo == Lexico.TipoToken.TK_RETURN ||
                 currentToken.Tipo == Lexico.TipoToken.TK_ID || currentToken.Tipo == TipoToken.TK_CHAR || currentToken.Tipo == TipoToken.TK_BOOL ||
-                currentToken.Tipo == TipoToken.TK_STRING || currentToken.Tipo == TipoToken.TK_FLOAT || currentToken.Tipo == TipoToken.TK_INT || currentToken.Tipo == TipoToken.TK_PRIVATE || currentToken.Tipo == TipoToken.TK_PUBLIC)
+                currentToken.Tipo == TipoToken.TK_STRING || currentToken.Tipo == TipoToken.TK_FLOAT || currentToken.Tipo == TipoToken.TK_INT || currentToken.Tipo == TipoToken.TK_PRIVATE || currentToken.Tipo == TipoToken.TK_PUBLIC || currentToken.Tipo == TipoToken.TK_CLASS)
             {
                 Sentencia S = Statement();
                 S.sig = StatementList();
@@ -80,39 +80,7 @@ namespace Project_Compiladores1.Sintactico
                     throw new Exception("Error Sintactico - Se esperaba simbolo (");
                 }
                 #endregion
-            }/*
-            else if (currentToken.Tipo == TipoToken.TK_READ)
-            {
-                #region Read
-
-                currentToken = lex.NextToken();
-                if (currentToken.Tipo == TipoToken.TK_OPENPAR)
-                {
-                    currentToken = lex.NextToken();
-                    if (currentToken.Tipo == TipoToken.TK_CLOSEPAR)
-                    {
-                        currentToken = lex.NextToken();
-                        if (currentToken.Tipo == TipoToken.TK_FINSENTENCIA)
-                        {
-                            currentToken = lex.NextToken();
-                        }
-                        else
-                        {
-                            throw new Exception("Error Sintactico - Se esperaba simbolo ;");
-                        }
-                    }
-                    else
-                    {
-                        throw new Exception("Error Sintactico - Se esperaba simbolo )");
-                    }
-                }
-                else
-                {
-                    throw new Exception("Error Sintactico - Se esperaba simbolo (");
-                }
-
-                #endregion
-            }*/
+            }
             else if (currentToken.Tipo == TipoToken.TK_IF)
             {
                 #region If
@@ -331,12 +299,15 @@ namespace Project_Compiladores1.Sintactico
             }
             else if (currentToken.Tipo == TipoToken.TK_CHAR || currentToken.Tipo == TipoToken.TK_BOOL || currentToken.Tipo == TipoToken.TK_STRING || currentToken.Tipo == TipoToken.TK_FLOAT || currentToken.Tipo == TipoToken.TK_INT || currentToken.Tipo == TipoToken.TK_PRIVATE || currentToken.Tipo == TipoToken.TK_PUBLIC)
             {
+                #region Declaraciones
                 Sentencia S = new Sentencia();
                 S = Declaration();
                 return S;
+                #endregion
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_SWITCH)
             {
+                #region Switch
                 currentToken = lex.NextToken();
                 if (currentToken.Tipo != Lexico.TipoToken.TK_OPENPAR)
                     throw new Exception("Error Sintactico - Se esperaba un (");
@@ -371,8 +342,47 @@ namespace Project_Compiladores1.Sintactico
 
                 currentToken = lex.NextToken();
                 return sSwitch;
+                #endregion 
+            }
+            else if (currentToken.Tipo == TipoToken.TK_CLASS)
+            {
+                return Clases();
             }
             return null;
+        }
+
+        public Sentencia Clases()
+        {
+            currentToken = lex.NextToken();
+            if (currentToken.Tipo != TipoToken.TK_ID)
+                throw new Exception("Error Sintactico - Se esperaba un ID");
+            S_Class sClass = new S_Class();
+            sClass.Var.id = currentToken.Lexema;
+            currentToken = lex.NextToken();
+            if (currentToken.Tipo != TipoToken.TK_OPENLLAVE)
+                throw new Exception("Error Sintactico - Se esperaba el simbolo {");
+            currentToken = lex.NextToken();
+            //sClass.CamposClase = ((Campos)DeclarationClass());
+            sClass.CamposClase = DeclarationClass();
+            if (currentToken.Tipo != TipoToken.TK_CLOSELLAVE)
+                throw new Exception("Error Sintactico - Se esperaba el simbolo }");
+            currentToken = lex.NextToken();
+            return sClass;
+        }
+
+        public Sentencia DeclarationClass()
+        {
+            /*Campos S = ((Campos)Declaration());
+            if (currentToken.Tipo == TipoToken.TK_PUBLIC || currentToken.Tipo == TipoToken.TK_PRIVATE)
+            {
+                S.Sig = ((Campos)DeclarationClass());
+            }*/
+            Sentencia S = Declaration();
+            if (currentToken.Tipo == TipoToken.TK_PUBLIC || currentToken.Tipo == TipoToken.TK_PRIVATE)
+            {
+                S.sig = DeclarationClass();
+            }
+            return S;
         }
 
         public Cases Cases()
@@ -411,6 +421,7 @@ namespace Project_Compiladores1.Sintactico
             }
         }
 
+        
         public Sentencia Declaration()
         {
             VARTYPE();
