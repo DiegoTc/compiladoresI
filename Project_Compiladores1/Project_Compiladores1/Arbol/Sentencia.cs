@@ -115,7 +115,7 @@ namespace Project_Compiladores1.Arbol
         public Campos miembros;
     }
 
-    internal class S_LlamadaFunc : Sentencia
+    class S_LlamadaFunc : Sentencia
     {
         public Variable Var = new Variable();
         public Expresiones VarList;

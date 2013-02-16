@@ -542,8 +542,15 @@ namespace Project_Compiladores1.Sintactico
             }
             else if (currentToken.Tipo == TipoToken.TK_ASSIGN)
             {
-                return AssignDeclaration(C);
-
+                Sentencia S = new Sentencia();
+                S = AssignDeclaration(C);
+                if (((Campos)C).Tip == null)
+                    return S;
+                else
+                {
+                    ((Campos)C).Valor = ((S_Asignacion) S).Valor;
+                    return C;
+                }                                
             }
             else if (currentToken.Tipo == TipoToken.TK_OPENPAR)
             {
@@ -775,22 +782,25 @@ namespace Project_Compiladores1.Sintactico
         public Expresiones ExprList()
         {            
             Expresiones E = Expr();
+            
             return ExprListP(E);
         }
 
         public ListaExpre ExprListP(Expresiones E)
         {
+            ListaExpre listaExpre = new ListaExpre();
+            
             if (currentToken.Tipo == TipoToken.TK_COMA)
             {
+                listaExpre.Ex.Add(E);
                 currentToken = lex.NextToken();
-                Expresiones E1 = Expr();
+                Expresiones E1 = Expr();                
                 return ExprListP(E1);
             }
             else
             {
-                ListaExpre LE = new ListaExpre();
-                LE.Ex.Add(E);
-                return LE;
+                listaExpre.Ex.Add(E);
+                return listaExpre;
             }
         }
 
@@ -1015,12 +1025,21 @@ namespace Project_Compiladores1.Sintactico
                 }
                 else if (currentToken.Tipo == TipoToken.TK_MENOSMENOS)
                 {
-                    ExpMenosMenos expMenosMenos= new ExpMenosMenos();
+                    ExpMenosMenos expMenosMenos = new ExpMenosMenos();
                     expMenosMenos.ID = V;
                     currentToken = lex.NextToken();
                     return expMenosMenos;
                 }
-                StatementP(V);
+                else if (currentToken.Tipo == TipoToken.TK_OPENPAR)
+                {
+                    ExprFuncion exprFuncion = new ExprFuncion();
+                    exprFuncion.VarList =  ExprFun(V);
+
+                }
+                else
+                {
+                    StatementP(V);
+                }
                 return V;
                
             }
@@ -1073,14 +1092,16 @@ namespace Project_Compiladores1.Sintactico
                 {
                     throw new Exception("Error Sintactico - Se esperaba simbolo )");
                 }
-            }
-            else if (currentToken.Tipo == TipoToken.TK_MASMAS || currentToken.Tipo == TipoToken.TK_MENOSMENOS)
-            {
-                currentToken = lex.NextToken();
-            }
+            }            
 
             return null;
 
+        }
+
+        public Expresiones ExprFun (Variable Id)
+        {
+            Sentencia S = StatementP(Id);            
+            return ((S_LlamadaFunc) StatementP(Id)).VarList;
         }
 
     }

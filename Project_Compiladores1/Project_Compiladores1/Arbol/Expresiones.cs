@@ -204,11 +204,19 @@ namespace Project_Compiladores1.Arbol
 
     class ExpMasMas : Expresiones
     {
-        public Variable ID;       
+        public Variable ID = new Variable();       
     }
 
     class ExpMenosMenos : Expresiones
     {
-        public Variable ID;
+        public Variable ID = new Variable();
     }
+
+    class ExprFuncion : Expresiones
+    {
+        public Variable ID = new Variable();
+        public Expresiones VarList;
+    }
+
+
 }
