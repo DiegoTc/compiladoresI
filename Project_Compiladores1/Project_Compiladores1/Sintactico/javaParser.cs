@@ -1013,7 +1013,7 @@ namespace Project_Compiladores1.Sintactico
                     currentToken = lex.NextToken();
                     return expMasMas;
                 }
-                else if (currentToken.Tipo == TipoToken.TK_MASMAS)
+                else if (currentToken.Tipo == TipoToken.TK_MENOSMENOS)
                 {
                     ExpMenosMenos expMenosMenos= new ExpMenosMenos();
                     expMenosMenos.ID = V;
