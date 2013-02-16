@@ -58,6 +58,13 @@ namespace Project_Compiladores1.Arbol
         public Sentencia S;
     }
 
+    class Structs : Sentencia
+    {
+        public Variable nombre= new Variable();
+        public Campos c;
+        //public ArrayList list = new ArrayList();
+    }
+
     class Cases : Sentencia
     {
         public string Valor;
