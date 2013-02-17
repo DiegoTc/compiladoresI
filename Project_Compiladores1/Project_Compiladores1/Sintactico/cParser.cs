@@ -374,8 +374,9 @@ namespace Project_Compiladores1.Sintactico
             currentToken = lex.NextToken();
             
             Sentencia s= DeclarationP(campos);
-
-            return s;
+            if(s is S_Asignacion)
+                campos.Valor = ((S_Asignacion)s).Valor;
+            return campos;
         }
 
         public Tipo Tipo()
@@ -551,14 +552,14 @@ namespace Project_Compiladores1.Sintactico
                 {
                     throw new Exception("Error Sintactico - Se esperaba un simbolo ]");
                 }
-            }
+            }/*
             else if (currentToken.Tipo == Lexico.TipoToken.TK_INT || currentToken.Tipo == Lexico.TipoToken.TK_FLOAT || currentToken.Tipo == Lexico.TipoToken.TK_CHAR ||
                 currentToken.Tipo == Lexico.TipoToken.TK_TRUE || currentToken.Tipo == Lexico.TipoToken.TK_FALSE)
             {
                 Sentencia s = new Sentencia();
                 s = DeclarationStruct();
                 return s;
-            }
+            }*/
             else
                 throw new Exception("Se esperaba el token ;");
 
@@ -940,7 +941,24 @@ namespace Project_Compiladores1.Sintactico
                 Variable v = new Variable();
                 v.id = currentToken.Lexema;
                 currentToken = lex.NextToken();
-                StatementP(v);
+                if (currentToken.Tipo == Lexico.TipoToken.TK_MASMAS)
+                {
+                    ExpMasMas xmas = new ExpMasMas();
+                    xmas.ID = v;
+                    currentToken = lex.NextToken();
+                    return xmas;
+                }
+                else if (currentToken.Tipo == Lexico.TipoToken.TK_MENOSMENOS)
+                {
+                    ExpMenosMenos xmenos = new ExpMenosMenos();
+                    xmenos.ID = v;
+                    currentToken = lex.NextToken();
+                    return xmenos;
+                }
+                else
+                {
+                    StatementP(v);
+                }
                 return v;
 
             }
@@ -955,14 +973,6 @@ namespace Project_Compiladores1.Sintactico
                 LitBool lit = new LitBool(false);
                 currentToken = lex.NextToken();
                 return lit;
-            }
-            else if (currentToken.Tipo == Lexico.TipoToken.TK_MASMAS)
-            {
-                currentToken = lex.NextToken();
-            }
-            else if (currentToken.Tipo == Lexico.TipoToken.TK_MENOSMENOS)
-            {
-                currentToken = lex.NextToken();
             }
             return null;
         }

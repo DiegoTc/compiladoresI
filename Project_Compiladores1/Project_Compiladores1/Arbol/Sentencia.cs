@@ -94,7 +94,7 @@ namespace Project_Compiladores1.Arbol
         public Campos Sig;
         public Expresiones Valor;
         public int Dimension;
-        public Expresiones Ex;
+        public Expresiones Ex;//Dimension del arreglo
     }
 
     class S_Break: Sentencia
