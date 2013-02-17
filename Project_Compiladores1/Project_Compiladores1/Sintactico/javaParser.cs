@@ -780,27 +780,25 @@ namespace Project_Compiladores1.Sintactico
         }
 
         public Expresiones ExprList()
-        {            
-            Expresiones E = Expr();
-            
-            return ExprListP(E);
+        {
+            ListaExpre listaExpre = new ListaExpre();
+            listaExpre.Ex.Add(Expr());            
+
+            return ExprListP(listaExpre);
         }
 
         public ListaExpre ExprListP(Expresiones E)
         {
-            ListaExpre listaExpre = new ListaExpre();
-            
+                        
             if (currentToken.Tipo == TipoToken.TK_COMA)
-            {
-                listaExpre.Ex.Add(E);
+            {                
                 currentToken = lex.NextToken();
-                Expresiones E1 = Expr();                
-                return ExprListP(E1);
+                ((ListaExpre) E).Ex.Add(Expr());                
+                return ExprListP(E);
             }
             else
             {
-                listaExpre.Ex.Add(E);
-                return listaExpre;
+                return ((ListaExpre)E);
             }
         }
 
@@ -1033,8 +1031,9 @@ namespace Project_Compiladores1.Sintactico
                 else if (currentToken.Tipo == TipoToken.TK_OPENPAR)
                 {
                     ExprFuncion exprFuncion = new ExprFuncion();
+                    exprFuncion.ID = V;
                     exprFuncion.VarList =  ExprFun(V);
-
+                    return exprFuncion;
                 }
                 else
                 {
@@ -1099,9 +1098,8 @@ namespace Project_Compiladores1.Sintactico
         }
 
         public Expresiones ExprFun (Variable Id)
-        {
-            Sentencia S = StatementP(Id);            
-            return ((S_LlamadaFunc) StatementP(Id)).VarList;
+        {                    
+            return ((S_LlamadaFunc) StatementP(Id)).VarList;            
         }
 
     }
