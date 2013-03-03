@@ -58,5 +58,22 @@ namespace Project_Compiladores1.Arbol
         {
             return t is Voids;
         }
-    }  
+    }
+
+    class Class : Tipo
+    {
+        public override bool esEquivalente(Tipo t)
+        {
+            return t is Class;
+        }
+    }
+
+    class Struct : Tipo
+    {
+        public override bool esEquivalente(Tipo t)
+        {
+            return t is Struct;
+        }
+    } 
+
 }

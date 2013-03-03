@@ -452,6 +452,8 @@ namespace Project_Compiladores1.Arbol
     {
         public Variable ID = new Variable();
         public Expresiones VarList;
+        public Tipo tipo;
+
         public override Tipo validarSemantica()
         {
             //FALTA

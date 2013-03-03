@@ -11,6 +11,7 @@ namespace Project_Compiladores1.Semantico
     class InfSemantica
     {
         public Dictionary<string, Tipo> tblSimbolos = new Dictionary<string, Tipo>();
+        public Dictionary<string, Tipo> tblFunciones = new Dictionary<string, Tipo>();
         public Dictionary<string, Tipo> tblTipos = new Dictionary<string, Tipo>();
         private static InfSemantica instance = null;
 

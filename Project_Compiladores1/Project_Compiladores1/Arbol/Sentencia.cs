@@ -54,9 +54,16 @@ namespace Project_Compiladores1.Arbol
         {
             Tipo var = InfSemantica.getInstance().tblSimbolos[id.id];
             Tipo val = Valor.validarSemantica();
-            if (!var.esEquivalente(val))
+            if (var != null)
             {
-                throw new Exception("Error Semantico - No se pueden asignar tipos diferentes " + var + " con " + val);
+                if (!var.esEquivalente(val))
+                {
+                    throw new Exception("Error Semantico - No se pueden asignar tipos diferentes " + var + " con " + val);
+                }
+            }
+            else
+            {
+                throw new Exception("Error Semantico - No existe la variable " + id.id);
             }
         }
     }
@@ -145,19 +152,36 @@ namespace Project_Compiladores1.Arbol
         public override void validarSemantica()
         {           
             //FALTA
+            Tipo var = InfSemantica.getInstance().tblFunciones[nombre.id];
+            if (var == null)
+                throw new Exception("Error Semantico - La variable " + nombre.id + " ya esta siendo utilizada");
+            else
+                InfSemantica.getInstance().tblFunciones.Add(nombre.id, new Struct());
+            c.validarSemantica();
         }
 
     }
 
     class Cases : Sentencia
     {
-        public string Valor;
+        public Expresiones  Valor;
         public Sentencia S;
         Cases Sig;
 
         public override void validarSemantica()
         {
             //FALTA
+            Tipo T = Valor.validarSemantica();
+            if (T is Entero || T is Cadena || T is Caracter)
+            {
+                //NADA
+            }
+            else
+            {
+                throw new Exception("Error Semantico - Tipo de valor de evaluacion de case no soportado");
+            }
+            S.SentValSemantica();
+            Sig.validarSemantica();
         }
     }
 
@@ -170,6 +194,17 @@ namespace Project_Compiladores1.Arbol
         public override void validarSemantica()
         {
             //FALTA
+            Tipo T = Var.validarSemantica();
+            if (T is Entero || T is Cadena || T is Caracter)
+            {
+                //NADA
+            }
+            else
+            {
+                throw new Exception("Error Semantico - Tipo de valor no soportado en el switch");
+            }
+            Casos.validarSemantica();
+            sdefault.SentValSemantica();
         }
     }
 
@@ -178,11 +213,50 @@ namespace Project_Compiladores1.Arbol
         public Tipo Retorno;
         public Variable var = new Variable();
         public Campos Campo;
-        public Sentencia S;
+        public Sentencia S;        
 
         public override void validarSemantica()
         {
             //FALTA
+            #region Validar Existe Variable
+            Tipo Var = InfSemantica.getInstance().tblFunciones[var.id];
+            if (var != null)
+            {
+                if (Retorno != null)
+                    InfSemantica.getInstance().tblFunciones.Add(var.id, Retorno);
+                else
+                    InfSemantica.getInstance().tblFunciones.Add(var.id, new Voids());   
+            }
+            else
+            {
+                throw new Exception("Error Semantico - La variable " + var.id + " ya existe");
+            }
+            #endregion
+
+            Campo.validarSemantica();
+
+            if (Retorno != null)
+            {
+                #region Valida Valor de Retorno
+
+                Sentencia tmp = S;
+                while (tmp != null)
+                {
+                    if (tmp is S_Return)
+                    {
+                        S_Return ret = ((S_Return) tmp);
+                        Tipo T = ret.Expr.validarSemantica();
+                        if (!Retorno.esEquivalente(T))
+                        {
+                            throw new Exception(
+                                "Error Semantico - Expresion de retorno no es el mismo que el retorno de la funcion");
+                        }
+                    }
+                    tmp = tmp.sig;
+                }
+
+                #endregion
+            }
         }
     }
 
@@ -198,7 +272,22 @@ namespace Project_Compiladores1.Arbol
 
         public override void validarSemantica()
         {
-            //FALTA
+            //FALTA            
+            Tipo var = InfSemantica.getInstance().tblSimbolos[Var.id];
+            Tipo Val = Valor.validarSemantica();
+            if (var != null)
+            {
+                InfSemantica.getInstance().tblSimbolos.Add(Var.id, Tip);
+            }
+            else
+            {
+                throw new Exception("Error Semantico - La variable " + Var.id + " ya existe");
+            }
+            if (!var.esEquivalente(Val))
+            {
+                throw new Exception("Error Semantico - No se puede inicializar variables con tipos diferentes");
+            }
+            Sig.validarSemantica();
         }
     }
 
@@ -223,27 +312,21 @@ namespace Project_Compiladores1.Arbol
         public Expresiones Expr;
         public override void validarSemantica()
         {
-            //FALTA
+            Expr.validarSemantica();
         }
-    }
-
-    class S_Struct : Sentencia
-    {
-        public string nombre;
-        public Campos miembros;
-        public override void validarSemantica()
-        {
-            //FALTA
-        }
-    }
+    }  
 
     class S_LlamadaFunc : Sentencia
     {
         public Variable Var = new Variable();
         public Expresiones VarList;
+
         public override void validarSemantica()
         {
             //FALTA
+            Tipo var = InfSemantica.getInstance().tblFunciones[Var.id];
+            if (var == null)
+                throw new Exception("Error Semantico - La variable " + Var.id + " no existe");
         }
     }
 
@@ -254,6 +337,17 @@ namespace Project_Compiladores1.Arbol
         public override void validarSemantica()
         {
             //FALTA
+            #region Validar Existe Variable
+            Tipo var = InfSemantica.getInstance().tblFunciones[Var.id];
+            if (var != null)
+            {
+                InfSemantica.getInstance().tblFunciones.Add(Var.id, new Class());
+            }
+            else
+            {
+                throw new Exception("Error Semantico - La variable " + Var.id + " ya existe");
+            }
+            #endregion
         }
     }
 
