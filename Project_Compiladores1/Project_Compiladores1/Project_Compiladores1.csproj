@@ -53,6 +53,7 @@
     <Compile Include="Lexico\LexicoPascal.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Semantico\InfSemantica.cs" />
     <Compile Include="Sintactico\cParser.cs" />
     <Compile Include="Sintactico\javaParser.cs" />
     <Compile Include="Sintactico\Parser.cs" />
