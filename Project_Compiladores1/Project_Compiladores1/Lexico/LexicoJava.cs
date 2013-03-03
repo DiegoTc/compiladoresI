@@ -66,6 +66,7 @@ namespace Project_Compiladores1.Lexico
             PalabrasReservadas.Add("default", TipoToken.TK_DEFAULT);
             PalabrasReservadas.Add("public", TipoToken.TK_PUBLIC);
             PalabrasReservadas.Add("private", TipoToken.TK_PRIVATE);
+            PalabrasReservadas.Add("new", TipoToken.TK_NEW);
 
 
             symbol = nextSymbol();

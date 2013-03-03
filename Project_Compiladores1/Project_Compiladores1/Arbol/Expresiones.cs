@@ -3,11 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Project_Compiladores1.Semantico;
 
 namespace Project_Compiladores1.Arbol
 {
-    class Expresiones
+    public abstract class Expresiones
     {
+        public abstract Tipo validarSemantica();
     }
 
     class LiteralEntero : Expresiones
@@ -16,6 +18,11 @@ namespace Project_Compiladores1.Arbol
         public LiteralEntero(int valor)
         {
             Valor = valor;
+        }
+
+        public override Tipo validarSemantica()
+        {
+            return InfSemantica.getInstance().tblTipos["ENTERO"];            
         }
     }
 
@@ -26,6 +33,11 @@ namespace Project_Compiladores1.Arbol
         {
             Valor = valor;
         }
+
+        public override Tipo validarSemantica()
+        {
+            return InfSemantica.getInstance().tblTipos["FLOTANTE"];
+        }
     }
 
     class LitBool : Expresiones
@@ -34,6 +46,11 @@ namespace Project_Compiladores1.Arbol
         public LitBool(bool valor)
         {
             Valor = valor;
+        }
+
+        public override Tipo validarSemantica()
+        {
+            return InfSemantica.getInstance().tblTipos["BOOLEANO"];
         }
     }
 
@@ -44,6 +61,11 @@ namespace Project_Compiladores1.Arbol
         {
             Valor = valor;
         }
+
+        public override Tipo validarSemantica()
+        {
+            return InfSemantica.getInstance().tblTipos["CARACTER"];
+        }
     }
 
     class LitString : Expresiones
@@ -53,9 +75,14 @@ namespace Project_Compiladores1.Arbol
         {
             Valor = valor;
         }
+
+        public override Tipo validarSemantica()
+        {
+            return InfSemantica.getInstance().tblTipos["CADENA"];
+        }
     }
 
-    class OperacionBinaria : Expresiones
+    public abstract class OperacionBinaria : Expresiones
     {
         public Expresiones Izq { get; set; }
         public Expresiones Der { get; set; }
@@ -72,12 +99,34 @@ namespace Project_Compiladores1.Arbol
             : base(izq, der)
         {
         }
+
+        public override Tipo validarSemantica()
+        {
+            Tipo left = Izq.validarSemantica();
+            Tipo right = Der.validarSemantica();
+            if (left is Entero && right is Entero)
+            {
+                return left;
+            }
+            throw new Exception("Error Semantico - No se puede sumar " + left + " con " + right);
+        }
     }
+
     class Resta : OperacionBinaria
     {
         public Resta(Expresiones izq, Expresiones der)
             : base(izq, der)
         {
+        }
+        public override Tipo validarSemantica()
+        {
+            Tipo left = Izq.validarSemantica();
+            Tipo right = Der.validarSemantica();
+            if (left is Entero && right is Entero)
+            {
+                return left;
+            }
+            throw new Exception("Error Semantico - No se puede restar " + left + " con " + right);
         }
     }
     class Multiplicacion : OperacionBinaria
@@ -86,12 +135,33 @@ namespace Project_Compiladores1.Arbol
             : base(izq, der)
         {
         }
+        public override Tipo validarSemantica()
+        {
+            Tipo left = Izq.validarSemantica();
+            Tipo right = Der.validarSemantica();
+            if (left is Entero && right is Entero)
+            {
+                return left;
+            }
+            throw new Exception("Error Semantico - No se puede multiplicar " + left + " con " + right);
+        }
     }
     class Division : OperacionBinaria
     {
         public Division(Expresiones izq, Expresiones der)
             : base(izq, der)
         {
+        }
+
+        public override Tipo validarSemantica()
+        {
+            Tipo left = Izq.validarSemantica();
+            Tipo right = Der.validarSemantica();
+            if (left is Entero && right is Entero)
+            {
+                return left;
+            }
+            throw new Exception("Error Semantico - No se puede dividir " + left + " con " + right);
         }
     }
 
@@ -100,6 +170,17 @@ namespace Project_Compiladores1.Arbol
         public Mod(Expresiones izq, Expresiones der)
             : base(izq, der)
         {
+        }
+
+        public override Tipo validarSemantica()
+        {
+            Tipo left = Izq.validarSemantica();
+            Tipo right = Der.validarSemantica();
+            if (left is Entero && right is Entero)
+            {
+                return left;
+            }
+            throw new Exception("Error Semantico - No se puede realizar esta operacion entre " + left + " con " + right);
         }
     }
 
@@ -112,6 +193,16 @@ namespace Project_Compiladores1.Arbol
             Izq = izq;
             Der = der;
         }
+
+        public override Tipo validarSemantica()
+        {
+            Tipo left = Izq.validarSemantica();
+            Tipo right = Der.validarSemantica();
+
+            if (left is Booleano && right is Booleano)
+                return left;
+            throw new Exception("Error Semantico - Comparacion Invalida");
+        }
     }
 
     class Or : Expresiones
@@ -122,6 +213,16 @@ namespace Project_Compiladores1.Arbol
         {
             Izq = izq;
             Der = der;
+        }
+
+        public override Tipo validarSemantica()
+        {
+            Tipo left = Izq.validarSemantica();
+            Tipo right = Der.validarSemantica();
+
+            if (left is Booleano && right is Booleano)
+                return left;
+            throw new Exception("Error Semantico - Comparacion Invalida");
         }
     }
 
@@ -134,6 +235,35 @@ namespace Project_Compiladores1.Arbol
             Izq = izq;
             Der = der;
         }
+
+        public override Tipo validarSemantica()
+        {
+            Tipo left = Izq.validarSemantica();
+            Tipo right = Der.validarSemantica();
+
+            if (left is Entero && right is Entero)
+            {
+                return new Booleano();
+            }
+            if (left is Flotante && right is Flotante)
+            {
+                return new Booleano();
+            }
+            if (left is Cadena && right is Cadena)
+            {
+                return new Booleano();
+            }
+            if (left is Caracter && right is Caracter)
+            {
+                return new Booleano();
+            }
+            if (left is Booleano && right is Booleano)
+            {
+                return left;
+            }
+
+            throw new Exception("Error Semantico - Comparacion Invalida");
+        }
     }
 
     class Distinto : Expresiones
@@ -144,6 +274,18 @@ namespace Project_Compiladores1.Arbol
         {
             Izq = izq;
             Der = der;
+        }
+
+        public override Tipo validarSemantica()
+        {
+            Tipo left = Izq.validarSemantica();
+            Tipo right = Der.validarSemantica();
+
+            if (!left.esEquivalente(right))
+            {
+                throw new Exception("Error Semantico - No se puede pueden comparar los tipos " + left + " con " + right);
+            }
+            return left;
         }
     }
 
@@ -156,6 +298,24 @@ namespace Project_Compiladores1.Arbol
             Izq = izq;
             Der = der;
         }
+
+        public override Tipo validarSemantica()
+        {
+            Tipo left = Izq.validarSemantica();
+            Tipo right = Der.validarSemantica();
+
+            if (left is Entero && right is Entero)
+            {
+                return new Booleano();
+            }
+            if (left is Flotante && right is Flotante)
+            {
+                return new Booleano();
+            }            
+
+            throw new Exception("Error Semantico - Comparacion Invalida");
+            
+        }
     }
 
     class MenorQue : Expresiones
@@ -166,6 +326,23 @@ namespace Project_Compiladores1.Arbol
         {
             Izq = izq;
             Der = der;
+        }
+
+        public override Tipo validarSemantica()
+        {
+            Tipo left = Izq.validarSemantica();
+            Tipo right = Der.validarSemantica();
+
+            if (left is Entero && right is Entero)
+            {
+                return new Booleano();
+            }
+            if (left is Flotante && right is Flotante)
+            {
+                return new Booleano();
+            }
+
+            throw new Exception("Error Semantico - Comparacion Invalida");
         }
     }
 
@@ -178,6 +355,23 @@ namespace Project_Compiladores1.Arbol
             Izq = izq;
             Der = der;
         }
+
+        public override Tipo validarSemantica()
+        {
+            Tipo left = Izq.validarSemantica();
+            Tipo right = Der.validarSemantica();
+
+            if (left is Entero && right is Entero)
+            {
+                return new Booleano();
+            }
+            if (left is Flotante && right is Flotante)
+            {
+                return new Booleano();
+            }
+
+            throw new Exception("Error Semantico - Comparacion Invalida");
+        }
     }
 
     class MenorIgual : Expresiones
@@ -189,34 +383,105 @@ namespace Project_Compiladores1.Arbol
             Izq = izq;
             Der = der;
         }
+
+        public override Tipo validarSemantica()
+        {
+            Tipo left = Izq.validarSemantica();
+            Tipo right = Der.validarSemantica();
+
+            if (left is Entero && right is Entero)
+            {
+                return new Booleano();
+            }
+            if (left is Flotante && right is Flotante)
+            {
+                return new Booleano();
+            }
+
+            throw new Exception("Error Semantico - Comparacion Invalida");
+        }
     }
 
     class Variable : Expresiones
     {
         public string id { get; set; }
         public Expresiones acces { get; set; }
+
+        public override Tipo validarSemantica()
+        {
+            Tipo t = InfSemantica.getInstance().tblSimbolos[id];
+            if (t == null)
+                throw new Exception("Error Semantico - Variable " + id + " no existe" );
+            return t;
+        }
     }
 
     class ListaExpre: Expresiones
     {
         public ArrayList Ex = new ArrayList();
+
+        public override Tipo validarSemantica()
+        {
+            //FALTA
+            return null;
+        }
+
     }
 
     class ExpMasMas : Expresiones
     {
-        public Variable ID = new Variable();       
+        public Variable ID = new Variable();
+        public override Tipo validarSemantica()
+        {
+            //FALTA
+            return null;
+        }
     }
 
     class ExpMenosMenos : Expresiones
     {
         public Variable ID = new Variable();
+        public override Tipo validarSemantica()
+        {
+            //FALTA
+            return null;
+        }
     }
 
     class ExprFuncion : Expresiones
     {
         public Variable ID = new Variable();
         public Expresiones VarList;
+        public Tipo tipo;
+
+        public override Tipo validarSemantica()
+        {
+            //FALTA
+            return null;
+        }
     }
 
+    class OperacionUnaria : Expresiones
+    {
+        public Expresiones parametro;
+        public override Tipo validarSemantica()
+        {
+            //FALTA
+            return null;
+        }
+    }
 
+    class Not : OperacionUnaria
+    {
+        public Not(Expresiones par)
+        {
+            this.parametro = par;
+        }
+
+        public override Tipo validarSemantica()
+        {
+            //FALTA
+            return null;
+        }
+    }
 }

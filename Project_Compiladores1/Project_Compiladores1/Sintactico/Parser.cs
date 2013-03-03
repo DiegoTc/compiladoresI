@@ -18,9 +18,11 @@ namespace Project_Compiladores1.Sintactico
             currentToken = lex.NextToken();
         }
 
+
+
         public void parse()
         {
-
+            
         }
     }
 }
