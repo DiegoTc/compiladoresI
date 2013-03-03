@@ -245,7 +245,7 @@ namespace Project_Compiladores1.Sintactico
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_ID)
             {
-                Sentencia S = new Sentencia();
+                Sentencia S;
                 Variable Id = new Variable();
                 Id.id= currentToken.Lexema;
                 currentToken = lex.NextToken();
@@ -260,7 +260,7 @@ namespace Project_Compiladores1.Sintactico
             {
                 currentToken = lex.NextToken();
                 
-                Sentencia s = new Sentencia();
+                Sentencia s  ;
                 s=Declaration();
                 return s;
 
@@ -269,7 +269,7 @@ namespace Project_Compiladores1.Sintactico
                     currentToken.Tipo == Lexico.TipoToken.TK_TRUE || currentToken.Tipo == Lexico.TipoToken.TK_FALSE)
             {
                 
-                Sentencia s = new Sentencia();
+                Sentencia s  ;
                 s = Declaration();
                 return s;
             }
@@ -280,7 +280,7 @@ namespace Project_Compiladores1.Sintactico
                 Structs str = new Structs();
                 str.nombre.id = currentToken.Lexema;
                 currentToken = lex.NextToken();
-                Sentencia s = new Sentencia();
+                Sentencia s  ;
                 s = Compound();
                 str.c = ((Campos)s);
                 return str;
@@ -296,7 +296,7 @@ namespace Project_Compiladores1.Sintactico
             {
                 currentToken = lex.NextToken();
                
-                Sentencia S = new Sentencia();
+                Sentencia S  ;
                 S = DeclarationStruct();
                 if (currentToken.Tipo != Lexico.TipoToken.TK_CLOSELLAVE)
                     throw new Exception("Se esperaba una }");
@@ -323,7 +323,8 @@ namespace Project_Compiladores1.Sintactico
                 if (this.currentToken.Tipo != Lexico.TipoToken.TK_CHAR_LIT && this.currentToken.Tipo != Lexico.TipoToken.TK_FLOAT_LIT && this.currentToken.Tipo != Lexico.TipoToken.TK_INT_LIT)
                     throw new Exception("Se esperaba un numero o un char");
 
-                cas.Valor = currentToken.Lexema;
+                cas.Valor = Expression();
+
                 this.currentToken = lex.NextToken();
                 if (this.currentToken.Tipo != Lexico.TipoToken.TK_DOSPUNTOS)
                     throw new Exception("Se esperaba el simbolo :");
@@ -354,7 +355,12 @@ namespace Project_Compiladores1.Sintactico
                 {
                     //currentToken = lex.NextToken();
                     Sentencia sa = DeclarationStruct();
-                    campos.Sig = ((Campos)sa);
+                    Campos c = campos;
+                    while (c.Sig != null)
+                    {
+                        c = c.Sig;
+                    }
+                    c.Sig = ((Campos)sa);
                 }
 
                 return campos;
@@ -374,9 +380,15 @@ namespace Project_Compiladores1.Sintactico
             currentToken = lex.NextToken();
             
             Sentencia s= DeclarationP(campos);
-            if(s is S_Asignacion)
+            if (s is S_Asignacion)
+            {
                 campos.Valor = ((S_Asignacion)s).Valor;
-            return campos;
+                return campos;
+            }
+            else
+            {
+                return s;
+            }
         }
 
         public Tipo Tipo()
@@ -414,14 +426,16 @@ namespace Project_Compiladores1.Sintactico
             if (currentToken.Tipo == Lexico.TipoToken.TK_COMA)
             {
                 currentToken = lex.NextToken();
-                Campos c = new Campos();
+                //Campos c = new Campos();
                 if (currentToken.Tipo != Lexico.TipoToken.TK_ID)
                     throw new Exception("Se esperaba el token ID");
 
-                c.Var.id = currentToken.Lexema;
+                ((Campos)campos).Sig = new Campos();
+                ((Campos)campos).Sig.Var.id = currentToken.Lexema;
+                ((Campos)campos).Sig.Tip = ((Campos)campos).Tip;
                 currentToken = lex.NextToken();
 
-                campos.sig = DeclarationPStruct(c);
+                DeclarationP(((Campos)campos).Sig);
                 return campos;
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_ASSIGN)
@@ -431,7 +445,7 @@ namespace Project_Compiladores1.Sintactico
                 sasignacion.id.id = ((Campos)campos).Var.id;
                 currentToken = lex.NextToken();
                 sasignacion.Valor = Expression();
-                Sentencia s = new Sentencia();
+                Sentencia s  ;
                 s = DeclarationPStruct(sasignacion);
                 return s;
 
@@ -450,19 +464,20 @@ namespace Project_Compiladores1.Sintactico
                 if (E is LiteralEntero)
                 {
                     LiteralEntero e = ((LiteralEntero)E);
-                    ((Campos)campos).Dimension = e.Valor;
-                    ((Campos)campos).Ex = E;
+                    ((Campos)campos).Dimension = ((Campos)campos).dim.Count;
+                    ((Campos)campos).dim.Add(E);
                 }
                 else
                 {
-                    ((Campos)campos).Ex = E;
+                    ((Campos)campos).Dimension = ((Campos)campos).dim.Count;
+                    ((Campos)campos).dim.Add(E);
                 }
 
                 ((Campos)campos).Var.id = ((Campos)campos).Var.id;
                 if (currentToken.Tipo == Lexico.TipoToken.TK_CLOSECOR)
                 {
                     currentToken = lex.NextToken();
-                    Sentencia s = new Sentencia();
+                    Sentencia s  ;
                     s = DeclarationPStruct(campos);
                     return s;
                 }
@@ -482,14 +497,16 @@ namespace Project_Compiladores1.Sintactico
             if (currentToken.Tipo == Lexico.TipoToken.TK_COMA)
             {
                 currentToken = lex.NextToken();
-                Campos c = new Campos();
+                //Campos c = new Campos();
                 if (currentToken.Tipo != Lexico.TipoToken.TK_ID)
                     throw new Exception("Se esperaba el token ID");
 
-                c.Var.id = currentToken.Lexema;
+                ((Campos)campos).Sig = new Campos();
+                ((Campos)campos).Sig.Var.id = currentToken.Lexema;
+                ((Campos)campos).Sig.Tip = ((Campos)campos).Tip;
                 currentToken = lex.NextToken();
-               
-                campos.sig=DeclarationP(c);
+
+                DeclarationP(((Campos)campos).Sig);
                 return campos;
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_ASSIGN)
@@ -499,7 +516,7 @@ namespace Project_Compiladores1.Sintactico
                 sasignacion.id.id = ((Campos)campos).Var.id;
                 currentToken = lex.NextToken();
                 sasignacion.Valor= Expression();
-                Sentencia s = new Sentencia();
+                Sentencia s  ;
                 s=DeclarationP(sasignacion);
                 return s;
                 
@@ -528,23 +545,29 @@ namespace Project_Compiladores1.Sintactico
                 Campos c = new Campos();
                 currentToken = lex.NextToken();
                 Expresiones E = Expression();
-
+                if(E == null)
+                    throw new Exception("Error Sintactico se esperaba un valor adentro de los []");
+                if(campos is Campos)
+                    c.dim = ((Campos)campos).dim;
+                
                 if (E is LiteralEntero)
                 {
                     LiteralEntero e = ((LiteralEntero)E);
-                    c.Dimension = e.Valor;
-                    c.Ex = E;
+                    c.Dimension = c.dim.Count+1;
+                    c.dim.Add(E);
+                    //c.Ex = E;
                 }
                 else
                 {
-                    c.Ex = E;
+                    c.Dimension = c.dim.Count+1;
+                    c.dim.Add(E);
                 }
                 
                 c.Var.id = ((Campos)campos).Var.id;
                 if (currentToken.Tipo == Lexico.TipoToken.TK_CLOSECOR)
                 {
                     currentToken = lex.NextToken();
-                    Sentencia s = new Sentencia();
+                    Sentencia s  ;
                     s = DeclarationP(c);
                     return s;
                 }
@@ -552,14 +575,7 @@ namespace Project_Compiladores1.Sintactico
                 {
                     throw new Exception("Error Sintactico - Se esperaba un simbolo ]");
                 }
-            }/*
-            else if (currentToken.Tipo == Lexico.TipoToken.TK_INT || currentToken.Tipo == Lexico.TipoToken.TK_FLOAT || currentToken.Tipo == Lexico.TipoToken.TK_CHAR ||
-                currentToken.Tipo == Lexico.TipoToken.TK_TRUE || currentToken.Tipo == Lexico.TipoToken.TK_FALSE)
-            {
-                Sentencia s = new Sentencia();
-                s = DeclarationStruct();
-                return s;
-            }*/
+            }
             else
                 throw new Exception("Se esperaba el token ;");
 
@@ -620,7 +636,7 @@ namespace Project_Compiladores1.Sintactico
             }
             else
             {
-                Sentencia S = new Sentencia();
+                Sentencia S  ;
                 S=StatementP2(id);
                 return S;
             }
@@ -685,7 +701,7 @@ namespace Project_Compiladores1.Sintactico
                     throw new Exception("Se esperaba el token ]");
 
                  currentToken = lex.NextToken();
-                 Sentencia S = new Sentencia();
+                 Sentencia S  ;
                  S=StatementP2(assig.id);
                 if(S!=null)
                     assig.Valor = ((S_Asignacion)S).Valor;
@@ -743,7 +759,7 @@ namespace Project_Compiladores1.Sintactico
             if (currentToken.Tipo == Lexico.TipoToken.TK_OPENLLAVE)
             {
                 currentToken = lex.NextToken();
-                Sentencia S = new Sentencia();
+                Sentencia S  ;
                 S=StatementList();
                 if (currentToken.Tipo != Lexico.TipoToken.TK_CLOSELLAVE)
                     throw new Exception("Se esperaba una }");
