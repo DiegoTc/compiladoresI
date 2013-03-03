@@ -67,7 +67,7 @@ namespace Project_Compiladores1.Arbol
 
     class Cases : Sentencia
     {
-        public string Valor;
+        public Expresiones Valor;
         public Sentencia S;
         Cases Sig;
     }
