@@ -45,7 +45,7 @@ namespace Project_Compiladores1.Lexico
             Operadores.Add("!", TipoToken.TK_NOT);
 
 
-
+            PalabrasReservadas.Add("string", TipoToken.TK_STRING);
             PalabrasReservadas.Add("int", TipoToken.TK_INT);
             PalabrasReservadas.Add("float", TipoToken.TK_FLOAT);
             PalabrasReservadas.Add("char", TipoToken.TK_CHAR);
@@ -68,7 +68,7 @@ namespace Project_Compiladores1.Lexico
             PalabrasReservadas.Add("public", TipoToken.TK_PUBLIC);
             PalabrasReservadas.Add("private", TipoToken.TK_PRIVATE);
             PalabrasReservadas.Add("new", TipoToken.TK_NEW);
-            PalabrasReservadas.Add("String", TipoToken.TK_STRING);
+            
             
 
 

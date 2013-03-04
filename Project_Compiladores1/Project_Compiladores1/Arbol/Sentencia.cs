@@ -254,7 +254,11 @@ namespace Project_Compiladores1.Arbol
             {
                 Var = InfSemantica.getInstance().tblFunciones[var.id];
             }
-            if (Var != null)
+            if (InfSemantica.getInstance().tblSimbolos.ContainsKey(var.id))
+            {
+                throw new Exception("Error Semantico - La variable " + var.id + " ya existe");
+            }  
+            if (Var == null)
             {
                 if (Retorno != null)
                     InfSemantica.getInstance().tblFunciones.Add(var.id, Retorno);
@@ -286,6 +290,10 @@ namespace Project_Compiladores1.Arbol
                                 "Error Semantico - Expresion de retorno no es el mismo que el retorno de la funcion");
                         }
                     }
+                    else
+                    {
+                        tmp.SentValSemantica();
+                    }
                     tmp = tmp.sig;
                 }
 
@@ -312,8 +320,11 @@ namespace Project_Compiladores1.Arbol
             if (InfSemantica.getInstance().tblSimbolos.ContainsKey(Var.id))
             {
                 var = InfSemantica.getInstance().tblSimbolos[Var.id];
+            }            
+            if (InfSemantica.getInstance().tblFunciones.ContainsKey(Var.id))
+            {
+                throw new Exception("Error Semantico - La variable " + Var.id + " ya existe");
             }
-
             Tipo Val = null;
             if (Valor != null)
             {

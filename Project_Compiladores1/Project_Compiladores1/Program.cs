@@ -26,6 +26,7 @@ namespace Project_Compiladores1
             javaParser s = new javaParser(lj);
 
             Sentencia raiz = s.parse();
+            raiz.SentValSemantica();
             Console.ReadKey();
 
 
