@@ -737,6 +737,7 @@ namespace Project_Compiladores1.Sintactico
             else if(id.access[0] is ExprFuncion)
             {
                 S_LlamadaFunc Sl = new S_LlamadaFunc();
+                Sl.VarClase = id;
                 Sl.Var.id = ((ExprFuncion)id.access[0]).ID.id;
                 Sl.VarList = ((ExprFuncion)id.access[0]).VarList;
                 return Sl;
