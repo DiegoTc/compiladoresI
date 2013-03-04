@@ -170,6 +170,7 @@ namespace Project_Compiladores1.Arbol
     {
         public Variable nombre = new Variable();
         public Campos c;
+        public Dictionary<string, Tipo> tblSimbolosStruct = new Dictionary<string, Tipo>();
 
         public override void validarSemantica()
         {
@@ -188,7 +189,13 @@ namespace Project_Compiladores1.Arbol
                 throw new Exception("Error Semantico - La variable " + nombre.id + " ya esta siendo utilizada");
             else
                 InfSemantica.getInstance().tblFunciones.Add(nombre.id, new Struct());
-            c.validarSemantica();
+            Campos tmp = c;
+            while (tmp != null)
+            {
+                tblSimbolosStruct.Add(tmp.Var.id, tmp.Tip);
+                tmp = tmp.Sig;
+            }            
+            //c.validarSemantica();
         }
 
     }
@@ -404,6 +411,8 @@ namespace Project_Compiladores1.Arbol
     {
         public Variable Var = new Variable();
         public Sentencia CamposClase;
+        public Dictionary<string, Tipo> tblSimbolosClass = new Dictionary<string, Tipo>();
+
         public override void validarSemantica()
         {
             //FALTA
@@ -428,6 +437,21 @@ namespace Project_Compiladores1.Arbol
                 throw new Exception("Error Semantico - La variable " + Var.id + " ya existe");
             }
             #endregion
+            Sentencia tmp = CamposClase;
+            while (tmp != null)
+            {
+                if (tmp is Campos)
+                {
+                    Campos tmpCampo = ((Campos) tmp);
+                    tblSimbolosClass.Add(tmpCampo.Var.id, tmpCampo.Tip);
+                }
+                else
+                {
+                    tmp.validarSemantica();
+                }
+                tmp = tmp.sig;
+            }    
+
         }
     }
 
