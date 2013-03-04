@@ -649,55 +649,66 @@ namespace Project_Compiladores1.Sintactico
             {
                 currentToken = lex.NextToken();
                 getValoresPunto(id.access);
-               
-                
             }
 
-            if (currentToken.Tipo == Lexico.TipoToken.TK_ASSIGN)
+            if (currentToken.Tipo == Lexico.TipoToken.TK_ASSIGN || currentToken.Tipo == Lexico.TipoToken.TK_MASIGUAL || currentToken.Tipo == Lexico.TipoToken.TK_MENOSIGUAL || currentToken.Tipo == Lexico.TipoToken.TK_PORIGUAL||
+                currentToken.Tipo == Lexico.TipoToken.TK_ENTREIGUAL)
             {
                 S_Asignacion sasign = new S_Asignacion();
-                sasign.Op = new Igual();
-                sasign.id = id;
+                var Tip = currentToken.Tipo;
                 currentToken = lex.NextToken();
-                sasign.Valor= Expression();
-                return sasign;
+                if (currentToken.Tipo == Lexico.TipoToken.TK_READ)
+                {
+                    S_Read sRead = new S_Read();
+                    sRead.var = id;
+                   
+
+                    currentToken = lex.NextToken();
+                    if (currentToken.Tipo == Lexico.TipoToken.TK_OPENPAR)
+                    {
+                        currentToken = lex.NextToken();
+                        if (currentToken.Tipo == Lexico.TipoToken.TK_CLOSEPAR)
+                        {
+                            currentToken = lex.NextToken();
+                            if (currentToken.Tipo == Lexico.TipoToken.TK_FINSENTENCIA)
+                            {
+                                currentToken = lex.NextToken();
+                                return sRead;
+                            }
+                            else
+                            {
+                                throw new Exception("Error Sintactico - Se esperaba simbolo ;");
+                            }
+                        }
+                        else
+                        {
+                            throw new Exception("Error Sintactico - Se esperaba simbolo )");
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception("Error Sintactico - Se esperaba simbolo (");
+                    }
+                }
+                else
+                {
+                    Expresiones E = Expression();
+                    S_Asignacion sAsignacion = new S_Asignacion();
+                    sAsignacion.id = id;
+                    if (Tip == Lexico.TipoToken.TK_ASSIGN)
+                        sAsignacion.Op = new Igual();
+                    else if (Tip == Lexico.TipoToken.TK_MASIGUAL)
+                        sAsignacion.Op = new MasIgual();
+                    else if (Tip == Lexico.TipoToken.TK_MENOSIGUAL)
+                        sAsignacion.Op = new MenosIgual();
+                    else if (Tip == Lexico.TipoToken.TK_PORIGUAL)
+                        sAsignacion.Op = new PorIgual();
+                    else if (Tip == Lexico.TipoToken.TK_ENTREIGUAL)
+                        sAsignacion.Op = new EntreIgual();
+                    sAsignacion.Valor = E;
+                    return sAsignacion;
+                }
                 
-            }
-            else if(currentToken.Tipo == Lexico.TipoToken.TK_MASIGUAL)
-            {
-                S_Asignacion sasign = new S_Asignacion();
-                sasign.Op = new MasIgual();
-                sasign.id = id;
-                currentToken = lex.NextToken();
-                sasign.Valor = Expression();
-                return sasign;
-            }
-            else if(currentToken.Tipo == Lexico.TipoToken.TK_MENOSIGUAL)
-            {
-                S_Asignacion sasign = new S_Asignacion();
-                sasign.Op = new MenosIgual();
-                sasign.id = id;
-                currentToken = lex.NextToken();
-                sasign.Valor = Expression();
-                return sasign;
-            }
-            else if(currentToken.Tipo == Lexico.TipoToken.TK_PORIGUAL)
-            {
-                S_Asignacion sasign = new S_Asignacion();
-                sasign.Op = new PorIgual();
-                sasign.id = id;
-                currentToken = lex.NextToken();
-                sasign.Valor = Expression();
-                return sasign;
-            }
-            else if(currentToken.Tipo == Lexico.TipoToken.TK_ENTREIGUAL)
-            {
-                S_Asignacion sasign = new S_Asignacion();
-                sasign.Op = new EntreIgual();
-                sasign.id = id;
-                currentToken = lex.NextToken();
-                sasign.Valor = Expression();
-                return sasign;
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_OPENCOR)
             {
@@ -734,14 +745,17 @@ namespace Project_Compiladores1.Sintactico
                 sAsignacion.Valor = Ex;
                 return sAsignacion;
             }
-            else if(id.access[0] is ExprFuncion)
-            {
-                S_LlamadaFunc Sl = new S_LlamadaFunc();
-                Sl.VarClase = id;
-                Sl.Var.id = ((ExprFuncion)id.access[0]).ID.id;
-                Sl.VarList = ((ExprFuncion)id.access[0]).VarList;
-                return Sl;
-            }
+            //else if(id.access.Count>0)
+            //{
+                else if (id.access.Count >0 && id.access[0] is ExprFuncion )
+                {
+                    S_LlamadaFunc Sl = new S_LlamadaFunc();
+                    Sl.VarClase = id;
+                    Sl.Var.id = ((ExprFuncion)id.access[0]).ID.id;
+                    Sl.VarList = ((ExprFuncion)id.access[0]).VarList;
+                    return Sl;
+                }
+            //}
             else
             {
                 return null;
