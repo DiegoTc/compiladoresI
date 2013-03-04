@@ -184,7 +184,7 @@ namespace Project_Compiladores1.Arbol
                 throw new Exception("Error Semantico - La variable " + nombre.id + " ya existe");
             }
 
-            if (var == null)
+            if (var != null)
                 throw new Exception("Error Semantico - La variable " + nombre.id + " ya esta siendo utilizada");
             else
                 InfSemantica.getInstance().tblFunciones.Add(nombre.id, new Struct());
