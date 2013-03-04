@@ -179,7 +179,10 @@ namespace Project_Compiladores1.Arbol
             {
                 var = InfSemantica.getInstance().tblFunciones[nombre.id];
             }
-
+            if (InfSemantica.getInstance().tblSimbolos.ContainsKey(nombre.id))
+            {
+                throw new Exception("Error Semantico - La variable " + nombre.id + " ya existe");
+            }
 
             if (var == null)
                 throw new Exception("Error Semantico - La variable " + nombre.id + " ya esta siendo utilizada");
