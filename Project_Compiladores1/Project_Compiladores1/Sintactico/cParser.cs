@@ -645,6 +645,14 @@ namespace Project_Compiladores1.Sintactico
 
         public Sentencia StatementP2(Variable id)
         {
+            if (currentToken.Tipo == Lexico.TipoToken.TK_PUNTO)
+            {
+                currentToken = lex.NextToken();
+                getValoresPunto(id.access);
+               
+                
+            }
+
             if (currentToken.Tipo == Lexico.TipoToken.TK_ASSIGN)
             {
                 S_Asignacion sasign = new S_Asignacion();
@@ -713,17 +721,7 @@ namespace Project_Compiladores1.Sintactico
                 //currentToken = lex.NextToken();
                 return assig;
             }
-            else if (currentToken.Tipo == Lexico.TipoToken.TK_PUNTO)
-            {
-                currentToken = lex.NextToken();
-                if (currentToken.Tipo == Lexico.TipoToken.TK_ID)
-                {
-                    Expresiones e = Expression();
-                    id.access.Add(e);
-                    currentToken = lex.NextToken();
-                    StatementP(id);
-                }
-            }
+          
             else if (currentToken.Tipo == Lexico.TipoToken.TK_MENOSMENOS || currentToken.Tipo == Lexico.TipoToken.TK_MASMAS)
             {
                 S_Asignacion sAsignacion = new S_Asignacion();
@@ -736,7 +734,35 @@ namespace Project_Compiladores1.Sintactico
                 sAsignacion.Valor = Ex;
                 return sAsignacion;
             }
-            return null;
+            else if(id.access[0] is ExprFuncion)
+            {
+                S_LlamadaFunc Sl = new S_LlamadaFunc();
+                Sl.Var.id = ((ExprFuncion)id.access[0]).ID.id;
+                Sl.VarList = ((ExprFuncion)id.access[0]).VarList;
+                return Sl;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public List<Expresiones> getValoresPunto(List<Expresiones> list)
+        {
+            if (currentToken.Tipo == Lexico.TipoToken.TK_ID)
+            {
+                Expresiones e = Expression();
+                list.Add(e);
+               
+                if(currentToken.Tipo == Lexico.TipoToken.TK_PUNTO)
+                    getValoresPunto(list);
+                if (e is ExprFuncion && list.Count == 1)
+                    return list;
+                else
+                    throw new Exception("Error al invocar los atributos");
+
+            }
+            return list;
         }
 
         public void recorrerArray(S_Asignacion assig)
@@ -1008,7 +1034,8 @@ namespace Project_Compiladores1.Sintactico
                 }
                 else
                 {
-                    StatementP(v);
+                    if(currentToken.Tipo != Lexico.TipoToken.TK_ASSIGN)
+                        StatementP(v);
                 }
                 return v;
 
