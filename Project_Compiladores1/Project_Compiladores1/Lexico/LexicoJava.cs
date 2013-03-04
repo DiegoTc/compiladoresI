@@ -42,6 +42,7 @@ namespace Project_Compiladores1.Lexico
             Operadores.Add(".", TipoToken.TK_PUNTO);
             Operadores.Add(",", TipoToken.TK_COMA);
             Operadores.Add(":", TipoToken.TK_DOSPUNTOS);
+            Operadores.Add("!", TipoToken.TK_NOT);
 
 
 
@@ -49,7 +50,7 @@ namespace Project_Compiladores1.Lexico
             PalabrasReservadas.Add("float", TipoToken.TK_FLOAT);
             PalabrasReservadas.Add("char", TipoToken.TK_CHAR);
             PalabrasReservadas.Add("true", TipoToken.TK_TRUE);
-            PalabrasReservadas.Add("bool", TipoToken.TK_BOOL);
+            PalabrasReservadas.Add("boolean", TipoToken.TK_BOOL);
             PalabrasReservadas.Add("false", TipoToken.TK_FALSE);
             PalabrasReservadas.Add("if", TipoToken.TK_IF);
             PalabrasReservadas.Add("else", TipoToken.TK_ELSE);
@@ -67,6 +68,8 @@ namespace Project_Compiladores1.Lexico
             PalabrasReservadas.Add("public", TipoToken.TK_PUBLIC);
             PalabrasReservadas.Add("private", TipoToken.TK_PRIVATE);
             PalabrasReservadas.Add("new", TipoToken.TK_NEW);
+            PalabrasReservadas.Add("String", TipoToken.TK_STRING);
+            
 
 
             symbol = nextSymbol();

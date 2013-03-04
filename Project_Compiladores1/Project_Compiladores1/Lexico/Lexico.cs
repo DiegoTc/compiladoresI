@@ -164,7 +164,7 @@ namespace Project_Compiladores1.Lexico
                             symbol = nextSymbol();
                             estado = 1;
                         }
-                        else if (Operadores.ContainsKey(symbol.ToString()) || symbol == '"' || symbol == '\'')
+                        else if (Operadores.ContainsKey(symbol.ToString()) || symbol == '"' || symbol == '\'' || symbol == '&' || symbol == '|')
                         {
                             lexema += symbol;
                             symbol = nextSymbol();
@@ -254,7 +254,17 @@ namespace Project_Compiladores1.Lexico
                         return new Token(lexema, TipoToken.TK_INT_LIT, Fil, Col); //Aqui regresa un numero entero
 
                     case 8:
-                        if (Operadores.ContainsKey(lexema.ToLower() + symbol.ToString().ToLower()))
+                        if (lexema == "&" && symbol == '&')
+                        {
+                            lexema += symbol;
+                            symbol = nextSymbol();
+                            return new Token(lexema, Operadores[lexema], Fil, Col);
+                        }else if (lexema == "|" && symbol == '|')
+                        {
+                            lexema += symbol;
+                            symbol = nextSymbol();
+                            return new Token(lexema, Operadores[lexema], Fil, Col);
+                        }else if (Operadores.ContainsKey(lexema.ToLower() + symbol.ToString().ToLower()))
                         {
                             lexema += symbol;
                             symbol = nextSymbol();

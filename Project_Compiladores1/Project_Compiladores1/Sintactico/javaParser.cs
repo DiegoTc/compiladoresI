@@ -836,10 +836,11 @@ namespace Project_Compiladores1.Sintactico
                 currentToken = lex.NextToken();
                 S_Asignacion sAsignacion = new S_Asignacion();
                 sAsignacion.id = Id;
-                sAsignacion.id.acces = Expr();
+                sAsignacion.id.access.Add(Expr());
                 if (currentToken.Tipo == TipoToken.TK_CLOSECOR)
                 {
                     currentToken = lex.NextToken();
+                    recorrerArray(sAsignacion);
                     Sentencia S  ;
                     S = StatementP2(sAsignacion.id);
                     sAsignacion.Valor = ((S_Asignacion) S).Valor;
@@ -874,6 +875,19 @@ namespace Project_Compiladores1.Sintactico
             else
             {
                 return null;
+            }
+        }
+
+        public void recorrerArray(S_Asignacion assig)
+        {
+            if (currentToken.Tipo == Lexico.TipoToken.TK_OPENCOR)
+            {
+                currentToken = lex.NextToken();
+                assig.id.access.Add(Expr());
+                if (currentToken.Tipo != Lexico.TipoToken.TK_CLOSECOR)
+                    throw new Exception("Se esperaba el token ]");
+                currentToken = lex.NextToken();
+                recorrerArray(assig);
             }
         }
 

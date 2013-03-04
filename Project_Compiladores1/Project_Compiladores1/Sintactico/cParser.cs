@@ -634,10 +634,11 @@ namespace Project_Compiladores1.Sintactico
                     throw new Exception("Se esperaba el token )");
                 
             }
+          
             else
             {
-                Sentencia S  ;
-                S=StatementP2(id);
+                Sentencia S;
+                S = StatementP2(id);
                 return S;
             }
         }
@@ -695,12 +696,13 @@ namespace Project_Compiladores1.Sintactico
                 currentToken = lex.NextToken();
                 S_Asignacion assig = new S_Asignacion();
                 assig.id = id;
-                assig.id.acces=Expression();
+                assig.id.access.Add(Expression());
 
                  if (currentToken.Tipo != Lexico.TipoToken.TK_CLOSECOR)
                     throw new Exception("Se esperaba el token ]");
 
                  currentToken = lex.NextToken();
+                 recorrerArray(assig);
                  Sentencia S  ;
                  S=StatementP2(assig.id);
                 if(S!=null)
@@ -711,7 +713,18 @@ namespace Project_Compiladores1.Sintactico
                 //currentToken = lex.NextToken();
                 return assig;
             }
-           else if (currentToken.Tipo == Lexico.TipoToken.TK_MENOSMENOS || currentToken.Tipo == Lexico.TipoToken.TK_MASMAS)
+            else if (currentToken.Tipo == Lexico.TipoToken.TK_PUNTO)
+            {
+                currentToken = lex.NextToken();
+                if (currentToken.Tipo == Lexico.TipoToken.TK_ID)
+                {
+                    Expresiones e = Expression();
+                    id.access.Add(e);
+                    currentToken = lex.NextToken();
+                    StatementP(id);
+                }
+            }
+            else if (currentToken.Tipo == Lexico.TipoToken.TK_MENOSMENOS || currentToken.Tipo == Lexico.TipoToken.TK_MASMAS)
             {
                 S_Asignacion sAsignacion = new S_Asignacion();
                 sAsignacion.id = id;
@@ -726,7 +739,18 @@ namespace Project_Compiladores1.Sintactico
             return null;
         }
 
-       
+        public void recorrerArray(S_Asignacion assig)
+        {
+            if (currentToken.Tipo == Lexico.TipoToken.TK_OPENCOR)
+            {
+                currentToken = lex.NextToken();
+                assig.id.access.Add(Expression());
+                if (currentToken.Tipo != Lexico.TipoToken.TK_CLOSECOR)
+                    throw new Exception("Se esperaba el token ]");
+                currentToken = lex.NextToken();
+                recorrerArray(assig);
+            }
+        }
 
         public Expresiones ExpreList()
         {

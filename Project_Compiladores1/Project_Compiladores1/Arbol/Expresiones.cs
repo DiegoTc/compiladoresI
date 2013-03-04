@@ -405,7 +405,8 @@ namespace Project_Compiladores1.Arbol
     class Variable : Expresiones
     {
         public string id { get; set; }
-        public Expresiones acces { get; set; }
+        public List<Expresiones> access = new List<Expresiones>();
+        //public Expresiones acces { get; set; }
 
         public override Tipo validarSemantica()
         {
@@ -433,7 +434,12 @@ namespace Project_Compiladores1.Arbol
         public Variable ID = new Variable();
         public override Tipo validarSemantica()
         {
-            //FALTA
+            //FALTA          
+            Tipo T = ID.validarSemantica();
+            if (T is Entero)
+            { }
+            else
+                throw new Exception("Error Semantico - Se esperaba un valor Entero");
             return null;
         }
     }

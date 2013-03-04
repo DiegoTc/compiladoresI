@@ -140,6 +140,18 @@ namespace Project_Compiladores1.Arbol
             {
                 var = InfSemantica.getInstance().tblSimbolos[Var.id];
             }
+            else
+            {
+                if (Tip != null)
+                {
+                    InfSemantica.getInstance().tblSimbolos.Add(Var.id, Tip);
+                    var = InfSemantica.getInstance().tblSimbolos[Var.id];
+                }
+                else
+                {
+                    throw new Exception("Error Semantico - No existe la variable" + Var.id);
+                }
+            }
 
             Tipo val = Inicio.validarSemantica();
             if (!var.esEquivalente(val))
@@ -302,21 +314,29 @@ namespace Project_Compiladores1.Arbol
                 var = InfSemantica.getInstance().tblSimbolos[Var.id];
             }
 
-
-            Tipo Val = Valor.validarSemantica();
+            Tipo Val = null;
+            if (Valor != null)
+            {
+                Val = Valor.validarSemantica();
+            }
             if (var != null)
             {
-                InfSemantica.getInstance().tblSimbolos.Add(Var.id, Tip);
+                throw new Exception("Error Semantico - La variable " + Var.id + " ya existe");    
             }
             else
             {
-                throw new Exception("Error Semantico - La variable " + Var.id + " ya existe");
+                InfSemantica.getInstance().tblSimbolos.Add(Var.id, Tip);
+                var = InfSemantica.getInstance().tblSimbolos[Var.id];
             }
-            if (!var.esEquivalente(Val))
+            if (Valor != null)
             {
-                throw new Exception("Error Semantico - No se puede inicializar variables con tipos diferentes");
+                if (!var.esEquivalente(Val))
+                {
+                    throw new Exception("Error Semantico - No se puede inicializar variables con tipos diferentes");
+                }
             }
-            Sig.validarSemantica();
+            if(Sig!=null)
+                Sig.validarSemantica();
         }
     }
 
