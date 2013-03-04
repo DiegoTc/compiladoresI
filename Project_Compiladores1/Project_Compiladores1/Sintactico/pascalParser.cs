@@ -13,7 +13,7 @@ namespace Project_Compiladores1.Sintactico
             : base(lexer)
         {
         }
-
+        /*
         public Sentencia parse()
         {
             Sentencia ret=SL();
@@ -833,7 +833,7 @@ namespace Project_Compiladores1.Sintactico
             {
                 currentToken = lex.NextToken();
                 return new Not(expr());
-            }*/
+            }
             else if (currentToken.Tipo == TipoToken.TK_ID)
             {
                 Variable id = new Variable();
@@ -842,6 +842,6 @@ namespace Project_Compiladores1.Sintactico
                 return S_prime(id);
             }
             else return LIT();
-        }
+        }*/
     }
 }

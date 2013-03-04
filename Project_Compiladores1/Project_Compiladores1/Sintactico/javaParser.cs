@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -756,6 +757,10 @@ namespace Project_Compiladores1.Sintactico
 
         public Sentencia StatementP2(Variable Id)
         {
+            if (currentToken.Tipo == TipoToken.TK_PUNTO)
+            {
+                Atributos(Id.access);
+            }            
             if (currentToken.Tipo == TipoToken.TK_ASSIGN || currentToken.Tipo == TipoToken.TK_MASIGUAL || currentToken.Tipo == TipoToken.TK_MENOSIGUAL || currentToken.Tipo == TipoToken.TK_PORIGUAL || currentToken.Tipo == TipoToken.TK_ENTREIGUAL)
             {
                 var Tip = currentToken.Tipo;
@@ -872,11 +877,43 @@ namespace Project_Compiladores1.Sintactico
                 sAsignacion.Valor = Ex;
                 return sAsignacion;
             }
+            else if (Id.access[0] is ExprFuncion)
+            {
+                S_LlamadaFunc SL = new S_LlamadaFunc();
+                SL.VarClase = Id;
+                SL.Var.id = ((ExprFuncion)Id.access[0]).ID.id;
+                SL.VarList = ((ExprFuncion) Id.access[0]).VarList;
+
+                return SL;
+            }
             else
             {
                 return null;
             }
         }
+
+        public List<Expresiones> Atributos(List<Expresiones> List)
+        {
+            currentToken = lex.NextToken();
+            if (currentToken.Tipo == TipoToken.TK_ID)
+            {
+                Expresiones e = Expr();                
+                List.Add(e);
+                if (currentToken.Tipo == TipoToken.TK_PUNTO)
+                {
+                    Atributos(List);
+                }
+                if (e is ExprFuncion)
+                {
+                    if (List.Count == 1)
+                        return List;
+                    else
+                        throw new Exception("Error Sintactico - Error al invocar atributos.");
+                }                                
+            }
+            return List;
+        }
+        
 
         public void recorrerArray(S_Asignacion assig)
         {
@@ -1149,7 +1186,8 @@ namespace Project_Compiladores1.Sintactico
                 }
                 else
                 {
-                    StatementP(V);
+                    //if(currentToken.Tipo != TipoToken.TK_ASSIGN)
+                    //    StatementP(V);
                 }
                 return V;
                
