@@ -24,8 +24,9 @@ namespace Project_Compiladores1.Sintactico
             Sentencia S = StatementList();
             if (currentToken.Tipo != TipoToken.TK_FINFLUJO)
                 throw new Exception("Se esperaba fin flujo ");
-            return S;
+            
             Console.WriteLine("Evaluacion Sintactica Correcta");
+            return S;
         }
 
         public Sentencia StatementList()
