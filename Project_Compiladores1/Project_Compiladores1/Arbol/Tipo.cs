@@ -74,6 +74,12 @@ namespace Project_Compiladores1.Arbol
         {
             return t is Struct;
         }
-    } 
+    }
+
+
+    class T_Campos : Dictionary<string, Tipo>
+    {
+        ArrayList ids= new ArrayList();
+    }
 
 }

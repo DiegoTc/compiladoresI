@@ -490,4 +490,68 @@ namespace Project_Compiladores1.Arbol
             return null;
         }
     }
+
+    public abstract class Access : Expresiones
+    {
+        private Access _next;
+
+        public Access Next
+        {
+            get { return _next; }
+            set { _next = value; }
+        }
+    }
+
+    class AccessMiembro : Access
+    {
+        private String id;
+
+        public string Id
+        {
+            get { return id; }
+            set { id = value; }
+        }
+
+        public override Tipo validarSemantica()
+        {
+            //FALTA
+            return null;
+        }
+    }
+
+    class AccessClass : Access
+    {
+        private String id;
+
+        public string Id
+        {
+            get { return id; }
+            set { id = value; }
+        }
+
+        public override Tipo validarSemantica()
+        {
+            //FALTA
+            return null;
+        }
+    }
+
+    class AccessArreglo : Access
+    {
+        private ArrayList cont;//=new ArrayList<>();
+
+        public ArrayList Cont
+        {
+            get { return cont; }
+            set { cont = value; }
+        }
+
+        public override Tipo validarSemantica()
+        {
+            //FALTA
+            return null;
+        }
+    }
+
+
 }

@@ -453,7 +453,7 @@ namespace Project_Compiladores1.Sintactico
         public Sentencia Declaration()
         {
             VARTYPE();
-            Campos C = new Campos();
+            Declaracion C = new Declaracion();
             C.Tip = Type();
             if (currentToken.Tipo == TipoToken.TK_ID)
             {
@@ -556,16 +556,16 @@ namespace Project_Compiladores1.Sintactico
             {
                 currentToken = lex.NextToken();
                 //Campos CP = new Campos();                
-                if (C is Campos)
+                if (C is Declaracion)
                 {
-                    ((Campos)C).Sig = new Campos();
+                    ((Declaracion)C).Sig = new Declaracion();
                 }
                 if (currentToken.Tipo == TipoToken.TK_ID)
                 {
-                   ((Campos)C).Sig.Var.id = currentToken.Lexema;
-                   ((Campos)C).Sig.Tip = ((Campos)C).Tip;
+                   ((Declaracion)C).Sig.Var.id = currentToken.Lexema;
+                   ((Declaracion)C).Sig.Tip = ((Declaracion)C).Tip;
                     currentToken = lex.NextToken();
-                    DeclarationP(((Campos)C).Sig);
+                    DeclarationP(((Declaracion)C).Sig);
                     
                     return C;
                 }
@@ -578,11 +578,11 @@ namespace Project_Compiladores1.Sintactico
             {
                 Sentencia S  ;
                 S = AssignDeclaration(C);
-                if (((Campos)C).Tip == null)
+                if (((Declaracion)C).Tip == null)
                     return S;
                 else
                 {
-                    ((Campos)C).Valor = ((S_Asignacion) S).Valor;
+                    ((Declaracion)C).Valor = ((S_Asignacion) S).Valor;
                     return C;
                 }                                
             }
@@ -590,8 +590,8 @@ namespace Project_Compiladores1.Sintactico
             {
                 currentToken = lex.NextToken();
                 S_Functions sFunctions = new S_Functions();
-                sFunctions.Retorno = ((Campos)C).Tip;
-                sFunctions.var.id = ((Campos)C).Var.id;
+                sFunctions.Retorno = ((Declaracion)C).Tip;
+                sFunctions.var.id = ((Declaracion)C).Var.id;
                 sFunctions.Campo = ParameterList();
                 if (currentToken.Tipo == TipoToken.TK_CLOSEPAR)
                 {
@@ -615,11 +615,11 @@ namespace Project_Compiladores1.Sintactico
             }
         }
 
-        public Campos ParameterList()
+        public Declaracion ParameterList()
         {
             if (currentToken.Tipo == TipoToken.TK_CHAR || currentToken.Tipo == TipoToken.TK_BOOL || currentToken.Tipo == TipoToken.TK_STRING || currentToken.Tipo == TipoToken.TK_FLOAT || currentToken.Tipo == TipoToken.TK_INT)
             {
-                Campos C = new Campos();
+                Declaracion C = new Declaracion();
                 C.Tip = Type();
                 if (currentToken.Tipo == TipoToken.TK_ID)
                 {
@@ -639,11 +639,11 @@ namespace Project_Compiladores1.Sintactico
             }
         }
 
-        public Campos ParameterListP()
+        public Declaracion ParameterListP()
         {
             if (currentToken.Tipo == TipoToken.TK_COMA)
             {
-                Campos C1 = new Campos();
+                Declaracion C1 = new Declaracion();
                 currentToken = lex.NextToken();
                 C1.Tip = Type();
                 if (currentToken.Tipo == TipoToken.TK_ID)
@@ -673,7 +673,7 @@ namespace Project_Compiladores1.Sintactico
                 if (currentToken.Tipo == TipoToken.TK_NEW)
                 {
                     currentToken = lex.NextToken();
-                    sAsignacion.id.id = ((Campos)S).Var.id;
+                    sAsignacion.id.id = ((Declaracion)S).Var.id;
                     sAsignacion.Valor = Expr();
                     Class c = new Class();
                     if(sAsignacion.Valor is ExprFuncion)
@@ -683,7 +683,7 @@ namespace Project_Compiladores1.Sintactico
                 }
                 else
                 {
-                    sAsignacion.id.id = ((Campos)S).Var.id;
+                    sAsignacion.id.id = ((Declaracion)S).Var.id;
                     sAsignacion.Valor = Expr();
                     return DeclarationP(sAsignacion);
                 }
@@ -721,7 +721,7 @@ namespace Project_Compiladores1.Sintactico
             }
         }
 
-        private Sentencia declareArray(Campos c)
+        private Sentencia declareArray(Declaracion c)
         {
             if (currentToken.Tipo == TipoToken.TK_OPENCOR)
             {
@@ -803,7 +803,7 @@ namespace Project_Compiladores1.Sintactico
                 }
                 else if (currentToken.Tipo == TipoToken.TK_NEW)
                 {
-                    Campos campos = new Campos();
+                    Declaracion campos = new Declaracion();
                     campos.Var.id = Id.id;
                     currentToken = lex.NextToken();
                     campos.Tip = Type();
@@ -815,7 +815,7 @@ namespace Project_Compiladores1.Sintactico
                     S_Asignacion sAsignacion = new S_Asignacion();
                     sAsignacion.Op = new Igual();
                     sAsignacion.id = Id;
-                    sAsignacion.campos = ((Campos)campos);
+                    sAsignacion.campos = ((Declaracion)campos);
                     return sAsignacion;
                 }
                 else

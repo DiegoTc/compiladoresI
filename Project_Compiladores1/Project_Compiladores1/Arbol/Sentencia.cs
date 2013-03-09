@@ -48,7 +48,7 @@ namespace Project_Compiladores1.Arbol
         public Operadores Op;
         public Variable id = new Variable();
         public Expresiones Valor;
-        public Campos campos; //Para las asignaciones de arreglos.
+        public Declaracion campos; //Para las asignaciones de arreglos.
 
         public override void validarSemantica()
         {
@@ -169,7 +169,7 @@ namespace Project_Compiladores1.Arbol
     class Structs : Sentencia
     {
         public Variable nombre = new Variable();
-        public Campos c;
+        public Declaracion c;
         public Dictionary<string, Tipo> tblSimbolosStruct = new Dictionary<string, Tipo>();
 
         public override void validarSemantica()
@@ -250,7 +250,7 @@ namespace Project_Compiladores1.Arbol
     {
         public Tipo Retorno;
         public Variable var = new Variable();
-        public Campos Campo;
+        public Declaracion Campo;
         public Sentencia S;
 
         public override void validarSemantica()
@@ -312,11 +312,11 @@ namespace Project_Compiladores1.Arbol
         }
     }
 
-    class Campos : Sentencia
+    class Declaracion : Sentencia
     {
         public Tipo Tip;
         public Variable Var = new Variable();
-        public Campos Sig;
+        public Declaracion Sig;
         public Expresiones Valor;
         public int Dimension;
         public List<Expresiones> dim = new List<Expresiones>();
