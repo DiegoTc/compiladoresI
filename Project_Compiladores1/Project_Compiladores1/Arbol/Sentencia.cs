@@ -46,7 +46,7 @@ namespace Project_Compiladores1.Arbol
     class S_Asignacion : Sentencia
     {
         public Operadores Op;
-        public Variable id = new Variable();
+        public Variable id;// = new Variable();
         public Expresiones Valor;
         public Declaracion campos; //Para las asignaciones de arreglos.
 
@@ -122,7 +122,7 @@ namespace Project_Compiladores1.Arbol
     class S_For : Sentencia
     {
         public Tipo Tip;
-        public Variable Var = new Variable();
+        public Variable Var;
         public Expresiones Inicio;
         public Expresiones Condicion;
         public Expresiones Iteracion;
@@ -149,7 +149,7 @@ namespace Project_Compiladores1.Arbol
                 }
                 else
                 {
-                    throw new Exception("Error Semantico - No existe la variable" + Var.id);
+                    throw new Exception("Error Semantico - No existe la variable" + Var);
                 }
             }
 
@@ -168,7 +168,7 @@ namespace Project_Compiladores1.Arbol
 
     class Structs : Sentencia
     {
-        public Variable nombre = new Variable();
+        public string nombre;// = new Variable();
         public Declaracion c;
         public Dictionary<string, Tipo> tblSimbolosStruct = new Dictionary<string, Tipo>();
 
@@ -176,20 +176,22 @@ namespace Project_Compiladores1.Arbol
         {
             //FALTA            
             Tipo var = null;
-            if (InfSemantica.getInstance().tblFunciones.ContainsKey(nombre.id))
+            if (InfSemantica.getInstance().tblFunciones.ContainsKey(nombre))
             {
-                var = InfSemantica.getInstance().tblFunciones[nombre.id];
+                var = InfSemantica.getInstance().tblFunciones[nombre];
             }
-            if (InfSemantica.getInstance().tblSimbolos.ContainsKey(nombre.id))
+            if (InfSemantica.getInstance().tblSimbolos.ContainsKey(nombre))
             {
-                throw new Exception("Error Semantico - La variable " + nombre.id + " ya existe");
+                throw new Exception("Error Semantico - La variable " + nombre + " ya existe");
             }
 
             if (var != null)
-                throw new Exception("Error Semantico - La variable " + nombre.id + " ya esta siendo utilizada");
+                throw new Exception("Error Semantico - La variable " + nombre + " ya esta siendo utilizada");
             else
-                InfSemantica.getInstance().tblFunciones.Add(nombre.id, new Struct());
-            Campos tmp = c;
+            {
+                //InfSemantica.getInstance().tblFunciones.Add(nombre, new Struct()); AGREGAR LUEGO
+            }
+            Declaracion tmp = c;
             while (tmp != null)
             {
                 tblSimbolosStruct.Add(tmp.Var.id, tmp.Tip);
@@ -249,7 +251,8 @@ namespace Project_Compiladores1.Arbol
     class S_Functions : Sentencia
     {
         public Tipo Retorno;
-        public Variable var = new Variable();
+        private String var;
+        //public Variable var = new Variable();
         public Declaracion Campo;
         public Sentencia S;
 
@@ -260,24 +263,24 @@ namespace Project_Compiladores1.Arbol
 
 
             Tipo Var = null;
-            if (InfSemantica.getInstance().tblFunciones.ContainsKey(var.id))
+            if (InfSemantica.getInstance().tblFunciones.ContainsKey(var))
             {
-                Var = InfSemantica.getInstance().tblFunciones[var.id];
+                Var = InfSemantica.getInstance().tblFunciones[var];
             }
-            if (InfSemantica.getInstance().tblSimbolos.ContainsKey(var.id))
+            if (InfSemantica.getInstance().tblSimbolos.ContainsKey(var))
             {
-                throw new Exception("Error Semantico - La variable " + var.id + " ya existe");
+                throw new Exception("Error Semantico - La variable " + var + " ya existe");
             }  
             if (Var == null)
             {
                 if (Retorno != null)
-                    InfSemantica.getInstance().tblFunciones.Add(var.id, Retorno);
+                    InfSemantica.getInstance().tblFunciones.Add(var, Retorno);
                 else
-                    InfSemantica.getInstance().tblFunciones.Add(var.id, new Voids());
+                    InfSemantica.getInstance().tblFunciones.Add(var, new Voids());
             }
             else
             {
-                throw new Exception("Error Semantico - La variable " + var.id + " ya existe");
+                throw new Exception("Error Semantico - La variable " + var + " ya existe");
             }
             #endregion
 
@@ -315,12 +318,9 @@ namespace Project_Compiladores1.Arbol
     class Declaracion : Sentencia
     {
         public Tipo Tip;
-        public Variable Var = new Variable();
+        public Variable Var;//r = new Variable();
         public Declaracion Sig;
         public Expresiones Valor;
-        public int Dimension;
-        public List<Expresiones> dim = new List<Expresiones>();
-        public Expresiones Ex;
 
         public override void validarSemantica()
         {
@@ -388,8 +388,8 @@ namespace Project_Compiladores1.Arbol
 
     class S_LlamadaFunc : Sentencia
     {
-        public Variable Var = new Variable();
-        public Variable VarClase = new Variable();
+        public Variable Var; // = new Variable();
+        //public Variable VarClase = new Variable();
         public Expresiones VarList;
 
         public override void validarSemantica()
@@ -409,7 +409,7 @@ namespace Project_Compiladores1.Arbol
 
     class S_Class : Sentencia
     {
-        public Variable Var = new Variable();
+        public Variable Var;// = new Variable();
         public Sentencia CamposClase;
         public Dictionary<string, Tipo> tblSimbolosClass = new Dictionary<string, Tipo>();
 
@@ -437,12 +437,13 @@ namespace Project_Compiladores1.Arbol
                 throw new Exception("Error Semantico - La variable " + Var.id + " ya existe");
             }
             #endregion
+
             Sentencia tmp = CamposClase;
             while (tmp != null)
             {
-                if (tmp is Campos)
+                if (tmp is Declaracion)
                 {
-                    Campos tmpCampo = ((Campos) tmp);
+                    Declaracion tmpCampo = ((Declaracion)tmp);
                     tblSimbolosClass.Add(tmpCampo.Var.id, tmpCampo.Tip);
                 }
                 else

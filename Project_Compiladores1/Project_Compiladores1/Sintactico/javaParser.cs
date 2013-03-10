@@ -282,7 +282,7 @@ namespace Project_Compiladores1.Sintactico
             {
                 #region Id
                 Sentencia S ;
-                Variable Id = new Variable();
+                Variable Id = new Variable(currentToken.Lexema, null);
                 Id.id = currentToken.Lexema;
                 currentToken = lex.NextToken();
                 
@@ -471,7 +471,8 @@ namespace Project_Compiladores1.Sintactico
                     int dim = arrayDimensions(1);
                     if (currentToken.Tipo == TipoToken.TK_ID)
                     {
-                        C.Dimension = dim;
+
+                        C.Var.Dimension = dim;
                         C.Var.id = currentToken.Lexema;
                         currentToken = lex.NextToken();
                         if (currentToken.Tipo == TipoToken.TK_FINSENTENCIA)
@@ -500,6 +501,8 @@ namespace Project_Compiladores1.Sintactico
                 throw new Exception("Error Sintactico - Se esperaba un identificador o simbolo [");
             }
         }
+
+
 
         public void VARTYPE()
         {

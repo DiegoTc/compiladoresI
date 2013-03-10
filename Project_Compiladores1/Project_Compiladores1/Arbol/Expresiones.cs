@@ -369,7 +369,6 @@ namespace Project_Compiladores1.Arbol
             {
                 return new Booleano();
             }
-
             throw new Exception("Error Semantico - Comparacion Invalida");
         }
     }
@@ -405,14 +404,56 @@ namespace Project_Compiladores1.Arbol
     class Variable : Expresiones
     {
         public string id { get; set; }
-        public List<Expresiones> access = new List<Expresiones>();
+        public Access accesor { get; set; }
+        //public List<Expresiones> access = new List<Expresiones>();
         //public Expresiones acces { get; set; }
+
+        public Variable(string iden, Access acc)
+        {
+            id = iden;
+            accesor = acc;
+        }
 
         public override Tipo validarSemantica()
         {
             Tipo t = InfSemantica.getInstance().tblSimbolos[id];
+
             if (t == null)
-                throw new Exception("Error Semantico - Variable " + id + " no existe" );
+                throw new Exception("Error Semantico - Variable " + id + " no existe");
+
+
+            #region Validacion Accessories
+
+            if (t == null)
+                throw new Exception("Variable " + id + " no existe!");
+            Access tmp = accesor;
+            while (tmp != null)
+            {
+
+                if (tmp is AccessMiembro)
+                {
+                    #region Si es Registro
+
+                    AccessMiembro am = ((AccessMiembro) tmp);
+                    if (!(t is Struct))
+                        throw new Exception(id + " no es un registro");
+                    Struct reg = ((Struct) t);
+                    t = reg.Campos[am.Id];
+                    if (t == null)
+                        throw new Exception("miembro " + am.Id + " no existe!");
+
+                    #endregion
+                }else if(tmp is AccessArreglo)
+                {
+                    #region Si es Arreglo
+                    #endregion
+                }
+
+
+                tmp = tmp.Next;
+            }
+            #endregion
+
             return t;
         }
     }
@@ -431,7 +472,7 @@ namespace Project_Compiladores1.Arbol
 
     class ExpMasMas : Expresiones
     {
-        public Variable ID = new Variable();
+        public Variable ID;// = new Variable();
         public override Tipo validarSemantica()
         {
             //FALTA          
@@ -446,7 +487,7 @@ namespace Project_Compiladores1.Arbol
 
     class ExpMenosMenos : Expresiones
     {
-        public Variable ID = new Variable();
+        public Variable ID;// = new Variable();
         public override Tipo validarSemantica()
         {
             //FALTA
@@ -456,7 +497,7 @@ namespace Project_Compiladores1.Arbol
 
     class ExprFuncion : Expresiones
     {
-        public Variable ID = new Variable();
+        public Variable ID;// = new Variable();
         public Expresiones VarList;
         public Tipo tipo;
 
@@ -539,6 +580,17 @@ namespace Project_Compiladores1.Arbol
     class AccessArreglo : Access
     {
         private ArrayList cont;//=new ArrayList<>();
+
+        public AccessArreglo(ArrayList conte)
+        {
+            cont = conte;
+        }
+
+        public void addexp(Expresiones par)
+        {
+            cont.Add(par);
+        }
+
 
         public ArrayList Cont
         {
