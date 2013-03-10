@@ -725,7 +725,7 @@ namespace Project_Compiladores1.Sintactico
                 return S;
             }
         }
-        /*
+        
         private Sentencia declareArray(Declaracion c)
         {
             if (currentToken.Tipo == TipoToken.TK_OPENCOR)
@@ -759,7 +759,7 @@ namespace Project_Compiladores1.Sintactico
             }
             throw new Exception("Error Sintactico - Se esperaba un simbolo ;");
             
-        }*/
+        }
 
         public Sentencia StatementP2(Variable Id)
         {
@@ -849,7 +849,7 @@ namespace Project_Compiladores1.Sintactico
                 currentToken = lex.NextToken();
                 S_Asignacion sAsignacion = new S_Asignacion();
                 sAsignacion.id = Id;
-                sAsignacion.id.access.Add(Expr());
+                sAsignacion.id.accesor = Expr();
                 if (currentToken.Tipo == TipoToken.TK_CLOSECOR)
                 {
                     currentToken = lex.NextToken();
@@ -885,12 +885,12 @@ namespace Project_Compiladores1.Sintactico
                 sAsignacion.Valor = Ex;
                 return sAsignacion;
             }
-            else if (Id.accesor is AccessFunc)
+            else if (Id.accesor.Last() is AccessFunc)
             {
                 S_LlamadaFunc SL = new S_LlamadaFunc();
-                SL.VarClase = Id;
-                SL.Var.id = ((ExprFuncion)Id.access[0]).ID.id;
-                SL.VarList = ((ExprFuncion) Id.access[0]).VarList;
+                AccessFunc tmp = ((AccessFunc) Id.accesor.Last());
+                SL.Var = Id;
+                SL.VarList = tmp.Info.VarList;                
 
                 return SL;
             }
@@ -910,7 +910,7 @@ namespace Project_Compiladores1.Sintactico
                 if (e is ExprFuncion)
                 {
                     AccessFunc accF = new AccessFunc();
-                    accF.Id = tmpid;
+                    accF.Info = ((ExprFuncion)e);
                     List = accF;
                     return List;
                 }

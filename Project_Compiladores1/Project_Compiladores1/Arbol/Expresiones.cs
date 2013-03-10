@@ -497,7 +497,7 @@ namespace Project_Compiladores1.Arbol
 
     class ExprFuncion : Expresiones
     {
-        public Variable ID;// = new Variable();
+        public string ID;// = new Variable();
         public Expresiones VarList;
         public Tipo tipo;
 
@@ -541,6 +541,16 @@ namespace Project_Compiladores1.Arbol
             get { return _next; }
             set { _next = value; }
         }
+
+        public Access Last()
+        {
+            Access tmp = Next;
+            while (tmp.Next != null)
+            {
+                tmp = tmp.Next;
+            }
+            return tmp;
+        }
     }
 
     class AccessMiembro : Access
@@ -563,13 +573,7 @@ namespace Project_Compiladores1.Arbol
 
     class AccessFunc : Access
     {
-        private String id;
-
-        public string Id
-        {
-            get { return id; }
-            set { id = value; }
-        }
+        public ExprFuncion Info;
 
         public override Tipo validarSemantica()
         {
@@ -577,6 +581,7 @@ namespace Project_Compiladores1.Arbol
             return null;
         }
     }
+
     class AccessClass : Access
     {
         private String id;
