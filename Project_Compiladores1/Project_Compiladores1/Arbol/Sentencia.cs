@@ -170,7 +170,7 @@ namespace Project_Compiladores1.Arbol
     {
         public string nombre;// = new Variable();
         public Declaracion c;
-        public Dictionary<string, Tipo> tblSimbolosStruct = new Dictionary<string, Tipo>();
+        //public Dictionary<string, Tipo> tblSimbolosStruct = new Dictionary<string, Tipo>();
 
         public override void validarSemantica()
         {
@@ -194,7 +194,7 @@ namespace Project_Compiladores1.Arbol
             Declaracion tmp = c;
             while (tmp != null)
             {
-                tblSimbolosStruct.Add(tmp.Var.id, tmp.Tip);
+               // tblSimbolosStruct.Add(tmp.Var.id, tmp.Tip);
                 tmp = tmp.Sig;
             }            
             //c.validarSemantica();
@@ -397,7 +397,7 @@ namespace Project_Compiladores1.Arbol
         public Variable Var; // = new Variable();
 
         //public Variable VarClase = new Variable();
-        public Expresiones VarList;
+        //public Expresiones VarList;
 
         public override void validarSemantica()
         {

@@ -497,7 +497,7 @@ namespace Project_Compiladores1.Arbol
 
     class ExprFuncion : Expresiones
     {
-        public string ID;// = new Variable();
+        public Variable ID;// = new Variable();
         public Expresiones VarList;
         public Tipo tipo;
 
@@ -573,7 +573,7 @@ namespace Project_Compiladores1.Arbol
 
     class AccessFunc : Access
     {
-        public ExprFuncion Info;
+        public ListaExpre Variables;
 
         public override Tipo validarSemantica()
         {
