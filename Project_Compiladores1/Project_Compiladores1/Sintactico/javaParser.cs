@@ -596,7 +596,7 @@ namespace Project_Compiladores1.Sintactico
                 currentToken = lex.NextToken();
                 S_Functions sFunctions = new S_Functions();
                 sFunctions.Retorno = ((Declaracion)C).Tip;
-                sFunctions.var.id = ((Declaracion)C).Var.id;
+                sFunctions.Var = ((Declaracion)C).Var.id;
                 sFunctions.Campo = ParameterList();
                 if (currentToken.Tipo == TipoToken.TK_CLOSEPAR)
                 {
@@ -725,7 +725,7 @@ namespace Project_Compiladores1.Sintactico
                 return S;
             }
         }
-
+        /*
         private Sentencia declareArray(Declaracion c)
         {
             if (currentToken.Tipo == TipoToken.TK_OPENCOR)
@@ -759,14 +759,16 @@ namespace Project_Compiladores1.Sintactico
             }
             throw new Exception("Error Sintactico - Se esperaba un simbolo ;");
             
-        }
+        }*/
 
         public Sentencia StatementP2(Variable Id)
         {
             if (currentToken.Tipo == TipoToken.TK_PUNTO)
             {
-                Atributos(Id.access);
-            }            
+                AccessMiembro Ls = new AccessMiembro();
+                Id.accesor = Atributos(Ls);              
+
+            }
             if (currentToken.Tipo == TipoToken.TK_ASSIGN || currentToken.Tipo == TipoToken.TK_MASIGUAL || currentToken.Tipo == TipoToken.TK_MENOSIGUAL || currentToken.Tipo == TipoToken.TK_PORIGUAL || currentToken.Tipo == TipoToken.TK_ENTREIGUAL)
             {
                 var Tip = currentToken.Tipo;
@@ -883,7 +885,7 @@ namespace Project_Compiladores1.Sintactico
                 sAsignacion.Valor = Ex;
                 return sAsignacion;
             }
-            else if (Id.access[0] is ExprFuncion)
+            else if (Id.accesor is AccessFunc)
             {
                 S_LlamadaFunc SL = new S_LlamadaFunc();
                 SL.VarClase = Id;
@@ -898,24 +900,30 @@ namespace Project_Compiladores1.Sintactico
             }
         }
 
-        public List<Expresiones> Atributos(List<Expresiones> List)
+        public Access Atributos(Access List)
         {
             currentToken = lex.NextToken();
             if (currentToken.Tipo == TipoToken.TK_ID)
             {
-                Expresiones e = Expr();                
-                List.Add(e);
-                if (currentToken.Tipo == TipoToken.TK_PUNTO)
-                {
-                    Atributos(List);
-                }
+                string tmpid = currentToken.Lexema;
+                Expresiones e = Expr();
                 if (e is ExprFuncion)
                 {
-                    if (List.Count == 1)
-                        return List;
-                    else
-                        throw new Exception("Error Sintactico - Error al invocar atributos.");
-                }                                
+                    AccessFunc accF = new AccessFunc();
+                    accF.Id = tmpid;
+                    List = accF;
+                    return List;
+                }
+                else
+                {
+                    AccessMiembro accM = new AccessMiembro();
+                    accM.Id = ((Variable) e).id;
+                    List = accM;
+                }
+                if (currentToken.Tipo == TipoToken.TK_PUNTO)
+                {
+                    Atributos(List.Next);
+                }                                              
             }
             return List;
         }

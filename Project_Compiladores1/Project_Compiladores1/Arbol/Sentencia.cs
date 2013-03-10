@@ -256,6 +256,12 @@ namespace Project_Compiladores1.Arbol
         public Declaracion Campo;
         public Sentencia S;
 
+        public string Var
+        {
+            get { return var; }
+            set { var = value; }
+        }
+
         public override void validarSemantica()
         {
             //FALTA
@@ -263,24 +269,24 @@ namespace Project_Compiladores1.Arbol
 
 
             Tipo Var = null;
-            if (InfSemantica.getInstance().tblFunciones.ContainsKey(var))
+            if (InfSemantica.getInstance().tblFunciones.ContainsKey(this.Var))
             {
-                Var = InfSemantica.getInstance().tblFunciones[var];
+                Var = InfSemantica.getInstance().tblFunciones[this.Var];
             }
-            if (InfSemantica.getInstance().tblSimbolos.ContainsKey(var))
+            if (InfSemantica.getInstance().tblSimbolos.ContainsKey(this.Var))
             {
-                throw new Exception("Error Semantico - La variable " + var + " ya existe");
+                throw new Exception("Error Semantico - La variable " + this.Var + " ya existe");
             }  
             if (Var == null)
             {
                 if (Retorno != null)
-                    InfSemantica.getInstance().tblFunciones.Add(var, Retorno);
+                    InfSemantica.getInstance().tblFunciones.Add(this.Var, Retorno);
                 else
-                    InfSemantica.getInstance().tblFunciones.Add(var, new Voids());
+                    InfSemantica.getInstance().tblFunciones.Add(this.Var, new Voids());
             }
             else
             {
-                throw new Exception("Error Semantico - La variable " + var + " ya existe");
+                throw new Exception("Error Semantico - La variable " + this.Var + " ya existe");
             }
             #endregion
 
@@ -318,7 +324,7 @@ namespace Project_Compiladores1.Arbol
     class Declaracion : Sentencia
     {
         public Tipo Tip;
-        public Variable Var;//r = new Variable();
+        public Variable Var = new Variable();
         public Declaracion Sig;
         public Expresiones Valor;
 
@@ -388,7 +394,8 @@ namespace Project_Compiladores1.Arbol
 
     class S_LlamadaFunc : Sentencia
     {
-        public Variable Var; // = new Variable();
+        public string Var; // = new Variable();
+
         //public Variable VarClase = new Variable();
         public Expresiones VarList;
 

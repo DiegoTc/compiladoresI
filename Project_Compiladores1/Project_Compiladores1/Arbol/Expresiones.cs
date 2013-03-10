@@ -560,6 +560,23 @@ namespace Project_Compiladores1.Arbol
         }
     }
 
+
+    class AccessFunc : Access
+    {
+        private String id;
+
+        public string Id
+        {
+            get { return id; }
+            set { id = value; }
+        }
+
+        public override Tipo validarSemantica()
+        {
+            //FALTA
+            return null;
+        }
+    }
     class AccessClass : Access
     {
         private String id;
