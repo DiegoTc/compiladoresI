@@ -80,12 +80,7 @@ namespace Project_Compiladores1.Arbol
     class Struct : Tipo
     {
         private T_Campos _campos;
-
-        public Struct(T_Campos Camp)
-        {
-            Campos = Camp;
-        }
-
+        public String nombre;
         public T_Campos Campos
         {
             get { return _campos; }

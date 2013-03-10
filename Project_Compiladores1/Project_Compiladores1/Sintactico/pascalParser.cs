@@ -9,11 +9,12 @@ namespace Project_Compiladores1.Sintactico
 {
     class pascalParser:Parser
     {
+        
         public pascalParser(Lexico.Lexico lexer)
             : base(lexer)
         {
         }
-
+        /*
         public Sentencia parse()
         {
             Sentencia ret=SL();
@@ -914,6 +915,6 @@ namespace Project_Compiladores1.Sintactico
                 else throw new Exception("Se esperaba ID.");
             }
             else return par;
-        }
+        }*/
     }
 }

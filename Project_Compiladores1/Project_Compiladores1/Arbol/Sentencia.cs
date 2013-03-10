@@ -169,7 +169,7 @@ namespace Project_Compiladores1.Arbol
     class Structs : Sentencia
     {
         public string nombre;// = new Variable();
-        public Declaracion c;
+        public Declaracion campos;
         //public Dictionary<string, Tipo> tblSimbolosStruct = new Dictionary<string, Tipo>();
 
         public override void validarSemantica()
@@ -191,7 +191,7 @@ namespace Project_Compiladores1.Arbol
             {
                 //InfSemantica.getInstance().tblFunciones.Add(nombre, new Struct()); AGREGAR LUEGO
             }
-            Declaracion tmp = c;
+            Declaracion tmp = campos;
             while (tmp != null)
             {
                // tblSimbolosStruct.Add(tmp.Var.id, tmp.Tip);
@@ -324,7 +324,7 @@ namespace Project_Compiladores1.Arbol
     class Declaracion : Sentencia
     {
         public Tipo Tip;
-        public Variable Var = new Variable();
+        public Variable Var;
         public Declaracion Sig;
         public Expresiones Valor;
 
