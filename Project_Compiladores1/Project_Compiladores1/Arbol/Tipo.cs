@@ -92,7 +92,8 @@ namespace Project_Compiladores1.Arbol
 
     class Arreglo : Tipo
     {
-        private ArrayList dimensiones; //Debe Ser Entero
+        private int dimensiones; //Debe Ser Entero
+        private ArrayList rangos;
         private Tipo contenido;
 
         public Tipo Contenido
@@ -101,10 +102,16 @@ namespace Project_Compiladores1.Arbol
             set { contenido = value; }
         }
 
-        public ArrayList Dimensiones
+        public int Dimensiones
         {
             get { return dimensiones; }
             set { dimensiones = value; }
+        }
+
+        public ArrayList Rangos
+        {
+            get { return rangos; }
+            set { rangos = value; }
         }
 
 

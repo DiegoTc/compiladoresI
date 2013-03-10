@@ -21,7 +21,7 @@ namespace Project_Compiladores1.Semantico
             tblTipos.Add("FLOTANTE", new Flotante());
             tblTipos.Add("CADENA", new Cadena());
             tblTipos.Add("BOOLEANO", new Booleano());
-            tblTipos.Add("CARACTER", new Caracter());            
+            tblTipos.Add("CARACTER", new Caracter());
         }
 
         public static InfSemantica getInstance()

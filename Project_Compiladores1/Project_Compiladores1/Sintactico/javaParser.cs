@@ -471,8 +471,11 @@ namespace Project_Compiladores1.Sintactico
                     int dim = arrayDimensions(1);
                     if (currentToken.Tipo == TipoToken.TK_ID)
                     {
-
-                        C.Var.Dimension = dim;
+                        Arreglo ArrTip = new Arreglo();
+                        ArrTip.Contenido = C.Tip;
+                        ArrTip.Dimensiones = dim;
+                        C.Tip = ArrTip;
+                        
                         C.Var.id = currentToken.Lexema;
                         currentToken = lex.NextToken();
                         if (currentToken.Tipo == TipoToken.TK_FINSENTENCIA)
@@ -500,8 +503,7 @@ namespace Project_Compiladores1.Sintactico
             {
                 throw new Exception("Error Sintactico - Se esperaba un identificador o simbolo [");
             }
-        }
-
+        }       
 
 
         public void VARTYPE()
