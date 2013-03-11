@@ -1,17 +1,33 @@
 ﻿<%@ Page Title="Home Page" Language="C#" MasterPageFile="~/Site.master" AutoEventWireup="true"
     CodeBehind="Default.aspx.cs" Inherits="WebUI._Default" %>
 
-<asp:Content ID="HeaderContent" runat="server" ContentPlaceHolderID="HeadContent">
+<asp:Content ID="Content1" ContentPlaceHolderID="Encabezado" runat="server">
 </asp:Content>
-<asp:Content ID="BodyContent" runat="server" ContentPlaceHolderID="MainContent">
-    <h2>
-        Welcome to ASP.NET!
-    </h2>
-    <p>
-        To learn more about ASP.NET visit <a href="http://www.asp.net" title="ASP.NET Website">www.asp.net</a>.
-    </p>
-    <p>
-        You can also find <a href="http://go.microsoft.com/fwlink/?LinkID=152368&amp;clcid=0x409"
-            title="MSDN ASP.NET Docs">documentation on ASP.NET at MSDN</a>.
-    </p>
+<asp:Content ID="Content2" ContentPlaceHolderID="Contenido" runat="server">
+    <div class="container">
+        <legend>Multi-Interpretador</legend>
+
+        <div class="row-fluid" >
+            Seleccione un Lenguaje :
+
+            <select id="cbLenguaje" class="span2">
+                <option value="Java" selected="selected">Java</option>
+                <option value="Pascal" >Pascal</option>
+                <option value="C">C</option>
+            </select>
+        </div>
+
+        <div class="row-fluid">
+            <textarea id="txtContenido" placeholder="Ingrese una sentencia aqui!" class="span12" rows="10"></textarea>
+        </div>
+        
+        <div class="row-fluid">
+            <asp:Button ID="btnCompilar" CssClass="btn btn-primary btn-large" runat="server" Text="Compilar Sentencia" />
+
+        </div>
+        <br/>
+        <div class="row-fluid">
+            <textarea id="txtResultado" placeholder="El Resultado se muestra aqui!" class="span12" rows="10"></textarea>
+        </div>
+    </div>
 </asp:Content>

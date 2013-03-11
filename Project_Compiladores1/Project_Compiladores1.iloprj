@@ -13,6 +13,16 @@
       </ObfuscationOptions>
       <Name>Project_Compiladores1\bin\Debug\Project_Compiladores1.exe</Name>
     </NineRays.ILOMD.Options.AssemblyFileName>
+    <NineRays.ILOMD.Options.AssemblyFileName>
+      <Flags>VSProject</Flags>
+      <ObfuscationOptions>
+        <NineRays.ILOMD.Options.Options>
+          <SoftwareWatermark>
+          </SoftwareWatermark>
+        </NineRays.ILOMD.Options.Options>
+      </ObfuscationOptions>
+      <Name>WebUI\bin\WebUI.dll</Name>
+    </NineRays.ILOMD.Options.AssemblyFileName>
   </AssemblyList>
   <SaveToDirectory>.\Spices_output</SaveToDirectory>
 </NineRays.ILOMD.Options.Project>
