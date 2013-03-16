@@ -125,7 +125,7 @@ namespace Project_Compiladores1.Lexico
         }
 
 
-        public char nextSymbol()
+        char nextSymbol()
         {
             if (CurrentSymbol >= Contenido.Length)
                 return (char)0;
