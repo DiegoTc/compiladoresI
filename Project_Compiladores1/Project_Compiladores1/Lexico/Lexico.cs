@@ -83,6 +83,7 @@ namespace Project_Compiladores1.Lexico
         TK_CONTINUE,
         TK_EXIT,
         TK_RECORD,
+        TK_DOWNTO,
         TK_PRIVATE,
         TK_NEW
     }
