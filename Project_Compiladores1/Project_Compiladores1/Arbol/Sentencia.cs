@@ -395,9 +395,8 @@ namespace Project_Compiladores1.Arbol
     class S_LlamadaFunc : Sentencia
     {
         public Variable Var; // = new Variable();
-
-        //public Variable VarClase = new Variable();
-        //public Expresiones VarList;
+        public ListaExpre Variables;
+        
 
         public override void validarSemantica()
         {

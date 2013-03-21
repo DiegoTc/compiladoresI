@@ -377,6 +377,23 @@ namespace Project_Compiladores1.Sintactico
                         throw new Exception("Error Sintactico - Se esperaba fin sentencia");
                     return Decl;
                 }
+                else if(currentToken.Tipo == TipoToken.TK_OPENPAR)
+                {
+                    currentToken = lex.NextToken();
+                    S_LlamadaFunc sLlamadaFunc = new S_LlamadaFunc();
+                    sLlamadaFunc.Var = var;
+                    if (currentToken.Tipo == TipoToken.TK_CLOSEPAR)
+                    {
+                        return sLlamadaFunc;
+                    }
+                    else
+                    {
+                        //VERIFICAR VIENE UN LITERAL O VARIABLE Y AGREGARLO LUEGO LLAMAR EXPRLIST PARA QUE AGREGUE LO DEMAS Y VERIFICAR CLOSEPAR
+                        sLlamadaFunc.Variables = new ListaExpre();
+                        sLlamadaFunc.Variables.Ex.Add(Expr());
+                        //ExprList(listaExpre);
+                    }
+                }
                 else
                 {
                     if (currentToken.Tipo != TipoToken.TK_FINSENTENCIA)
@@ -486,7 +503,7 @@ namespace Project_Compiladores1.Sintactico
                 {
                     Decl.Var.id = currentToken.Lexema;
                     currentToken = lex.NextToken();
-                    Decl = DeclOption(Decl);
+                    Decl = DeclOption(Decl); /////PORQUE NO DEVUELVO NADA ACA??????????????????????????????
                 }
                 else
                 {
