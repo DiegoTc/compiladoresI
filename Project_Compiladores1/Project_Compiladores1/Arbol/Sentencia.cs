@@ -324,7 +324,7 @@ namespace Project_Compiladores1.Arbol
     class Declaracion : Sentencia
     {
         public Tipo Tip;
-        public Variable Var;
+        public Variable Var = new Variable("", null);
         public Declaracion Sig;
         public Expresiones Valor;
 

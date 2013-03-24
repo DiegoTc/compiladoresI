@@ -384,14 +384,43 @@ namespace Project_Compiladores1.Sintactico
                     sLlamadaFunc.Var = var;
                     if (currentToken.Tipo == TipoToken.TK_CLOSEPAR)
                     {
+                        currentToken = lex.NextToken();
                         return sLlamadaFunc;
                     }
                     else
                     {
                         //VERIFICAR VIENE UN LITERAL O VARIABLE Y AGREGARLO LUEGO LLAMAR EXPRLIST PARA QUE AGREGUE LO DEMAS Y VERIFICAR CLOSEPAR
-                        sLlamadaFunc.Variables = new ListaExpre();
-                        sLlamadaFunc.Variables.Ex.Add(Expr());
-                        //ExprList(listaExpre);
+                        if (currentToken.Tipo == TipoToken.TK_ID || currentToken.Tipo == TipoToken.TK_INT_LIT || currentToken.Tipo == TipoToken.TK_FLOAT_LIT || currentToken.Tipo == TipoToken.TK_STRING_LIT || currentToken.Tipo == TipoToken.TK_CHAR_LIT)
+                        {                            
+                            ListaExpre listaExpre  = new ListaExpre();
+                            listaExpre.Ex.Add(Expr());
+                            if (currentToken.Tipo == TipoToken.TK_COMA)
+                            {
+                                sLlamadaFunc.Variables = ExprList(listaExpre);
+                                if (currentToken.Tipo == TipoToken.TK_CLOSEPAR)
+                                {
+                                    currentToken = lex.NextToken();
+                                    return sLlamadaFunc;
+                                }
+                                else
+                                {
+                                    throw new Exception("Error Sintatico - Se esperaba simbolo )");
+                                }
+                            }
+                            else
+                            {
+                                sLlamadaFunc.Variables = listaExpre;
+                                if (currentToken.Tipo == TipoToken.TK_CLOSEPAR)
+                                {
+                                    currentToken = lex.NextToken();
+                                    return sLlamadaFunc;
+                                }
+                                else
+                                {
+                                    throw new Exception("Error Sintatico - Se esperaba simbolo )");
+                                }
+                            }
+                        }                        
                     }
                 }
                 else
@@ -504,6 +533,15 @@ namespace Project_Compiladores1.Sintactico
                     Decl.Var.id = currentToken.Lexema;
                     currentToken = lex.NextToken();
                     Decl = DeclOption(Decl); /////PORQUE NO DEVUELVO NADA ACA??????????????????????????????
+                    if (currentToken.Tipo != TipoToken.TK_FINSENTENCIA)
+                    {
+                        currentToken = lex.NextToken();
+                        return Decl;
+                    }
+                    else
+                    {
+                        throw new Exception("Error Sintactico - Se esperaba Fin Sentencia");
+                    }
                 }
                 else
                 {
@@ -548,6 +586,11 @@ namespace Project_Compiladores1.Sintactico
                         throw new Exception("Error Sintactico - Se esperaba simbolo }");
                     return sClass;
                 }
+                else if (currentToken.Tipo == TipoToken.TK_FINSENTENCIA)
+                {
+                    currentToken = lex.NextToken();
+                    return Decl;
+                }
             }
             return null;
         }
@@ -568,7 +611,7 @@ namespace Project_Compiladores1.Sintactico
                 }
 
             }
-            else if (currentToken.Tipo != TipoToken.TK_FINSENTENCIA)
+            else if (currentToken.Tipo == TipoToken.TK_FINSENTENCIA)
             {
                 currentToken = lex.NextToken();
             }
@@ -965,8 +1008,7 @@ namespace Project_Compiladores1.Sintactico
                 return List;
             }
             return List;
-        }
-       
+        }       
 
         public ListaExpre ExprList(Expresiones E)
         {

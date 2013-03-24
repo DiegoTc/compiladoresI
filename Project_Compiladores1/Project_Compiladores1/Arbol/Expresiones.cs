@@ -129,6 +129,7 @@ namespace Project_Compiladores1.Arbol
             throw new Exception("Error Semantico - No se puede restar " + left + " con " + right);
         }
     }
+
     class Multiplicacion : OperacionBinaria
     {
         public Multiplicacion(Expresiones izq, Expresiones der)
@@ -146,6 +147,7 @@ namespace Project_Compiladores1.Arbol
             throw new Exception("Error Semantico - No se puede multiplicar " + left + " con " + right);
         }
     }
+
     class Division : OperacionBinaria
     {
         public Division(Expresiones izq, Expresiones der)
