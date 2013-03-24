@@ -102,7 +102,7 @@ namespace Project_Compiladores1.Sintactico
                 S_Print sprint = new S_Print();
                 sprint.Expr = Expression();
 
-                this.currentToken = lex.NextToken();
+                //this.currentToken = lex.NextToken();
                 if (currentToken.Tipo != Lexico.TipoToken.TK_CLOSEPAR)
                     throw new Exception("Se esperaba un )");
                 this.currentToken = lex.NextToken();
@@ -494,6 +494,7 @@ namespace Project_Compiladores1.Sintactico
                 S_Functions declFuncion = new S_Functions();
                 declFuncion.Retorno = decl.Tip;
                 declFuncion.Var = decl.Var.id;
+                declFuncion.S = CompoundStatement();
                 if (listaParams != null)
                     declFuncion.Campo = listaParams;
                 return declFuncion;
@@ -511,7 +512,7 @@ namespace Project_Compiladores1.Sintactico
                 return s;
             }
             #endregion
-            return null;
+            return decl;
 
         }
 
@@ -678,8 +679,8 @@ namespace Project_Compiladores1.Sintactico
                     throw new Exception("Se esperaba ;");
                 currentToken = lex.NextToken();
             }
-            else
-                throw new Exception("Se esperaba ;");
+            //else
+                //throw new Exception("Se esperaba ;");
             return De;
 
         }
