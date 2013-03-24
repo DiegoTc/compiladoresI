@@ -102,6 +102,7 @@ namespace Project_Compiladores1.Sintactico
                 S_Print sprint = new S_Print();
                 sprint.Expr = Expression();
 
+                this.currentToken = lex.NextToken();
                 if (currentToken.Tipo != Lexico.TipoToken.TK_CLOSEPAR)
                     throw new Exception("Se esperaba un )");
                 this.currentToken = lex.NextToken();
@@ -305,7 +306,11 @@ namespace Project_Compiladores1.Sintactico
             else if (this.currentToken.Tipo == Lexico.TipoToken.TK_ID)
             {
                 #region
-                return SentenciaAssign_LlamaFun();
+                Sentencia s=SentenciaAssign_LlamaFun();
+                if (currentToken.Tipo != Lexico.TipoToken.TK_FINSENTENCIA)
+                    throw new Exception("Se esperaba un token ;" );
+                this.currentToken = lex.NextToken();
+                return s;
                 #endregion
             }
             return null;
