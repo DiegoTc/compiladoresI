@@ -163,7 +163,7 @@ namespace Project_Compiladores1.Sintactico
                 case TipoToken.TK_TYPE:
                 {
                     currentToken = lex.NextToken();
-                    //TODO: Pensar que hacer acá
+                    //TODO: Pensar que hacer acá para crear los structs y los usertype
                 }
 
                 #region break/continue/return
@@ -402,10 +402,19 @@ namespace Project_Compiladores1.Sintactico
                     {
                         currentToken = lex.NextToken();
                         S_LlamadaFunc ret = new S_LlamadaFunc();
-                        ret.Var.id = tmp;
-                        //TODO: ver que pedo con los parametros
-                        //QUE PEDO CON LOS PARAMETROS??? ffffffffffffffuuuuuuuuuuuuuuuuuuuuuuuuu!!!!!!!!!!!!!!!!!!!
+                        ret.Var = new Variable(tmp, null);
+                        ret.Variables = new ListaExpre();
+                        ret.Variables.Ex = ExprList();
+                        if (currentToken.Tipo != TipoToken.TK_CLOSEPAR)
+                            throw new Exception("Se esperaba ).");
+                        else
+                        {
+                            currentToken = lex.NextToken();
+                            return ret;
+                        }
                     }
+                default:
+                    throw new Exception("Sentencia no reconocida.");
             }
         }
 
@@ -462,7 +471,8 @@ namespace Project_Compiladores1.Sintactico
                 case TipoToken.TK_OPENCOR:
                     {
                         currentToken = lex.NextToken();
-                        AccessArreglo ret = new AccessArreglo(ExprList());
+                        AccessArreglo ret = new AccessArreglo();
+                        ret.Cont = ExprList();
                         if (currentToken.Tipo != TipoToken.TK_CLOSECOR)
                             throw new Exception("Se esperaba ].");
                         else
@@ -662,7 +672,7 @@ namespace Project_Compiladores1.Sintactico
                 if (currentToken.Tipo == TipoToken.TK_OPENPAR)
                 {
                     ExprFuncion ret = new ExprFuncion();
-                    //TODO: armar la llamada a funcion
+                    //TODO: armar la llamada a funcion, arreglar la clase ExprFuncion
                 }
             }
             else return LIT();

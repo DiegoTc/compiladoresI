@@ -125,12 +125,7 @@ namespace Project_Compiladores1.Lexico
             Operadores = new Dictionary<string, TipoToken>();           
         }
 
-
-<<<<<<< HEAD
-        char nextSymbol()
-=======
         protected char nextSymbol()
->>>>>>> origin/master
         {
             if (CurrentSymbol >= Contenido.Length)
                 return (char)0;
