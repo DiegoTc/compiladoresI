@@ -155,6 +155,16 @@ namespace Project_Compiladores1.Arbol
         }
     }
 
+    class UserType : Tipo
+    {
+        public string Nombre;
+        public Tipo Tip;
+
+        public override bool esEquivalente(Tipo t)
+        {
+            return t is UserType;
+        }
+    }
 
 
 }

@@ -593,13 +593,7 @@ namespace Project_Compiladores1.Sintactico
                     S_Class sClass = new S_Class();
                     sClass.Var.id = Decl.Var.id;
 
-
-
-
                     sClass.CamposClase = ListaDeclaracion(sClass.CamposClase);
-
-
-
 
                     if (currentToken.Tipo != TipoToken.TK_CLOSELLAVE)
                         throw new Exception("Error Sintactico - Se esperaba simbolo }");
@@ -611,6 +605,8 @@ namespace Project_Compiladores1.Sintactico
                     currentToken = lex.NextToken();
                     return Decl;
                 }
+                else
+                    throw new Exception("Error Sintactico - Se esperaba simbolo ;");
             }
             return Decl;
         }
@@ -659,7 +655,28 @@ namespace Project_Compiladores1.Sintactico
             {
                 Declaracion C = new Declaracion();
                 C.Tip = Type();
-                if (currentToken.Tipo == TipoToken.TK_ID)
+                if (currentToken.Tipo == TipoToken.TK_OPENCOR) //ARREGLO
+                {
+                    int dim = arrayDimensions(1);
+                    Arreglo ArrTip = new Arreglo();
+                    ArrTip.Contenido = C.Tip;
+                    ArrTip.Dimensiones = dim;
+                    C.Tip = ArrTip;
+                    if (currentToken.Tipo == TipoToken.TK_ID)
+                    {
+                        C.Var.id = currentToken.Lexema;
+                        currentToken = lex.NextToken();
+                        //C = DeclOption(C); /////PORQUE NO DEVUELVO NADA ACA??????????????????????????????                        
+                        C.Sig = ParameterListP();
+                        
+                        return C;
+                    }
+                    else
+                    {
+                        throw new Exception("Error Sintactico - Se esperaba un ID");
+                    }
+                }
+                else if (currentToken.Tipo == TipoToken.TK_ID)
                 {
                     C.Var.id = currentToken.Lexema;
                     currentToken = lex.NextToken();
