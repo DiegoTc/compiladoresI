@@ -903,7 +903,7 @@ namespace Project_Compiladores1.Sintactico
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_OPENCOR)
             {
-                AccessArreglo accAr = new AccessArreglo(null);
+                AccessArreglo accAr = new AccessArreglo();
                 accAr.Cont = ArrayDim(accAr.Cont);
                 List = accAr;
                 List.Next = Accesories(List.Next);

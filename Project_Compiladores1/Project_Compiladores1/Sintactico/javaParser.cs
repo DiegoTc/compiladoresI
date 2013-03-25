@@ -337,7 +337,7 @@ namespace Project_Compiladores1.Sintactico
             {
                 Variable var = new Variable(currentToken.Lexema, null);
                 currentToken = lex.NextToken();
-                if (currentToken.Tipo == TipoToken.TK_PUNTO)
+                if (currentToken.Tipo == TipoToken.TK_PUNTO || currentToken.Tipo == TipoToken.TK_OPENCOR)
                 {                    
                     Accesories(var.accesor);
                 }
@@ -543,6 +543,11 @@ namespace Project_Compiladores1.Sintactico
                 {
                     Decl.Var.id = currentToken.Lexema;
                     currentToken = lex.NextToken();
+                    if (currentToken.Tipo == TipoToken.TK_FINSENTENCIA)
+                    {
+                        currentToken = lex.NextToken();
+                        return Decl;
+                    }
                     Decl = DeclOption(Decl); /////PORQUE NO DEVUELVO NADA ACA??????????????????????????????
                     if (currentToken.Tipo != TipoToken.TK_FINSENTENCIA)
                     {
@@ -1021,7 +1026,9 @@ namespace Project_Compiladores1.Sintactico
                 V.ID = new Variable(currentToken.Lexema, null);
                 currentToken = lex.NextToken();
                 V.ID.accesor = Accesories(V.ID.accesor);
-                if (V.ID.accesor != null)
+                Access tmp = ((Access)V.ID.accesor);
+                tmp = tmp.Last();
+                if (V.ID.accesor != null && tmp is AccessFunc)
                     return V;
                 else
                     return V.ID;
@@ -1044,7 +1051,7 @@ namespace Project_Compiladores1.Sintactico
             }
             else if (currentToken.Tipo == TipoToken.TK_OPENCOR)
             {
-                AccessArreglo accAr = new AccessArreglo(null);
+                AccessArreglo accAr = new AccessArreglo();                
                 accAr.Cont = ArrayDim(accAr.Cont);
                 List = accAr;
                 List.Next = Accesories(List.Next);

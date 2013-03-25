@@ -572,7 +572,6 @@ namespace Project_Compiladores1.Arbol
         }
     }
 
-
     class AccessFunc : Access
     {
         public ListaExpre Variables;
@@ -603,12 +602,9 @@ namespace Project_Compiladores1.Arbol
 
     class AccessArreglo : Access
     {
-        private ArrayList cont;//=new ArrayList<>();
+        private ArrayList cont =new ArrayList();
 
-        public AccessArreglo(ArrayList conte)
-        {
-            cont = conte;
-        }
+       
 
         public void addexp(Expresiones par)
         {
