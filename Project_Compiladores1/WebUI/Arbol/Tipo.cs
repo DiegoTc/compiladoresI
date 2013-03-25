@@ -96,7 +96,7 @@ namespace WebUI.Arbol
     class Arreglo : Tipo
     {
         private int dimensiones; //Debe Ser Entero
-        private ArrayList rangos;
+        private ArrayList rangos = new ArrayList();
         private Tipo contenido;
 
         public Tipo Contenido
@@ -152,6 +152,17 @@ namespace WebUI.Arbol
                 this.Add(Ids[i].ToString(), t);
 
             }
+        }
+    }
+
+    class UserType : Tipo
+    {
+        public string Nombre;
+        public Tipo Tip;
+
+        public override bool esEquivalente(Tipo t)
+        {
+            return t is UserType;
         }
     }
 

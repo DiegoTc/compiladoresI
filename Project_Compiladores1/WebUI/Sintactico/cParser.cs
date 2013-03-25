@@ -102,6 +102,7 @@ namespace WebUI.Sintactico
                 S_Print sprint = new S_Print();
                 sprint.Expr = Expression();
 
+                //this.currentToken = lex.NextToken();
                 if (currentToken.Tipo != Lexico.TipoToken.TK_CLOSEPAR)
                     throw new Exception("Se esperaba un )");
                 this.currentToken = lex.NextToken();
@@ -305,7 +306,11 @@ namespace WebUI.Sintactico
             else if (this.currentToken.Tipo == Lexico.TipoToken.TK_ID)
             {
                 #region
-                return SentenciaAssign_LlamaFun();
+                Sentencia s = SentenciaAssign_LlamaFun();
+                if (currentToken.Tipo != Lexico.TipoToken.TK_FINSENTENCIA)
+                    throw new Exception("Se esperaba un token ;");
+                this.currentToken = lex.NextToken();
+                return s;
                 #endregion
             }
             return null;
@@ -489,6 +494,7 @@ namespace WebUI.Sintactico
                 S_Functions declFuncion = new S_Functions();
                 declFuncion.Retorno = decl.Tip;
                 declFuncion.Var = decl.Var.id;
+                declFuncion.S = CompoundStatement();
                 if (listaParams != null)
                     declFuncion.Campo = listaParams;
                 return declFuncion;
@@ -500,13 +506,28 @@ namespace WebUI.Sintactico
             {
                 currentToken = lex.NextToken();
                 Declaracion strDec = StructDeclaration();
+                Declaracion tmp = StructDeclaration();
+                while (tmp != null)
+                {
+                    strDec.Sig = tmp;
+                    tmp = StructDeclaration();
+                }
+
                 Structs s = new Structs();
                 s.nombre = decl.Var.id;
                 s.campos = strDec;
+                if (currentToken.Tipo != Lexico.TipoToken.TK_CLOSELLAVE)
+                    throw new Exception("Error sintactico se esperaba }");
+                currentToken = lex.NextToken();
+
+                if (currentToken.Tipo != Lexico.TipoToken.TK_FINSENTENCIA)
+                    throw new Exception("Error sintactico se esperaba ;");
+                currentToken = lex.NextToken();
+
                 return s;
             }
             #endregion
-            return null;
+            return decl;
 
         }
 
@@ -673,8 +694,8 @@ namespace WebUI.Sintactico
                     throw new Exception("Se esperaba ;");
                 currentToken = lex.NextToken();
             }
-            else
-                throw new Exception("Se esperaba ;");
+            //else
+            //throw new Exception("Se esperaba ;");
             return De;
 
         }
@@ -870,8 +891,12 @@ namespace WebUI.Sintactico
             {
                 ExprFuncion V = new ExprFuncion();
                 V.ID = new Variable(currentToken.Lexema, null);
-                Accesories(V.ID.accesor);
-                return V;
+                currentToken = lex.NextToken();
+                V.ID.accesor = Accesories(V.ID.accesor);
+                if (V.ID.accesor != null)
+                    return V;
+                else
+                    return V.ID;
 
             }
 
@@ -893,19 +918,23 @@ namespace WebUI.Sintactico
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_OPENCOR)
             {
-                AccessArreglo accAr = new AccessArreglo(null);
+                AccessArreglo accAr = new AccessArreglo();
                 accAr.Cont = ArrayDim(accAr.Cont);
                 List = accAr;
                 List.Next = Accesories(List.Next);
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_OPENPAR)
             {
+                currentToken = lex.NextToken();
                 AccessFunc accFun = new AccessFunc();
                 ListaExpre listaExpre = new ListaExpre();
                 listaExpre.Ex.Add(Expression());
                 if (listaExpre.Ex.Count > 0)
                     accFun.Variables = ExpreList(listaExpre);
                 List = accFun;
+                if (currentToken.Tipo != Lexico.TipoToken.TK_CLOSEPAR)
+                    throw new Exception("Error Sintactico -- Se esperaba simbolo )");
+                currentToken = lex.NextToken();
                 return List;
             }
             return List;
@@ -948,4 +977,5 @@ namespace WebUI.Sintactico
 
 
     }
+
 }

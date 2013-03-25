@@ -125,7 +125,7 @@ namespace WebUI.Lexico
         }
 
 
-        public char nextSymbol()
+        protected char nextSymbol()
         {
             if (CurrentSymbol >= Contenido.Length)
                 return (char)0;

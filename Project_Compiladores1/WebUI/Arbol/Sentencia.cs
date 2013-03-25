@@ -324,7 +324,7 @@ namespace WebUI.Arbol
     class Declaracion : Sentencia
     {
         public Tipo Tip;
-        public Variable Var;
+        public Variable Var = new Variable("", null);
         public Declaracion Sig;
         public Expresiones Valor;
 
@@ -395,9 +395,8 @@ namespace WebUI.Arbol
     class S_LlamadaFunc : Sentencia
     {
         public Variable Var; // = new Variable();
+        public ListaExpre Variables;
 
-        //public Variable VarClase = new Variable();
-        //public Expresiones VarList;
 
         public override void validarSemantica()
         {
@@ -416,7 +415,7 @@ namespace WebUI.Arbol
 
     class S_Class : Sentencia
     {
-        public Variable Var;// = new Variable();
+        public Variable Var = new Variable("", null);
         public Sentencia CamposClase;
         public Dictionary<string, Tipo> tblSimbolosClass = new Dictionary<string, Tipo>();
 

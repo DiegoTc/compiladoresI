@@ -129,6 +129,7 @@ namespace WebUI.Arbol
             throw new Exception("Error Semantico - No se puede restar " + left + " con " + right);
         }
     }
+
     class Multiplicacion : OperacionBinaria
     {
         public Multiplicacion(Expresiones izq, Expresiones der)
@@ -146,6 +147,7 @@ namespace WebUI.Arbol
             throw new Exception("Error Semantico - No se puede multiplicar " + left + " con " + right);
         }
     }
+
     class Division : OperacionBinaria
     {
         public Division(Expresiones izq, Expresiones der)
@@ -571,7 +573,6 @@ namespace WebUI.Arbol
         }
     }
 
-
     class AccessFunc : Access
     {
         public ListaExpre Variables;
@@ -602,12 +603,9 @@ namespace WebUI.Arbol
 
     class AccessArreglo : Access
     {
-        private ArrayList cont;//=new ArrayList<>();
+        private ArrayList cont = new ArrayList();
 
-        public AccessArreglo(ArrayList conte)
-        {
-            cont = conte;
-        }
+
 
         public void addexp(Expresiones par)
         {

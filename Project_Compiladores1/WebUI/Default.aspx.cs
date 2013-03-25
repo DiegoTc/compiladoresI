@@ -24,7 +24,7 @@ namespace WebUI
             //Evaluo si el textbox no esta vacio
             if (!string.IsNullOrEmpty(txtContenido.Value))
             {
-                
+                EvaluarSentencia();
             }
             else
             {
@@ -38,14 +38,19 @@ namespace WebUI
             {
                 case "Java":
 
+                    //Declaro la variable de sesion para el capturar el mensaje del analisis sintactico
+                    Session["MsjJava"] = string.Empty;
+
                     var lj = new LexicoJava(txtContenido.Value);
                     var jp = new javaParser(lj);
-
+                    
                     var raiz = jp.parse();
                     raiz.SentValSemantica();
 
-                    break;
+                    txtResultado.Value = Session["MsjJava"].ToString();
 
+                    break;
+                                                                                                                                                                                                                                                                                                                                                                                                                                          
                 case "C":
 
                     var lc = new LexicoC(txtContenido.Value);
