@@ -3,10 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Project_Compiladores1.Arbol;
-using Project_Compiladores1.Lexico;
+using System.Web;
+using WebUI.Arbol;
+using WebUI.Lexico;
 
-namespace Project_Compiladores1.Sintactico
+namespace WebUI.Sintactico
 {
     class javaParser : Parser
     {
@@ -23,8 +24,12 @@ namespace Project_Compiladores1.Sintactico
         {
             Sentencia S = StatementList();
             if (currentToken.Tipo != TipoToken.TK_FINFLUJO)
+            {
                 throw new Exception("Se esperaba fin flujo ");
+            }
             
+            HttpContext.Current.Session["MsjJava"] = "Analisis Sintáctico Correcto!";
+
             Console.WriteLine("Evaluacion Sintactica Correcta");
             return S;
         }
@@ -50,7 +55,7 @@ namespace Project_Compiladores1.Sintactico
 
         public Sentencia Statement()
         {
-            if (currentToken.Tipo == TipoToken.TK_CHAR || currentToken.Tipo == TipoToken.TK_BOOL || currentToken.Tipo == TipoToken.TK_STRING || currentToken.Tipo == TipoToken.TK_FLOAT || 
+            if (currentToken.Tipo == TipoToken.TK_CHAR || currentToken.Tipo == TipoToken.TK_BOOL || currentToken.Tipo == TipoToken.TK_STRING || currentToken.Tipo == TipoToken.TK_FLOAT ||
                 currentToken.Tipo == TipoToken.TK_INT || currentToken.Tipo == TipoToken.TK_PRIVATE || currentToken.Tipo == TipoToken.TK_PUBLIC || currentToken.Tipo == TipoToken.TK_CLASS)
             {
                 return Declaraciones();
@@ -338,7 +343,7 @@ namespace Project_Compiladores1.Sintactico
                 Variable var = new Variable(currentToken.Lexema, null);
                 currentToken = lex.NextToken();
                 if (currentToken.Tipo == TipoToken.TK_PUNTO || currentToken.Tipo == TipoToken.TK_OPENCOR)
-                {                    
+                {
                     Accesories(var.accesor);
                 }
                 if (currentToken.Tipo == TipoToken.TK_ASSIGN || currentToken.Tipo == TipoToken.TK_MASIGUAL || currentToken.Tipo == TipoToken.TK_MENOSIGUAL || currentToken.Tipo == TipoToken.TK_PORIGUAL || currentToken.Tipo == TipoToken.TK_ENTREIGUAL)
@@ -355,17 +360,20 @@ namespace Project_Compiladores1.Sintactico
                     else if (currentToken.Tipo == TipoToken.TK_ENTREIGUAL)
                         sAssig.Op = new EntreIgual();
                     currentToken = lex.NextToken();
-                    
+
                     sAssig.id = var;
                     sAssig.Valor = Expr();
                     if (currentToken.Tipo != TipoToken.TK_FINSENTENCIA)
+                    {
+                        HttpContext.Current.Session["MsjJava"] = "Error Sintactico - Se esperaba fin sentencia";
                         throw new Exception("Error Sintactico - Se esperaba fin sentencia");
+                    }
                     currentToken = lex.NextToken();
                     return sAssig;
                 }
                 else if (currentToken.Tipo == TipoToken.TK_ID)
                 {
-                    Declaracion Decl = new Declaracion();                    
+                    Declaracion Decl = new Declaracion();
                     Class TipClass = new Class();
                     TipClass.Nombre = var.id;
 
@@ -375,11 +383,14 @@ namespace Project_Compiladores1.Sintactico
                     Decl.Tip = TipClass;
                     currentToken = lex.NextToken();
                     if (currentToken.Tipo != TipoToken.TK_FINSENTENCIA)
+                    {
+                        HttpContext.Current.Session["MsjJava"] = "Error Sintactico - Se esperaba fin sentencia";
                         throw new Exception("Error Sintactico - Se esperaba fin sentencia");
+                    }
                     currentToken = lex.NextToken();
                     return Decl;
                 }
-                else if(currentToken.Tipo == TipoToken.TK_OPENPAR)
+                else if (currentToken.Tipo == TipoToken.TK_OPENPAR)
                 {
                     currentToken = lex.NextToken();
                     S_LlamadaFunc sLlamadaFunc = new S_LlamadaFunc();
@@ -388,7 +399,10 @@ namespace Project_Compiladores1.Sintactico
                     {
                         currentToken = lex.NextToken();
                         if (currentToken.Tipo != TipoToken.TK_FINSENTENCIA)
+                        {
+                            HttpContext.Current.Session["MsjJava"] = "Error Sintactico - Se esperaba fin sentencia";
                             throw new Exception("Error Sintactico - Se esperaba fin sentencia");
+                        }
                         currentToken = lex.NextToken();
                         return sLlamadaFunc;
                     }
@@ -396,8 +410,8 @@ namespace Project_Compiladores1.Sintactico
                     {
                         //VERIFICAR VIENE UN LITERAL O VARIABLE Y AGREGARLO LUEGO LLAMAR EXPRLIST PARA QUE AGREGUE LO DEMAS Y VERIFICAR CLOSEPAR
                         if (currentToken.Tipo == TipoToken.TK_ID || currentToken.Tipo == TipoToken.TK_INT_LIT || currentToken.Tipo == TipoToken.TK_FLOAT_LIT || currentToken.Tipo == TipoToken.TK_STRING_LIT || currentToken.Tipo == TipoToken.TK_CHAR_LIT)
-                        {                            
-                            ListaExpre listaExpre  = new ListaExpre();
+                        {
+                            ListaExpre listaExpre = new ListaExpre();
                             listaExpre.Ex.Add(Expr());
                             if (currentToken.Tipo == TipoToken.TK_COMA)
                             {
@@ -406,7 +420,10 @@ namespace Project_Compiladores1.Sintactico
                                 {
                                     currentToken = lex.NextToken();
                                     if (currentToken.Tipo != TipoToken.TK_FINSENTENCIA)
+                                    {
+                                        HttpContext.Current.Session["MsjJava"] = "Error Sintactico - Se esperaba fin sentencia";
                                         throw new Exception("Error Sintactico - Se esperaba fin sentencia");
+                                    }
                                     currentToken = lex.NextToken();
                                     return sLlamadaFunc;
                                 }
@@ -422,7 +439,10 @@ namespace Project_Compiladores1.Sintactico
                                 {
                                     currentToken = lex.NextToken();
                                     if (currentToken.Tipo != TipoToken.TK_FINSENTENCIA)
+                                    {
+                                        HttpContext.Current.Session["MsjJava"] = "Error Sintactico - Se esperaba fin sentencia";
                                         throw new Exception("Error Sintactico - Se esperaba fin sentencia");
+                                    }
                                     currentToken = lex.NextToken();
                                     return sLlamadaFunc;
                                 }
@@ -431,13 +451,16 @@ namespace Project_Compiladores1.Sintactico
                                     throw new Exception("Error Sintatico - Se esperaba simbolo )");
                                 }
                             }
-                        }                        
+                        }
                     }
                 }
                 else
                 {
                     if (currentToken.Tipo != TipoToken.TK_FINSENTENCIA)
+                    {
+                        HttpContext.Current.Session["MsjJava"] = "Error Sintactico - Se esperaba fin sentencia";
                         throw new Exception("Error Sintactico - Se esperaba fin sentencia");
+                    }
                     if (var.accesor.Last() is AccessFunc)
                     {
                         S_LlamadaFunc sLlamadaFunc = new S_LlamadaFunc();
@@ -556,6 +579,7 @@ namespace Project_Compiladores1.Sintactico
                     }
                     else
                     {
+                        HttpContext.Current.Session["MsjJava"] = "Error Sintactico - Se esperaba fin sentencia";
                         throw new Exception("Error Sintactico - Se esperaba Fin Sentencia");
                     }
                 }
@@ -611,7 +635,11 @@ namespace Project_Compiladores1.Sintactico
                     return Decl;
                 }
                 else
-                    throw new Exception("Error Sintactico - Se esperaba simbolo ;");
+                {
+                    HttpContext.Current.Session["MsjJava"] = "Error Sintáctico - Se esperaba simbolo ;";
+                    //throw new Exception("Error Sintactico - Se esperaba simbolo ;");
+                    return null;
+                }
             }
             return Decl;
         }
@@ -621,7 +649,7 @@ namespace Project_Compiladores1.Sintactico
             if (currentToken.Tipo == TipoToken.TK_CHAR || currentToken.Tipo == TipoToken.TK_BOOL || currentToken.Tipo == TipoToken.TK_STRING || currentToken.Tipo == TipoToken.TK_FLOAT ||
                 currentToken.Tipo == TipoToken.TK_INT || currentToken.Tipo == TipoToken.TK_PRIVATE || currentToken.Tipo == TipoToken.TK_PUBLIC || currentToken.Tipo == TipoToken.TK_CLASS || currentToken.Tipo == TipoToken.TK_VOID)
             {
-                Decls =  Declaraciones();
+                Decls = Declaraciones();
                 Decls.sig = ListaDeclaracion(Decls);
                 return Decls;
             }
@@ -640,6 +668,7 @@ namespace Project_Compiladores1.Sintactico
                 }
                 else
                 {
+                    HttpContext.Current.Session["MsjJava"] = "Error Sintactico - Se esperaba fin sentencia";
                     throw new Exception("Error Sintactico - Se esperaba Fin Sentencia");
                 }
 
@@ -650,6 +679,7 @@ namespace Project_Compiladores1.Sintactico
             }
             else
             {
+                HttpContext.Current.Session["MsjJava"] = "Error Sintactico - Se esperaba fin sentencia";
                 throw new Exception("Error Sintactico - Se esperaba Fin Sentencia");
             }
             return De;
@@ -674,7 +704,7 @@ namespace Project_Compiladores1.Sintactico
                         currentToken = lex.NextToken();
                         //C = DeclOption(C); /////PORQUE NO DEVUELVO NADA ACA??????????????????????????????                        
                         C.Sig = ParameterListP();
-                        
+
                         return C;
                     }
                     else
@@ -730,9 +760,8 @@ namespace Project_Compiladores1.Sintactico
             if (currentToken.Tipo == TipoToken.TK_COMA)
             {
                 currentToken = lex.NextToken();
-                if (currentToken.Tipo != TipoToken.TK_ID)
+                if (currentToken.Tipo == TipoToken.TK_ID)
                     throw new Exception("Error Sintactico - Se esperaba un Id");
-                De.Sig = new Declaracion();
                 De.Sig.Var.id = currentToken.Lexema;
                 De.Sig.Tip = De.Tip;
                 currentToken = lex.NextToken();
@@ -1022,28 +1051,18 @@ namespace Project_Compiladores1.Sintactico
                 currentToken = lex.NextToken();
                 return LB;
             }
-            else if (currentToken.Tipo == TipoToken.TK_ID)            
+            else if (currentToken.Tipo == TipoToken.TK_ID)
             {
                 ExprFuncion V = new ExprFuncion();
                 V.ID = new Variable(currentToken.Lexema, null);
                 currentToken = lex.NextToken();
-                if (currentToken.Tipo == TipoToken.TK_PUNTO || currentToken.Tipo == TipoToken.TK_ID || currentToken.Tipo == TipoToken.TK_OPENPAR || currentToken.Tipo == TipoToken.TK_OPENCOR)
-                {
-                    V.ID.accesor = Accesories(V.ID.accesor);
-                    Access tmp = ((Access) V.ID.accesor);
-                    if (tmp.Next != null)
-                    {
-                        tmp = tmp.Last();
-                    }
-                    if (V.ID.accesor != null && tmp is AccessFunc)
-                        return V;
-                    else
-                        return V.ID;
-                }
-                else
-                {
+                V.ID.accesor = Accesories(V.ID.accesor);
+                Access tmp = ((Access)V.ID.accesor);
+                tmp = tmp.Last();
+                if (V.ID.accesor != null && tmp is AccessFunc)
                     return V;
-                }
+                else
+                    return V.ID;
             }
             return null;
         }
@@ -1063,17 +1082,17 @@ namespace Project_Compiladores1.Sintactico
             }
             else if (currentToken.Tipo == TipoToken.TK_OPENCOR)
             {
-                AccessArreglo accAr = new AccessArreglo();                
+                AccessArreglo accAr = new AccessArreglo();
                 accAr.Cont = ArrayDim(accAr.Cont);
                 List = accAr;
                 List.Next = Accesories(List.Next);
             }
-            else if(currentToken.Tipo == TipoToken.TK_OPENPAR)
+            else if (currentToken.Tipo == TipoToken.TK_OPENPAR)
             {
                 currentToken = lex.NextToken();
                 AccessFunc accFun = new AccessFunc();
                 ListaExpre listaExpre = new ListaExpre();
-                listaExpre.Ex.Add(Expr());  
+                listaExpre.Ex.Add(Expr());
                 if (listaExpre.Ex.Count > 0)
                     accFun.Variables = ExprList(listaExpre);
                 List = accFun;
@@ -1083,7 +1102,7 @@ namespace Project_Compiladores1.Sintactico
                 return List;
             }
             return List;
-        }       
+        }
 
         public ListaExpre ExprList(Expresiones E)
         {
@@ -1101,7 +1120,7 @@ namespace Project_Compiladores1.Sintactico
         }
 
 
-        public ArrayList ArrayDim (ArrayList ListE)
+        public ArrayList ArrayDim(ArrayList ListE)
         {
             if (currentToken.Tipo == TipoToken.TK_OPENCOR)
             {

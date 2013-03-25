@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Project_Compiladores1.Lexico
+namespace WebUI.Lexico
 {
     public enum TipoToken
     {
@@ -83,7 +83,6 @@ namespace Project_Compiladores1.Lexico
         TK_CONTINUE,
         TK_EXIT,
         TK_RECORD,
-        TK_DOWNTO,
         TK_PRIVATE,
         TK_NEW
     }
@@ -122,15 +121,11 @@ namespace Project_Compiladores1.Lexico
             Col = 0;
             Fil = 0;
             PalabrasReservadas = new Dictionary<string, TipoToken>();
-            Operadores = new Dictionary<string, TipoToken>();           
+            Operadores = new Dictionary<string, TipoToken>();
         }
 
 
-<<<<<<< HEAD
-        char nextSymbol()
-=======
         protected char nextSymbol()
->>>>>>> origin/master
         {
             if (CurrentSymbol >= Contenido.Length)
                 return (char)0;
@@ -150,7 +145,7 @@ namespace Project_Compiladores1.Lexico
 
         public Token NextToken()
         {
-            int estado = 0;            
+            int estado = 0;
             string lexema = "";
             while (true)
             {
@@ -264,18 +259,20 @@ namespace Project_Compiladores1.Lexico
                             lexema += symbol;
                             symbol = nextSymbol();
                             return new Token(lexema, Operadores[lexema], Fil, Col);
-                        }else if (lexema == "|" && symbol == '|')
-                        {
-                            lexema += symbol;
-                            symbol = nextSymbol();
-                            return new Token(lexema, Operadores[lexema], Fil, Col);
-                        }else if (Operadores.ContainsKey(lexema.ToLower() + symbol.ToString().ToLower()))
+                        }
+                        else if (lexema == "|" && symbol == '|')
                         {
                             lexema += symbol;
                             symbol = nextSymbol();
                             return new Token(lexema, Operadores[lexema], Fil, Col);
                         }
-                        else if(lexema == "\"")
+                        else if (Operadores.ContainsKey(lexema.ToLower() + symbol.ToString().ToLower()))
+                        {
+                            lexema += symbol;
+                            symbol = nextSymbol();
+                            return new Token(lexema, Operadores[lexema], Fil, Col);
+                        }
+                        else if (lexema == "\"")
                         {
                             estado = 9;
                         }

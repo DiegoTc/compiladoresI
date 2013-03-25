@@ -1,7 +1,6 @@
 ﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.master.cs" Inherits="WebUI.SiteMaster" %>
 
 <!DOCTYPE html>
-
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head id="Head1" runat="server">
     <title>Hola Mundo</title>
@@ -10,17 +9,19 @@
     <link href="css/extras.css" rel="stylesheet" />
     <link href="css/bootstrap-responsive.css" rel="stylesheet" />
     <%-- Scripts --%>
-    <script type="text/javascript" src="js/jquery-1.9.0.min.js"></script>
+    <script type="text/javascript" src="js/jquery-1.9.0.js"></script>
     <script type="text/javascript" src="js/bootstrap.js"></script>
 </head>
 <body>
     <form id="form1" runat="server">
-        <asp:ContentPlaceHolder ID="Encabezado" runat="server">
+    <asp:ContentPlaceHolder ID="Encabezado" runat="server">
+    </asp:ContentPlaceHolder>
+    <div>
+        <asp:ScriptManager ID="ScriptManager1" runat="server">
+        </asp:ScriptManager>
+        <asp:ContentPlaceHolder ID="Contenido" runat="server">
         </asp:ContentPlaceHolder>
-        <div>
-            <asp:ContentPlaceHolder ID="Contenido" runat="server">
-            </asp:ContentPlaceHolder>
-        </div>
+    </div>
     </form>
 </body>
 </html>

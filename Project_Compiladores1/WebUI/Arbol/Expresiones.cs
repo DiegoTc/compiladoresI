@@ -3,9 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Project_Compiladores1.Semantico;
+using WebUI.Semantico;
 
-namespace Project_Compiladores1.Arbol
+namespace WebUI.Arbol
 {
     public abstract class Expresiones
     {
@@ -22,11 +22,11 @@ namespace Project_Compiladores1.Arbol
 
         public override Tipo validarSemantica()
         {
-            return InfSemantica.getInstance().tblTipos["ENTERO"];            
+            return InfSemantica.getInstance().tblTipos["ENTERO"];
         }
     }
 
-    class  LiteralFlotante : Expresiones
+    class LiteralFlotante : Expresiones
     {
         public float Valor { get; set; }
         public LiteralFlotante(float valor)
@@ -313,10 +313,10 @@ namespace Project_Compiladores1.Arbol
             if (left is Flotante && right is Flotante)
             {
                 return new Booleano();
-            }            
+            }
 
             throw new Exception("Error Semantico - Comparacion Invalida");
-            
+
         }
     }
 
@@ -436,16 +436,17 @@ namespace Project_Compiladores1.Arbol
                 {
                     #region Si es Registro
 
-                    AccessMiembro am = ((AccessMiembro) tmp);
+                    AccessMiembro am = ((AccessMiembro)tmp);
                     if (!(t is Struct))
                         throw new Exception(id + " no es un registro");
-                    Struct reg = ((Struct) t);
+                    Struct reg = ((Struct)t);
                     t = reg.Campos[am.Id];
                     if (t == null)
                         throw new Exception("miembro " + am.Id + " no existe!");
 
                     #endregion
-                }else if(tmp is AccessArreglo)
+                }
+                else if (tmp is AccessArreglo)
                 {
                     #region Si es Arreglo
                     #endregion
@@ -460,7 +461,7 @@ namespace Project_Compiladores1.Arbol
         }
     }
 
-    class ListaExpre: Expresiones
+    class ListaExpre : Expresiones
     {
         public ArrayList Ex = new ArrayList();
 
@@ -602,9 +603,9 @@ namespace Project_Compiladores1.Arbol
 
     class AccessArreglo : Access
     {
-        private ArrayList cont =new ArrayList();
+        private ArrayList cont = new ArrayList();
 
-       
+
 
         public void addexp(Expresiones par)
         {
@@ -624,6 +625,4 @@ namespace Project_Compiladores1.Arbol
             return null;
         }
     }
-
-
 }

@@ -3,11 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Project_Compiladores1.Semantico;
+using WebUI.Semantico;
 
-namespace Project_Compiladores1.Arbol
+
+namespace WebUI.Arbol
 {
-
     public abstract class Sentencia
     {
         public Sentencia sig;
@@ -46,7 +46,7 @@ namespace Project_Compiladores1.Arbol
     class S_Asignacion : Sentencia
     {
         public Operadores Op;
-        public Variable id = new Variable("", null);
+        public Variable id;// = new Variable();
         public Expresiones Valor;
         public Declaracion campos; //Para las asignaciones de arreglos.
 
@@ -122,7 +122,7 @@ namespace Project_Compiladores1.Arbol
     class S_For : Sentencia
     {
         public Tipo Tip;
-        public Variable Var = new Variable("", null);
+        public Variable Var;
         public Expresiones Inicio;
         public Expresiones Condicion;
         public Expresiones Iteracion;
@@ -194,9 +194,9 @@ namespace Project_Compiladores1.Arbol
             Declaracion tmp = campos;
             while (tmp != null)
             {
-               // tblSimbolosStruct.Add(tmp.Var.id, tmp.Tip);
+                // tblSimbolosStruct.Add(tmp.Var.id, tmp.Tip);
                 tmp = tmp.Sig;
-            }            
+            }
             //c.validarSemantica();
         }
 
@@ -276,7 +276,7 @@ namespace Project_Compiladores1.Arbol
             if (InfSemantica.getInstance().tblSimbolos.ContainsKey(this.Var))
             {
                 throw new Exception("Error Semantico - La variable " + this.Var + " ya existe");
-            }  
+            }
             if (Var == null)
             {
                 if (Retorno != null)
@@ -336,7 +336,7 @@ namespace Project_Compiladores1.Arbol
             if (InfSemantica.getInstance().tblSimbolos.ContainsKey(Var.id))
             {
                 var = InfSemantica.getInstance().tblSimbolos[Var.id];
-            }            
+            }
             if (InfSemantica.getInstance().tblFunciones.ContainsKey(Var.id))
             {
                 throw new Exception("Error Semantico - La variable " + Var.id + " ya existe");
@@ -348,7 +348,7 @@ namespace Project_Compiladores1.Arbol
             }
             if (var != null)
             {
-                throw new Exception("Error Semantico - La variable " + Var.id + " ya existe");    
+                throw new Exception("Error Semantico - La variable " + Var.id + " ya existe");
             }
             else
             {
@@ -362,7 +362,7 @@ namespace Project_Compiladores1.Arbol
                     throw new Exception("Error Semantico - No se puede inicializar variables con tipos diferentes");
                 }
             }
-            if(Sig!=null)
+            if (Sig != null)
                 Sig.validarSemantica();
         }
     }
@@ -396,7 +396,7 @@ namespace Project_Compiladores1.Arbol
     {
         public Variable Var; // = new Variable();
         public ListaExpre Variables;
-        
+
 
         public override void validarSemantica()
         {
@@ -457,9 +457,8 @@ namespace Project_Compiladores1.Arbol
                     tmp.validarSemantica();
                 }
                 tmp = tmp.sig;
-            }    
+            }
 
         }
     }
-
 }

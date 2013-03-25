@@ -5,13 +5,13 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace Project_Compiladores1.Arbol
+namespace WebUI.Arbol
 {
     public abstract class Tipo
     {
         public abstract bool esEquivalente(Tipo t);
     }
-    
+
     class Booleano : Tipo
     {
         public override bool esEquivalente(Tipo t)
@@ -139,14 +139,14 @@ namespace Project_Compiladores1.Arbol
         public new void Add(String key, Tipo value)
         {
             ids.Add(key);
-            base.Add(key, value);            
+            base.Add(key, value);
 
         }
 
         public void addVars(Object[] p)
         {
-            ArrayList Ids = ((ArrayList) p[0]);
-            Tipo t = ((Tipo) p[1]);
+            ArrayList Ids = ((ArrayList)p[0]);
+            Tipo t = ((Tipo)p[1]);
             for (int i = 0; i < ids.Count; i++)
             {
                 this.Add(Ids[i].ToString(), t);
@@ -165,6 +165,5 @@ namespace Project_Compiladores1.Arbol
             return t is UserType;
         }
     }
-
 
 }

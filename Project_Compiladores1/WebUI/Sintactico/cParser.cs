@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
 using System.Text;
-using Project_Compiladores1.Arbol;
+using WebUI.Arbol;
 
-namespace Project_Compiladores1.Sintactico
+namespace WebUI.Sintactico
 {
     class parserC : Parser
     {
@@ -306,9 +306,9 @@ namespace Project_Compiladores1.Sintactico
             else if (this.currentToken.Tipo == Lexico.TipoToken.TK_ID)
             {
                 #region
-                Sentencia s=SentenciaAssign_LlamaFun();
+                Sentencia s = SentenciaAssign_LlamaFun();
                 if (currentToken.Tipo != Lexico.TipoToken.TK_FINSENTENCIA)
-                    throw new Exception("Se esperaba un token ;" );
+                    throw new Exception("Se esperaba un token ;");
                 this.currentToken = lex.NextToken();
                 return s;
                 #endregion
@@ -695,7 +695,7 @@ namespace Project_Compiladores1.Sintactico
                 currentToken = lex.NextToken();
             }
             //else
-                //throw new Exception("Se esperaba ;");
+            //throw new Exception("Se esperaba ;");
             return De;
 
         }
@@ -896,7 +896,7 @@ namespace Project_Compiladores1.Sintactico
                 if (V.ID.accesor != null)
                     return V;
                 else
-                    return V.ID;	
+                    return V.ID;
 
             }
 
@@ -932,7 +932,7 @@ namespace Project_Compiladores1.Sintactico
                 if (listaExpre.Ex.Count > 0)
                     accFun.Variables = ExpreList(listaExpre);
                 List = accFun;
-                if(currentToken.Tipo != Lexico.TipoToken.TK_CLOSEPAR)
+                if (currentToken.Tipo != Lexico.TipoToken.TK_CLOSEPAR)
                     throw new Exception("Error Sintactico -- Se esperaba simbolo )");
                 currentToken = lex.NextToken();
                 return List;
@@ -968,7 +968,7 @@ namespace Project_Compiladores1.Sintactico
             return ListE;
         }
 
-    
+
 
 
 
@@ -977,6 +977,5 @@ namespace Project_Compiladores1.Sintactico
 
 
     }
-
 
 }

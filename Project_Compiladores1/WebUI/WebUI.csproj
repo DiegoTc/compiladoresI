@@ -115,6 +115,10 @@
     <Compile Include="Account\Register.aspx.designer.cs">
       <DependentUpon>Register.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Arbol\Expresiones.cs" />
+    <Compile Include="Arbol\Operadores.cs" />
+    <Compile Include="Arbol\Sentencia.cs" />
+    <Compile Include="Arbol\Tipo.cs" />
     <Compile Include="Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -125,7 +129,16 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Lexico\Lexico.cs" />
+    <Compile Include="Lexico\LexicoC.cs" />
+    <Compile Include="Lexico\LexicoJava.cs" />
+    <Compile Include="Lexico\LexicoPascal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Semantico\InfSemantica.cs" />
+    <Compile Include="Sintactico\cParser.cs" />
+    <Compile Include="Sintactico\javaParser.cs" />
+    <Compile Include="Sintactico\Parser.cs" />
+    <Compile Include="Sintactico\pascalParser.cs" />
     <Compile Include="Site.Master.cs">
       <DependentUpon>Site.Master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -136,10 +149,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Arbol\" />
-    <Folder Include="Lexico\" />
-    <Folder Include="Semantico\" />
-    <Folder Include="Sintactico\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Account\Web.config" />
