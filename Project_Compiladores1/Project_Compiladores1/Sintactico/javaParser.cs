@@ -592,9 +592,18 @@ namespace Project_Compiladores1.Sintactico
                     currentToken = lex.NextToken();
                     S_Class sClass = new S_Class();
                     sClass.Var.id = Decl.Var.id;
-                    sClass.CamposClase = Declaraciones();
+
+
+
+
+                    sClass.CamposClase = ListaDeclaracion(sClass.CamposClase);
+
+
+
+
                     if (currentToken.Tipo != TipoToken.TK_CLOSELLAVE)
                         throw new Exception("Error Sintactico - Se esperaba simbolo }");
+                    currentToken = lex.NextToken();
                     return sClass;
                 }
                 else if (currentToken.Tipo == TipoToken.TK_FINSENTENCIA)
@@ -604,6 +613,17 @@ namespace Project_Compiladores1.Sintactico
                 }
             }
             return Decl;
+        }
+
+        public Sentencia ListaDeclaracion(Sentencia Decls)
+        {
+            if (currentToken.Tipo == TipoToken.TK_CHAR || currentToken.Tipo == TipoToken.TK_BOOL || currentToken.Tipo == TipoToken.TK_STRING || currentToken.Tipo == TipoToken.TK_FLOAT ||
+                currentToken.Tipo == TipoToken.TK_INT || currentToken.Tipo == TipoToken.TK_PRIVATE || currentToken.Tipo == TipoToken.TK_PUBLIC || currentToken.Tipo == TipoToken.TK_CLASS || currentToken.Tipo == TipoToken.TK_VOID)
+            {
+                Decls =  Declaraciones();
+                Decls.sig = ListaDeclaracion(Decls);
+            }
+            return Decls;
         }
 
         public Declaracion DeclOption(Declaracion De)

@@ -415,7 +415,7 @@ namespace Project_Compiladores1.Arbol
 
     class S_Class : Sentencia
     {
-        public Variable Var;// = new Variable();
+        public Variable Var = new Variable("", null);
         public Sentencia CamposClase;
         public Dictionary<string, Tipo> tblSimbolosClass = new Dictionary<string, Tipo>();
 
