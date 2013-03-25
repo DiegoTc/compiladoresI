@@ -730,8 +730,9 @@ namespace Project_Compiladores1.Sintactico
             if (currentToken.Tipo == TipoToken.TK_COMA)
             {
                 currentToken = lex.NextToken();
-                if (currentToken.Tipo == TipoToken.TK_ID)
+                if (currentToken.Tipo != TipoToken.TK_ID)
                     throw new Exception("Error Sintactico - Se esperaba un Id");
+                De.Sig = new Declaracion();
                 De.Sig.Var.id = currentToken.Lexema;
                 De.Sig.Tip = De.Tip;
                 currentToken = lex.NextToken();
@@ -1026,13 +1027,23 @@ namespace Project_Compiladores1.Sintactico
                 ExprFuncion V = new ExprFuncion();
                 V.ID = new Variable(currentToken.Lexema, null);
                 currentToken = lex.NextToken();
-                V.ID.accesor = Accesories(V.ID.accesor);
-                Access tmp = ((Access)V.ID.accesor);
-                tmp = tmp.Last();
-                if (V.ID.accesor != null && tmp is AccessFunc)
-                    return V;
+                if (currentToken.Tipo == TipoToken.TK_PUNTO || currentToken.Tipo == TipoToken.TK_ID || currentToken.Tipo == TipoToken.TK_OPENPAR || currentToken.Tipo == TipoToken.TK_OPENCOR)
+                {
+                    V.ID.accesor = Accesories(V.ID.accesor);
+                    Access tmp = ((Access) V.ID.accesor);
+                    if (tmp.Next != null)
+                    {
+                        tmp = tmp.Last();
+                    }
+                    if (V.ID.accesor != null && tmp is AccessFunc)
+                        return V;
+                    else
+                        return V.ID;
+                }
                 else
-                    return V.ID;
+                {
+                    return V;
+                }
             }
             return null;
         }

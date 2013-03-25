@@ -46,7 +46,7 @@ namespace Project_Compiladores1.Arbol
     class S_Asignacion : Sentencia
     {
         public Operadores Op;
-        public Variable id;// = new Variable();
+        public Variable id = new Variable("", null);
         public Expresiones Valor;
         public Declaracion campos; //Para las asignaciones de arreglos.
 
@@ -122,7 +122,7 @@ namespace Project_Compiladores1.Arbol
     class S_For : Sentencia
     {
         public Tipo Tip;
-        public Variable Var;
+        public Variable Var = new Variable("", null);
         public Expresiones Inicio;
         public Expresiones Condicion;
         public Expresiones Iteracion;
