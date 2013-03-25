@@ -506,9 +506,24 @@ namespace Project_Compiladores1.Sintactico
             {
                 currentToken = lex.NextToken();
                 Declaracion strDec = StructDeclaration();
+                Declaracion tmp = StructDeclaration();
+                while (tmp != null)
+                {
+                    strDec.Sig = tmp;
+                    tmp = StructDeclaration();
+                }
+
                 Structs s = new Structs();
                 s.nombre = decl.Var.id;
                 s.campos = strDec;
+                if (currentToken.Tipo != Lexico.TipoToken.TK_CLOSELLAVE)
+                    throw new Exception("Error sintactico se esperaba }");
+                currentToken = lex.NextToken();
+
+                if (currentToken.Tipo != Lexico.TipoToken.TK_FINSENTENCIA)
+                    throw new Exception("Error sintactico se esperaba ;");
+                currentToken = lex.NextToken();
+
                 return s;
             }
             #endregion
