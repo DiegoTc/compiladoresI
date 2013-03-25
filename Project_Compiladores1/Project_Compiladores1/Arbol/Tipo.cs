@@ -96,7 +96,7 @@ namespace Project_Compiladores1.Arbol
     class Arreglo : Tipo
     {
         private int dimensiones; //Debe Ser Entero
-        private ArrayList rangos;
+        private ArrayList rangos = new ArrayList();
         private Tipo contenido;
 
         public Tipo Contenido
