@@ -623,8 +623,9 @@ namespace Project_Compiladores1.Sintactico
             {
                 Decls =  Declaraciones();
                 Decls.sig = ListaDeclaracion(Decls);
+                return Decls;
             }
-            return Decls;
+            return null;
         }
 
         public Declaracion DeclOption(Declaracion De)
