@@ -876,8 +876,12 @@ namespace Project_Compiladores1.Sintactico
             {
                 ExprFuncion V = new ExprFuncion();
                 V.ID = new Variable(currentToken.Lexema, null);
-                Accesories(V.ID.accesor);
-                return V;
+                currentToken = lex.NextToken();
+                V.ID.accesor = Accesories(V.ID.accesor);
+                if (V.ID.accesor != null)
+                    return V;
+                else
+                    return V.ID;	
 
             }
 
@@ -906,12 +910,16 @@ namespace Project_Compiladores1.Sintactico
             }
             else if (currentToken.Tipo == Lexico.TipoToken.TK_OPENPAR)
             {
+                currentToken = lex.NextToken();
                 AccessFunc accFun = new AccessFunc();
                 ListaExpre listaExpre = new ListaExpre();
                 listaExpre.Ex.Add(Expression());
                 if (listaExpre.Ex.Count > 0)
                     accFun.Variables = ExpreList(listaExpre);
                 List = accFun;
+                if(currentToken.Tipo != Lexico.TipoToken.TK_CLOSEPAR)
+                    throw new Exception("Error Sintactico -- Se esperaba simbolo )");
+                currentToken = lex.NextToken();
                 return List;
             }
             return List;
