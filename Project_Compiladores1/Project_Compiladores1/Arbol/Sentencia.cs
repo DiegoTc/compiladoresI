@@ -508,6 +508,11 @@ namespace Project_Compiladores1.Arbol
     class TypeDef : Sentencia
     {
         public TypeDef Sig;
+
+        public override void validarSemantica()
+        {
+        }
+
     }
 
     class Alias : TypeDef
