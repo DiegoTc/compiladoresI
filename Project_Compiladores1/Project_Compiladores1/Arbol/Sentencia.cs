@@ -117,10 +117,14 @@ namespace Project_Compiladores1.Arbol
         {
             Tipo Con = Condicion.validarSemantica();
             //VALIDAR CONDICION SEA BOOL
-            if (Cierto != null)
-                Cierto.SentValSemantica();
-            if (Falso != null)
-                Cierto.SentValSemantica();
+            if (Con is Booleano)
+            {
+                if (Cierto != null)
+                    Cierto.SentValSemantica();
+                if (Falso != null)
+                    Cierto.SentValSemantica();
+            }
+            else throw new Exception("La condicion debe ser booleana");
         }
     }
 
@@ -132,9 +136,12 @@ namespace Project_Compiladores1.Arbol
         public override void validarSemantica()
         {
             Tipo Con = Condicion.validarSemantica();
-            //VALIDAR QUE SEA BOOL
-            if (S != null)
-                S.SentValSemantica();
+            if (Con is Booleano)
+            {
+                if (S != null)
+                    S.SentValSemantica();
+            }
+            else throw new Exception("La condicion debe ser booleana");
         }
     }
 
@@ -146,10 +153,12 @@ namespace Project_Compiladores1.Arbol
         public override void validarSemantica()
         {
             Tipo Con = Condicion.validarSemantica();
-            //VALIDAR QUE SEA BOOL
-            if (S != null)
-                S.SentValSemantica();
-
+            if (Con is Booleano)
+            {
+                if (S != null)
+                    S.SentValSemantica();
+            }
+            else throw new Exception("La condicion debe ser booleana");
         }
     }
 
@@ -271,7 +280,7 @@ namespace Project_Compiladores1.Arbol
 
         public override void validarSemantica()
         {
-            //FALTA
+            //ya no FALTA
             Tipo T = Var.validarSemantica();
             if (T is Entero || T is Cadena || T is Caracter)
             {
@@ -394,7 +403,7 @@ namespace Project_Compiladores1.Arbol
                 var = InfSemantica.getInstance().tblSimbolos[Var.id];
                 if (Tip is Struct)
                 {
-
+                    
                 }
 
             }
@@ -414,7 +423,7 @@ namespace Project_Compiladores1.Arbol
     {
         public override void validarSemantica()
         {
-            //FALTA
+            //no FALTA
         }
     }
 
@@ -422,7 +431,7 @@ namespace Project_Compiladores1.Arbol
     {
         public override void validarSemantica()
         {
-            //FALTA
+            //no FALTA
         }
     }
 
@@ -505,18 +514,17 @@ namespace Project_Compiladores1.Arbol
         }
     }
 
-    class TypeDef : Sentencia
+    abstract class TypeDef : Sentencia
     {
         public TypeDef Sig;
-
-        public override void validarSemantica()
-        {
-        }
-
     }
 
     class Alias : TypeDef
     {
         public UserType type;
+        public override void validarSemantica()
+        {
+            InfSemantica.getInstance().tblTipos.Add(type.Nombre, type.Tip);
+        }
     }
 }
