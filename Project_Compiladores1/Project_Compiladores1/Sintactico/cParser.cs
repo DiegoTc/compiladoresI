@@ -322,10 +322,13 @@ namespace Project_Compiladores1.Sintactico
             {
                 Variable var = new Variable(currentToken.Lexema, null);
                 currentToken = lex.NextToken();
-                if (currentToken.Tipo == Lexico.TipoToken.TK_PUNTO)
+                if (currentToken.Tipo == Lexico.TipoToken.TK_PUNTO || currentToken.Tipo == Lexico.TipoToken.TK_OPENCOR || currentToken.Tipo == Lexico.TipoToken.TK_OPENPAR)
                 {
-                    Accesories(var.accesor);
+                    Access a=Accesories(var.accesor);
+                    var.accesor = a;
                 }
+               
+
                 if (currentToken.Tipo == Lexico.TipoToken.TK_ASSIGN || currentToken.Tipo == Lexico.TipoToken.TK_MASIGUAL || currentToken.Tipo == Lexico.TipoToken.TK_MENORIGUAL || currentToken.Tipo == Lexico.TipoToken.TK_PORIGUAL ||
                     currentToken.Tipo == Lexico.TipoToken.TK_ENTREIGUAL)
                 {
@@ -361,17 +364,18 @@ namespace Project_Compiladores1.Sintactico
 
                     return decl;
                 }
+               
                 else
                 {
                     if (currentToken.Tipo != Lexico.TipoToken.TK_FINSENTENCIA)
                         throw new Exception("Error Sintactico --Se esperaba ;");
 
-                    if (var.accesor.Last() is AccessFunc)
-                    {
+                    //if (var.accesor.Last() is AccessFunc)
+                    //{
                         S_LlamadaFunc sllamadafunc = new S_LlamadaFunc();
                         sllamadafunc.Var = var;
                         return sllamadafunc;
-                    }
+                    //}
                 }
             }
             return null;
@@ -439,10 +443,14 @@ namespace Project_Compiladores1.Sintactico
             decl.Var = nombre;
 
             currentToken = lex.NextToken();
-            DeclaracionesCPrima(decl);
-            //Sentencia declopt = DeclOption();
+            Sentencia s=DeclaracionesCPrima(decl);
             DeclOption(decl);
-            return decl;
+            if (s is Structs)
+                return ((Structs)s);
+            else if (s is S_Functions)
+                return ((S_Functions)s);
+            else
+                return decl ;
         }
 
         public Sentencia DeclaracionesCPrima(Declaracion decl)
