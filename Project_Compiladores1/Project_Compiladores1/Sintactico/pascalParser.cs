@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Project_Compiladores1.Lexico;
 using Project_Compiladores1.Arbol;
+using Project_Compiladores1.Semantico;
 
 namespace Project_Compiladores1.Sintactico
 {
@@ -160,11 +161,20 @@ namespace Project_Compiladores1.Sintactico
                 }
                 #endregion
 
+                #region type
                 case TipoToken.TK_TYPE:
                 {
                     currentToken = lex.NextToken();
-                    //TODO: Pensar que hacer acá para crear los structs y los usertype
+                    TypeDef ret = TypeDeclarationList();
+                    if (currentToken.Tipo != TipoToken.TK_END)
+                        throw new Exception("Se esperaba end.");
+                    else
+                    {
+                        currentToken = lex.NextToken();
+                        return ret;
+                    }
                 }
+                #endregion
 
                 #region break/continue/return
                 case TipoToken.TK_BREAK:
@@ -432,7 +442,7 @@ namespace Project_Compiladores1.Sintactico
         Declaracion VariableDeclaration()
         {
             if (currentToken.Tipo != TipoToken.TK_ID)
-                return null;
+                throw new Exception("Se esperaba identificador.");
             else
             {
                 Declaracion ret = new Declaracion();
@@ -445,6 +455,56 @@ namespace Project_Compiladores1.Sintactico
                     currentToken = lex.NextToken();
                     ret.Tip = ParseType();
                     return ret;
+                }
+            }
+        }
+
+        TypeDef TypeDeclarationList()
+        {
+            TypeDef ret = TypeDeclaration();
+            if (currentToken.Tipo == TipoToken.TK_FINSENTENCIA)
+            {
+                currentToken = lex.NextToken();
+                ret.Sig = TypeDeclarationList();
+            }
+            return ret;
+        }
+
+        TypeDef TypeDeclaration()
+        {
+            if (currentToken.Tipo != TipoToken.TK_ID)
+                throw new Exception("Se esperaba identificador.");
+            else
+            {//type id
+                string tmp = currentToken.Lexema;
+                currentToken = lex.NextToken();
+                if (currentToken.Tipo != TipoToken.TK_ASSIGN)
+                    throw new Exception("Se esperaba asignacion.");
+                else
+                {//type id :=
+                    currentToken = lex.NextToken();
+                    if (currentToken.Tipo == TipoToken.TK_RECORD)
+                    {//type id := record
+                        currentToken = lex.NextToken();
+                        Structs ret = new Structs();
+                        ret.nombre = tmp;
+                        ret.campos = VariableDeclarationList();
+                        if (currentToken.Tipo != TipoToken.TK_END)
+                            throw new Exception("Se esperaba end.");
+                        else
+                        {
+                            currentToken = lex.NextToken();
+                            return ret;
+                        }
+                    }
+                    else
+                    {//type id := something
+                        Alias ret = new Alias();
+                        ret.type = new UserType();
+                        ret.type.Nombre = tmp;
+                        ret.type.Tip = ParseType();
+                        return ret;
+                    }
                 }
             }
         }
@@ -520,22 +580,45 @@ namespace Project_Compiladores1.Sintactico
                     }
                 case TipoToken.TK_ID:
                     {
-                        //TODO: AVeriguar que hacer acá
-                        //No se que hacer acá!!! :(
+                        if (InfSemantica.getInstance().tblTipos.ContainsKey(currentToken.Lexema))
+                        {
+                            return InfSemantica.getInstance().tblTipos[currentToken.Lexema];
+                        }
+                        else throw new Exception("Tipo no reconocido.");
                     }
                 case TipoToken.TK_ARRAY:
                     {
                         currentToken = lex.NextToken();
-                        Arreglo ret = new Arreglo();
-                        //TODO: pensar que hacer acá
-                        //FAlta hacer unas cosas acá
-                        return ret;
+                        if (currentToken.Tipo != TipoToken.TK_OPENCOR)
+                            throw new Exception("Se esperaba [");
+                        else
+                        {
+                            currentToken = lex.NextToken();
+                            Arreglo ret = new Arreglo();
+                            ret.Rangos = ExprList();
+                            ret.Dimensiones = ret.Rangos.Count;
+                            if (currentToken.Tipo != TipoToken.TK_CLOSECOR)
+                                throw new Exception("Se esperaba ]");
+                            else
+                            {
+                                currentToken = lex.NextToken();
+                                if (currentToken.Tipo != TipoToken.TK_OF)
+                                    throw new Exception("Se esperaba of.");
+                                else
+                                {
+                                    currentToken = lex.NextToken();
+                                    ret.Contenido = ParseType();
+                                    return ret;
+                                }
+                            }
+                        }
                     }
                 case TipoToken.TK_STRING:
                     {
                         currentToken = lex.NextToken();
                         return new Cadena();
                     }
+                default: throw new Exception("Eso no es un tipo.");
             }
         }
 
@@ -672,7 +755,21 @@ namespace Project_Compiladores1.Sintactico
                 if (currentToken.Tipo == TipoToken.TK_OPENPAR)
                 {
                     ExprFuncion ret = new ExprFuncion();
-                    //TODO: armar la llamada a funcion, arreglar la clase ExprFuncion
+                    ret.ID = new Variable(tmp, null);
+                    ret.VarList = new ListaExpre();
+                    ret.VarList.Ex = ExprList();
+                    if (currentToken.Tipo != TipoToken.TK_CLOSEPAR)
+                        throw new Exception("Se esperaba ).");
+                    else
+                    {
+                        currentToken = lex.NextToken();
+                        return ret;
+                    }
+                    //TODO: armar la llamada a funcion, arreglar la clase ExprFuncion, no hay donde poner parametros
+                }
+                else
+                {
+                    return new Variable(tmp, AccessList());
                 }
             }
             else return LIT();

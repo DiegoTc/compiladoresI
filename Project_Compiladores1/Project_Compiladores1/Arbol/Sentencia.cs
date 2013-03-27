@@ -166,7 +166,7 @@ namespace Project_Compiladores1.Arbol
         }
     }
 
-    class Structs : Sentencia
+    class Structs : TypeDef
     {
         public string nombre;// = new Variable();
         public Declaracion campos;
@@ -462,4 +462,13 @@ namespace Project_Compiladores1.Arbol
         }
     }
 
+    class TypeDef : Sentencia
+    {
+        public TypeDef Sig;
+    }
+
+    class Alias : TypeDef
+    {
+        public UserType type;
+    }
 }

@@ -162,7 +162,7 @@ namespace Project_Compiladores1.Arbol
 
         public override bool esEquivalente(Tipo t)
         {
-            return t is UserType;
+            return Tip.esEquivalente(t);
         }
     }
 

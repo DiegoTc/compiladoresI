@@ -500,8 +500,8 @@ namespace Project_Compiladores1.Arbol
     class ExprFuncion : Expresiones
     {
         public Variable ID;// = new Variable();
-        public Expresiones VarList;
-        public Tipo tipo;
+        public ListaExpre VarList;
+        public Tipo tipo;//esta mierda no se usa
 
         public override Tipo validarSemantica()
         {
