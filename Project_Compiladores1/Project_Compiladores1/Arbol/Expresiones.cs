@@ -877,8 +877,7 @@ namespace Project_Compiladores1.Arbol
         public Variable ID;// = new Variable();
         public override Tipo validarSemantica()
         {
-            //FALTA
-            return null;
+            return null;//falta
         }
 
         public override Valor interpretar()
