@@ -613,7 +613,7 @@ namespace Project_Compiladores1.Sintactico
                 d.Sig= FParams();
                 return d;
             }
-            return d;
+            return null;
         }
 
         public Declaracion StructDeclaration()

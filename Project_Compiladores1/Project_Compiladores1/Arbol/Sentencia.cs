@@ -326,6 +326,21 @@ namespace Project_Compiladores1.Arbol
             }  
             if (Var == null)
             {
+                Campo.validarSemantica();
+                /*Declaracion tmp=Campo;
+                while(tmp!=null)
+                {
+                    Variable v = tmp.Var;
+                    if(v.id!="")
+                    {
+                        if (InfSemantica.getInstance().tblTipos.ContainsKey(v.id))
+                        {
+                            throw new Exception("Error Semantico - La variable " + v.id + " ya existe");
+                        }
+                        InfSemantica.getInstance().tblSimbolos.Add(v.id, tmp.Tip);
+                    }
+                    tmp = tmp.Sig;
+                }*/
                 InfSemantica.getInstance().tblFunciones.Add(this.Var, Retorno);                
             }
             else
@@ -334,7 +349,7 @@ namespace Project_Compiladores1.Arbol
             }
             #endregion
 
-            Campo.validarSemantica();
+           
 
             if (Retorno != null)
             {
