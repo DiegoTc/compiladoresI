@@ -102,13 +102,34 @@ namespace Project_Compiladores1.Arbol
 
         public override Tipo validarSemantica()
         {
-            Tipo left = Izq.validarSemantica();
-            Tipo right = Der.validarSemantica();
-            if (left is Entero && right is Entero)
+            Tipo left, right;
+            try
             {
-                return left;
+                left = Izq.validarSemantica();
+                right = Der.validarSemantica();
             }
-            throw new Exception("Error Semantico - No se puede sumar " + left + " con " + right);
+            catch (Exception ex) { throw ex; }
+            if (left is Entero)
+                if (right is Entero || right is Flotante)
+                    return right;
+                else
+                    throw new Exception("Tipos incompatibles.");
+            else if (left is Flotante)
+                if (right is Entero || right is Flotante)
+                    return left;
+                else
+                    throw new Exception("Tipos incompatibles.");
+            else if (left is Booleano)
+                throw new Exception("No se pueden sumar booleanos, con NADA, NADA!!!");
+            else if (left is Caracter)
+                if (right is Cadena)
+                    return right;
+                else throw new Exception("Tipos incompatibles");
+            else if (left is Cadena)
+                if (right is Booleano)
+                    throw new Exception("Tipos incompatibles.");
+                else return left;
+            else throw new Exception("WTF?");
         }
     }
 
@@ -120,13 +141,24 @@ namespace Project_Compiladores1.Arbol
         }
         public override Tipo validarSemantica()
         {
-            Tipo left = Izq.validarSemantica();
-            Tipo right = Der.validarSemantica();
-            if (left is Entero && right is Entero)
+            Tipo left, right;
+            try
             {
-                return left;
+                left = Izq.validarSemantica();
+                right = Der.validarSemantica();
             }
-            throw new Exception("Error Semantico - No se puede restar " + left + " con " + right);
+            catch (Exception ex) { throw ex; }
+            if (left is Entero)
+                if (right is Entero || right is Flotante)
+                    return right;
+                else
+                    throw new Exception("Tipos incompatibles.");
+            else if (left is Flotante)
+                if (right is Entero || right is Flotante)
+                    return left;
+                else
+                    throw new Exception("Tipos incompatibles.");
+            else throw new Exception("Solo se pueden restar numeros!");
         }
     }
 
@@ -138,13 +170,24 @@ namespace Project_Compiladores1.Arbol
         }
         public override Tipo validarSemantica()
         {
-            Tipo left = Izq.validarSemantica();
-            Tipo right = Der.validarSemantica();
-            if (left is Entero && right is Entero)
+            Tipo left, right;
+            try
             {
-                return left;
+                left = Izq.validarSemantica();
+                right = Der.validarSemantica();
             }
-            throw new Exception("Error Semantico - No se puede multiplicar " + left + " con " + right);
+            catch (Exception ex) { throw ex; }
+            if (left is Entero)
+                if (right is Entero || right is Flotante)
+                    return right;
+                else
+                    throw new Exception("Tipos incompatibles.");
+            else if (left is Flotante)
+                if (right is Entero || right is Flotante)
+                    return left;
+                else
+                    throw new Exception("Tipos incompatibles.");
+            else throw new Exception("Solo se pueden multiplicar numeros!");
         }
     }
 
@@ -157,13 +200,19 @@ namespace Project_Compiladores1.Arbol
 
         public override Tipo validarSemantica()
         {
-            Tipo left = Izq.validarSemantica();
-            Tipo right = Der.validarSemantica();
-            if (left is Entero && right is Entero)
+            Tipo left, right;
+            try
             {
-                return left;
+                left = Izq.validarSemantica();
+                right = Der.validarSemantica();
             }
-            throw new Exception("Error Semantico - No se puede dividir " + left + " con " + right);
+            catch (Exception ex) { throw ex; }
+            if (left is Entero || left is Flotante)
+                if (right is Entero || right is Flotante)
+                    return new Flotante();
+                else
+                    throw new Exception("Tipos incompatibles.");
+            else throw new Exception("Solo se pueden dividir numeros!");
         }
     }
 
@@ -176,230 +225,209 @@ namespace Project_Compiladores1.Arbol
 
         public override Tipo validarSemantica()
         {
-            Tipo left = Izq.validarSemantica();
-            Tipo right = Der.validarSemantica();
-            if (left is Entero && right is Entero)
+            Tipo left, right;
+            try
             {
-                return left;
+                left = Izq.validarSemantica();
+                right = Der.validarSemantica();
             }
-            throw new Exception("Error Semantico - No se puede realizar esta operacion entre " + left + " con " + right);
+            catch (Exception ex) { throw ex; }
+            if (left is Entero)
+            {
+                if (right is Entero || right is Flotante)
+                    return right;
+                else throw new Exception("Tipos incompatibles.");
+            }
+            else if (left is Flotante)
+            {
+                if (right is Entero || right is Flotante)
+                    return left;
+                else throw new Exception("Tipos incompatibles.");
+            }else throw new Exception("Modulo solo acepta numeros!!!");
         }
     }
 
-    class And : Expresiones
+    class And : OperacionBinaria
     {
-        public Expresiones Izq { get; set; }
-        public Expresiones Der { get; set; }
         public And(Expresiones izq, Expresiones der)
+            : base(izq, der)
         {
-            Izq = izq;
-            Der = der;
         }
 
         public override Tipo validarSemantica()
         {
-            Tipo left = Izq.validarSemantica();
-            Tipo right = Der.validarSemantica();
-
+            Tipo left, right;
+            try
+            {
+                left = Izq.validarSemantica();
+                right = Der.validarSemantica();
+            }
+            catch (Exception ex) { throw ex; }
             if (left is Booleano && right is Booleano)
                 return left;
             throw new Exception("Error Semantico - Comparacion Invalida");
         }
     }
 
-    class Or : Expresiones
+    class Or : OperacionBinaria
     {
-        public Expresiones Izq { get; set; }
-        public Expresiones Der { get; set; }
         public Or(Expresiones izq, Expresiones der)
+            : base(izq, der)
         {
-            Izq = izq;
-            Der = der;
         }
 
         public override Tipo validarSemantica()
         {
-            Tipo left = Izq.validarSemantica();
-            Tipo right = Der.validarSemantica();
-
+            Tipo left, right;
+            try
+            {
+                left = Izq.validarSemantica();
+                right = Der.validarSemantica();
+            }
+            catch (Exception ex) { throw ex; }
             if (left is Booleano && right is Booleano)
                 return left;
             throw new Exception("Error Semantico - Comparacion Invalida");
         }
     }
 
-    class Equal : Expresiones
+    class Equal : OperacionBinaria
     {
-        public Expresiones Izq { get; set; }
-        public Expresiones Der { get; set; }
         public Equal(Expresiones izq, Expresiones der)
+            : base(izq, der)
         {
-            Izq = izq;
-            Der = der;
         }
 
         public override Tipo validarSemantica()
         {
-            Tipo left = Izq.validarSemantica();
-            Tipo right = Der.validarSemantica();
-
-            if (left is Entero && right is Entero)
+            Tipo left, right;
+            try
             {
+                left = Izq.validarSemantica();
+                right = Der.validarSemantica();
+            }
+            catch (Exception ex) { throw ex; }
+            if (left.esEquivalente(right))
                 return new Booleano();
-            }
-            if (left is Flotante && right is Flotante)
-            {
-                return new Booleano();
-            }
-            if (left is Cadena && right is Cadena)
-            {
-                return new Booleano();
-            }
-            if (left is Caracter && right is Caracter)
-            {
-                return new Booleano();
-            }
-            if (left is Booleano && right is Booleano)
-            {
-                return left;
-            }
-
-            throw new Exception("Error Semantico - Comparacion Invalida");
+            else throw new Exception("Error Semantico - Comparacion Invalida");
         }
     }
 
-    class Distinto : Expresiones
+    class Distinto : OperacionBinaria
     {
-        public Expresiones Izq { get; set; }
-        public Expresiones Der { get; set; }
         public Distinto(Expresiones izq, Expresiones der)
+            : base(izq, der)
         {
-            Izq = izq;
-            Der = der;
         }
 
         public override Tipo validarSemantica()
         {
-            Tipo left = Izq.validarSemantica();
-            Tipo right = Der.validarSemantica();
-
-            if (!left.esEquivalente(right))
+            Tipo left, right;
+            try
             {
-                throw new Exception("Error Semantico - No se puede pueden comparar los tipos " + left + " con " + right);
+                left = Izq.validarSemantica();
+                right = Der.validarSemantica();
             }
-            return left;
+            catch (Exception ex) { throw ex; }
+            if (left.esEquivalente(right))
+                return new Booleano();
+            else throw new Exception("Error Semantico - No se puede pueden comparar los tipos " + left + " con " + right);
         }
     }
 
-    class MayorQue : Expresiones
+    class MayorQue : OperacionBinaria
     {
-        public Expresiones Izq { get; set; }
-        public Expresiones Der { get; set; }
         public MayorQue(Expresiones izq, Expresiones der)
+            :base(izq, der)
         {
-            Izq = izq;
-            Der = der;
         }
 
         public override Tipo validarSemantica()
         {
-            Tipo left = Izq.validarSemantica();
-            Tipo right = Der.validarSemantica();
-
-            if (left is Entero && right is Entero)
+            Tipo left, right;
+            try
             {
-                return new Booleano();
+                left = Izq.validarSemantica();
+                right = Der.validarSemantica();
             }
-            if (left is Flotante && right is Flotante)
-            {
-                return new Booleano();
-            }            
-
-            throw new Exception("Error Semantico - Comparacion Invalida");
-            
+            catch (Exception ex) { throw ex; }
+            if (left is Entero || left is Flotante)
+                if (right is Entero || right is Flotante)
+                    return new Booleano();
+                else throw new Exception("No se puede comparar un numero con otra cosa.");
+            else throw new Exception("Tipos incompatibles.");
         }
     }
 
-    class MenorQue : Expresiones
+    class MenorQue : OperacionBinaria
     {
-        public Expresiones Izq { get; set; }
-        public Expresiones Der { get; set; }
         public MenorQue(Expresiones izq, Expresiones der)
+            : base(izq, der)
         {
-            Izq = izq;
-            Der = der;
         }
 
         public override Tipo validarSemantica()
         {
-            Tipo left = Izq.validarSemantica();
-            Tipo right = Der.validarSemantica();
-
-            if (left is Entero && right is Entero)
+            Tipo left, right;
+            try
             {
-                return new Booleano();
+                left = Izq.validarSemantica();
+                right = Der.validarSemantica();
             }
-            if (left is Flotante && right is Flotante)
-            {
-                return new Booleano();
-            }
-
-            throw new Exception("Error Semantico - Comparacion Invalida");
+            catch (Exception ex) { throw ex; }
+            if (left is Entero || left is Flotante)
+                if (right is Entero || right is Flotante)
+                    return new Booleano();
+                else throw new Exception("No se puede comparar un numero con otra cosa.");
+            else throw new Exception("Tipos incompatibles.");
         }
     }
 
-    class MayorIgual : Expresiones
+    class MayorIgual : OperacionBinaria
     {
-        public Expresiones Izq { get; set; }
-        public Expresiones Der { get; set; }
         public MayorIgual(Expresiones izq, Expresiones der)
+            : base(izq, der)
         {
-            Izq = izq;
-            Der = der;
         }
 
         public override Tipo validarSemantica()
         {
-            Tipo left = Izq.validarSemantica();
-            Tipo right = Der.validarSemantica();
-
-            if (left is Entero && right is Entero)
+            Tipo left, right;
+            try
             {
-                return new Booleano();
+                left = Izq.validarSemantica();
+                right = Der.validarSemantica();
             }
-            if (left is Flotante && right is Flotante)
-            {
-                return new Booleano();
-            }
-            throw new Exception("Error Semantico - Comparacion Invalida");
+            catch (Exception ex) { throw ex; }
+            if (left is Entero || left is Flotante)
+                if (right is Entero || right is Flotante)
+                    return new Booleano();
+                else throw new Exception("No se puede comparar un numero con otra cosa.");
+            else throw new Exception("Tipos incompatibles.");
         }
     }
 
-    class MenorIgual : Expresiones
+    class MenorIgual : OperacionBinaria
     {
-        public Expresiones Izq { get; set; }
-        public Expresiones Der { get; set; }
         public MenorIgual(Expresiones izq, Expresiones der)
+            : base(izq, der)
         {
-            Izq = izq;
-            Der = der;
         }
 
         public override Tipo validarSemantica()
         {
-            Tipo left = Izq.validarSemantica();
-            Tipo right = Der.validarSemantica();
-
-            if (left is Entero && right is Entero)
+            Tipo left, right;
+            try
             {
-                return new Booleano();
+                left = Izq.validarSemantica();
+                right = Der.validarSemantica();
             }
-            if (left is Flotante && right is Flotante)
-            {
-                return new Booleano();
-            }
-
-            throw new Exception("Error Semantico - Comparacion Invalida");
+            catch (Exception ex) { throw ex; }
+            if (left is Entero || left is Flotante)
+                if (right is Entero || right is Flotante)
+                    return new Booleano();
+                else throw new Exception("No se puede comparar un numero con otra cosa.");
+            else throw new Exception("Tipos incompatibles.");
         }
     }
 
