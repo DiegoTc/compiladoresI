@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Project_Compiladores1.Interpretador;
 using Project_Compiladores1.Semantico;
 
 namespace Project_Compiladores1.Arbol
@@ -10,6 +11,8 @@ namespace Project_Compiladores1.Arbol
     public abstract class Expresiones
     {
         public abstract Tipo validarSemantica();
+
+        public abstract Valor interpretar(); 
     }
 
     class LiteralEntero : Expresiones
@@ -23,6 +26,11 @@ namespace Project_Compiladores1.Arbol
         public override Tipo validarSemantica()
         {
             return InfSemantica.getInstance().tblTipos["ENTERO"];            
+        }
+
+        public override Valor interpretar()
+        {
+            return new ValorEntero(Valor);
         }
     }
 
@@ -38,6 +46,11 @@ namespace Project_Compiladores1.Arbol
         {
             return InfSemantica.getInstance().tblTipos["FLOTANTE"];
         }
+
+        public override Valor interpretar()
+        {
+            return new ValorFlotante(Valor);
+        }
     }
 
     class LitBool : Expresiones
@@ -51,6 +64,11 @@ namespace Project_Compiladores1.Arbol
         public override Tipo validarSemantica()
         {
             return InfSemantica.getInstance().tblTipos["BOOLEANO"];
+        }
+
+        public override Valor interpretar()
+        {
+            return new ValorBooleano(Valor);
         }
     }
 
@@ -66,6 +84,11 @@ namespace Project_Compiladores1.Arbol
         {
             return InfSemantica.getInstance().tblTipos["CARACTER"];
         }
+
+        public override Valor interpretar()
+        {
+            return new ValorCaracter(Valor);
+        }
     }
 
     class LitString : Expresiones
@@ -79,6 +102,11 @@ namespace Project_Compiladores1.Arbol
         public override Tipo validarSemantica()
         {
             return InfSemantica.getInstance().tblTipos["CADENA"];
+        }
+
+        public override Valor interpretar()
+        {
+            return new ValorCadena(Valor);
         }
     }
 
@@ -131,6 +159,59 @@ namespace Project_Compiladores1.Arbol
                 else return left;
             else throw new Exception("WTF?");
         }
+
+        public override Valor interpretar()
+        {
+            Valor vizq = Izq.interpretar();
+            Valor vder = Der.interpretar();
+            
+            if (vizq is ValorEntero && vder is ValorEntero)
+            {
+                return new ValorEntero(((ValorEntero)vizq).Valor + ((ValorEntero)vder).Valor);
+            }
+            if (vizq is ValorFlotante && vder is ValorFlotante)
+            {
+                return new ValorFlotante(((ValorFlotante)vizq).Valor + ((ValorFlotante)vder).Valor);
+            }
+            if (vizq is ValorCadena && vder is ValorCadena)
+            {
+                return new ValorCadena(((ValorCadena)vizq).Valor + ((ValorCadena)vder).Valor);
+            }
+            if (vizq is ValorEntero && vder is ValorFlotante)
+            {
+                return new ValorFlotante(((ValorEntero)vizq).Valor + ((ValorFlotante)vder).Valor);
+            }
+            if (vizq is ValorFlotante && vder is ValorEntero)
+            {
+                return new ValorFlotante(((ValorFlotante)vizq).Valor + ((ValorEntero)vder).Valor);
+            }
+            if (vizq is ValorCadena && vder is ValorEntero)
+            {
+                return new ValorCadena(((ValorCadena)vizq).Valor + ((ValorEntero)vder).ToString());
+            }
+            if (vizq is ValorEntero && vder is ValorCadena)
+            {
+                return new ValorCadena(((ValorEntero)vizq).ToString() + ((ValorCadena)vder).Valor);
+            }
+            if (vizq is ValorCadena && vder is ValorFlotante)
+            {
+                return new ValorCadena(((ValorCadena)vizq).Valor + ((ValorFlotante)vder).ToString());
+            }
+            if (vizq is ValorFlotante && vder is ValorCadena)
+            {
+                return new ValorCadena(((ValorFlotante)vizq).ToString() + ((ValorCadena)vder).Valor);
+            }
+            if (vizq is ValorCadena && vder is ValorCaracter)
+            {
+                return new ValorCadena(((ValorCadena)vizq).Valor + ((ValorCaracter)vder).Valor);
+            }
+            if (vizq is ValorCaracter && vder is ValorCadena)
+            {
+                return new ValorCadena(((ValorCaracter)vizq).Valor + ((ValorCadena)vder).Valor);
+            }
+
+            return null;
+        }
     }
 
     class Resta : OperacionBinaria
@@ -159,6 +240,30 @@ namespace Project_Compiladores1.Arbol
                 else
                     throw new Exception("Tipos incompatibles.");
             else throw new Exception("Solo se pueden restar numeros!");
+        }
+
+        public override Valor interpretar()
+        {
+            Valor vizq = Izq.interpretar();
+            Valor vder = Der.interpretar();
+
+            if (vizq is ValorEntero && vder is ValorEntero)
+            {
+                return new ValorEntero(((ValorEntero)vizq).Valor - ((ValorEntero)vder).Valor);
+            }
+            if (vizq is ValorFlotante && vder is ValorFlotante)
+            {
+                return new ValorFlotante(((ValorFlotante)vizq).Valor - ((ValorFlotante)vder).Valor);
+            }
+            if (vizq is ValorEntero && vder is ValorFlotante)
+            {
+                return new ValorFlotante(((ValorEntero)vizq).Valor - ((ValorFlotante)vder).Valor);
+            }
+            if (vizq is ValorFlotante && vder is ValorEntero)
+            {
+                return new ValorFlotante(((ValorFlotante)vizq).Valor - ((ValorEntero)vder).Valor);
+            }
+            return null;
         }
     }
 
@@ -189,6 +294,30 @@ namespace Project_Compiladores1.Arbol
                     throw new Exception("Tipos incompatibles.");
             else throw new Exception("Solo se pueden multiplicar numeros!");
         }
+
+        public override Valor interpretar()
+        {
+            Valor vizq = Izq.interpretar();
+            Valor vder = Der.interpretar();
+
+            if (vizq is ValorEntero && vder is ValorEntero)
+            {
+                return new ValorEntero(((ValorEntero)vizq).Valor * ((ValorEntero)vder).Valor);
+            }
+            if (vizq is ValorFlotante && vder is ValorFlotante)
+            {
+                return new ValorFlotante(((ValorFlotante)vizq).Valor * ((ValorFlotante)vder).Valor);
+            }
+            if (vizq is ValorEntero && vder is ValorFlotante)
+            {
+                return new ValorFlotante(((ValorEntero)vizq).Valor * ((ValorFlotante)vder).Valor);
+            }
+            if (vizq is ValorFlotante && vder is ValorEntero)
+            {
+                return new ValorFlotante(((ValorFlotante)vizq).Valor * ((ValorEntero)vder).Valor);
+            }
+            return null;
+        }
     }
 
     class Division : OperacionBinaria
@@ -213,6 +342,30 @@ namespace Project_Compiladores1.Arbol
                 else
                     throw new Exception("Tipos incompatibles.");
             else throw new Exception("Solo se pueden dividir numeros!");
+        }
+
+        public override Valor interpretar()
+        {
+            Valor vizq = Izq.interpretar();
+            Valor vder = Der.interpretar();
+
+            if (vizq is ValorEntero && vder is ValorEntero)
+            {
+                return new ValorFlotante(((float)((ValorEntero)vizq).Valor) / ((float)((ValorEntero)vder).Valor));
+            }
+            if (vizq is ValorFlotante && vder is ValorFlotante)
+            {
+                return new ValorFlotante(((ValorFlotante)vizq).Valor / ((ValorFlotante)vder).Valor);
+            }
+            if (vizq is ValorEntero && vder is ValorFlotante)
+            {
+                return new ValorFlotante(((ValorEntero)vizq).Valor / ((ValorFlotante)vder).Valor);
+            }
+            if (vizq is ValorFlotante && vder is ValorEntero)
+            {
+                return new ValorFlotante(((ValorFlotante)vizq).Valor / ((ValorEntero)vder).Valor);
+            }
+            return null;
         }
     }
 
@@ -245,6 +398,30 @@ namespace Project_Compiladores1.Arbol
                 else throw new Exception("Tipos incompatibles.");
             }else throw new Exception("Modulo solo acepta numeros!!!");
         }
+
+        public override Valor interpretar()
+        {
+            Valor vizq = Izq.interpretar();
+            Valor vder = Der.interpretar();
+
+            if (vizq is ValorEntero && vder is ValorEntero)
+            {
+                return new ValorEntero(((ValorEntero)vizq).Valor / ((ValorEntero)vder).Valor);
+            }
+            if (vizq is ValorFlotante && vder is ValorFlotante)
+            {
+                return new ValorEntero(Convert.ToInt32(((ValorFlotante)vizq).Valor / ((ValorFlotante)vder).Valor));
+            }
+            if (vizq is ValorEntero && vder is ValorFlotante)
+            {
+                return new ValorEntero(Convert.ToInt32(((ValorEntero)vizq).Valor / ((ValorFlotante)vder).Valor));
+            }
+            if (vizq is ValorFlotante && vder is ValorEntero)
+            {
+                return new ValorEntero(Convert.ToInt32(((ValorFlotante)vizq).Valor / ((ValorEntero)vder).Valor));
+            }
+            return null;
+        }
     }
 
     class And : OperacionBinaria
@@ -266,6 +443,21 @@ namespace Project_Compiladores1.Arbol
             if (left is Booleano && right is Booleano)
                 return left;
             throw new Exception("Error Semantico - Comparacion Invalida");
+        }
+
+        public override Valor interpretar()
+        {
+            Valor vizq = Izq.interpretar();
+            Valor vder = Der.interpretar();
+
+            if (((ValorBooleano)vizq).Valor && ((ValorBooleano)vizq).Valor)
+            {
+                return new ValorBooleano(true);
+            }
+            else
+            {
+                return new ValorBooleano(false);
+            }
         }
     }
 
@@ -289,6 +481,21 @@ namespace Project_Compiladores1.Arbol
                 return left;
             throw new Exception("Error Semantico - Comparacion Invalida");
         }
+
+        public override Valor interpretar()
+        {
+            Valor vizq = Izq.interpretar();
+            Valor vder = Der.interpretar();
+
+            if (((ValorBooleano)vizq).Valor == false && ((ValorBooleano)vizq).Valor == false)
+            {
+                return new ValorBooleano(false);
+            }
+            else
+            {
+                return new ValorBooleano(true);
+            }
+        }
     }
 
     class Equal : OperacionBinaria
@@ -311,6 +518,34 @@ namespace Project_Compiladores1.Arbol
                 return new Booleano();
             else throw new Exception("Error Semantico - Comparacion Invalida");
         }
+
+        public override Valor interpretar()
+        {
+            Valor vizq = Izq.interpretar();
+            Valor vder = Der.interpretar();
+
+            if (vizq is ValorEntero)
+            {
+                return new ValorBooleano(((ValorEntero)vizq).Valor == ((ValorEntero)vder).Valor);
+            }
+            if (vizq is ValorFlotante)
+            {
+                return new ValorBooleano(((ValorFlotante)vizq).Valor == ((ValorFlotante)vder).Valor);
+            }
+            if (vizq is ValorCadena)
+            {
+                return new ValorBooleano(((ValorCadena)vizq).Valor == ((ValorCadena)vder).Valor);
+            }
+            if (vizq is ValorCaracter)
+            {
+                return new ValorBooleano(((ValorCaracter)vizq).Valor == ((ValorCaracter)vder).Valor);
+            }
+            if (vizq is ValorBooleano)
+            {
+                return new ValorBooleano(((ValorBooleano)vizq).Valor == ((ValorBooleano)vder).Valor);
+            }
+            return null;
+        }
     }
 
     class Distinto : OperacionBinaria
@@ -332,6 +567,34 @@ namespace Project_Compiladores1.Arbol
             if (left.esEquivalente(right))
                 return new Booleano();
             else throw new Exception("Error Semantico - No se puede pueden comparar los tipos " + left + " con " + right);
+        }
+
+        public override Valor interpretar()
+        {
+            Valor vizq = Izq.interpretar();
+            Valor vder = Der.interpretar();
+
+            if (vizq is ValorEntero)
+            {
+                return new ValorBooleano(((ValorEntero)vizq).Valor != ((ValorEntero)vder).Valor);
+            }
+            if (vizq is ValorFlotante)
+            {
+                return new ValorBooleano(((ValorFlotante)vizq).Valor != ((ValorFlotante)vder).Valor);
+            }
+            if (vizq is ValorCadena)
+            {
+                return new ValorBooleano(((ValorCadena)vizq).Valor != ((ValorCadena)vder).Valor);
+            }
+            if (vizq is ValorCaracter)
+            {
+                return new ValorBooleano(((ValorCaracter)vizq).Valor != ((ValorCaracter)vder).Valor);
+            }
+            if (vizq is ValorBooleano)
+            {
+                return new ValorBooleano(((ValorBooleano)vizq).Valor != ((ValorBooleano)vder).Valor);
+            }
+            return null;
         }
     }
 
@@ -381,6 +644,30 @@ namespace Project_Compiladores1.Arbol
                 else throw new Exception("No se puede comparar un numero con otra cosa.");
             else throw new Exception("Tipos incompatibles.");
         }
+
+        public override Valor interpretar()
+        {
+            Valor vizq = Izq.interpretar();
+            Valor vder = Der.interpretar();
+
+            if (vizq is ValorEntero && vder is ValorEntero)
+            {
+                return new ValorBooleano(((ValorEntero)vizq).Valor < ((ValorEntero)vder).Valor);
+            }
+            if (vizq is ValorFlotante && vder is ValorFlotante)
+            {
+                return new ValorBooleano(((ValorFlotante)vizq).Valor < ((ValorFlotante)vder).Valor);
+            }
+            if (vizq is ValorEntero && vder is ValorFlotante)
+            {
+                return new ValorBooleano(((ValorEntero)vizq).Valor < ((ValorFlotante)vder).Valor);
+            }
+            if (vizq is ValorFlotante && vder is ValorEntero)
+            {
+                return new ValorBooleano(((ValorFlotante)vizq).Valor < ((ValorEntero)vder).Valor);
+            }
+            return null;
+        }
     }
 
     class MayorIgual : OperacionBinaria
@@ -405,6 +692,30 @@ namespace Project_Compiladores1.Arbol
                 else throw new Exception("No se puede comparar un numero con otra cosa.");
             else throw new Exception("Tipos incompatibles.");
         }
+
+        public override Valor interpretar()
+        {
+            Valor vizq = Izq.interpretar();
+            Valor vder = Der.interpretar();
+
+            if (vizq is ValorEntero && vder is ValorEntero)
+            {
+                return new ValorBooleano(((ValorEntero)vizq).Valor >= ((ValorEntero)vder).Valor);
+            }
+            if (vizq is ValorFlotante && vder is ValorFlotante)
+            {
+                return new ValorBooleano(((ValorFlotante)vizq).Valor >= ((ValorFlotante)vder).Valor);
+            }
+            if (vizq is ValorEntero && vder is ValorFlotante)
+            {
+                return new ValorBooleano(((ValorEntero)vizq).Valor >= ((ValorFlotante)vder).Valor);
+            }
+            if (vizq is ValorFlotante && vder is ValorEntero)
+            {
+                return new ValorBooleano(((ValorFlotante)vizq).Valor >= ((ValorEntero)vder).Valor);
+            }
+            return null;
+        }
     }
 
     class MenorIgual : OperacionBinaria
@@ -428,6 +739,30 @@ namespace Project_Compiladores1.Arbol
                     return new Booleano();
                 else throw new Exception("No se puede comparar un numero con otra cosa.");
             else throw new Exception("Tipos incompatibles.");
+        }
+
+        public override Valor interpretar()
+        {
+            Valor vizq = Izq.interpretar();
+            Valor vder = Der.interpretar();
+
+            if (vizq is ValorEntero && vder is ValorEntero)
+            {
+                return new ValorBooleano(((ValorEntero)vizq).Valor <= ((ValorEntero)vder).Valor);
+            }
+            if (vizq is ValorFlotante && vder is ValorFlotante)
+            {
+                return new ValorBooleano(((ValorFlotante)vizq).Valor <= ((ValorFlotante)vder).Valor);
+            }
+            if (vizq is ValorEntero && vder is ValorFlotante)
+            {
+                return new ValorBooleano(((ValorEntero)vizq).Valor <= ((ValorFlotante)vder).Valor);
+            }
+            if (vizq is ValorFlotante && vder is ValorEntero)
+            {
+                return new ValorBooleano(((ValorFlotante)vizq).Valor <= ((ValorEntero)vder).Valor);
+            }
+            return null;
         }
     }
 
@@ -486,6 +821,13 @@ namespace Project_Compiladores1.Arbol
 
             return t;
         }
+
+        public override Valor interpretar()
+        {
+            Valor valor = InfInterpretador.getInstance().getValor(id);
+            //TO DO arreglo registro (si acces es distinto de null)
+            return valor;
+        }
     }
 
     class ListaExpre: Expresiones
@@ -498,6 +840,10 @@ namespace Project_Compiladores1.Arbol
             return null;
         }
 
+        public override Valor interpretar()
+        {
+            return null;
+        }
     }
 
     class ExpMasMas : Expresiones
@@ -513,6 +859,17 @@ namespace Project_Compiladores1.Arbol
                 throw new Exception("Error Semantico - Se esperaba un valor Entero");
             return null;
         }
+
+        public override Valor interpretar()
+        {
+            if (ID.accesor == null)
+            {
+                Valor v = ID.interpretar();
+                ((ValorEntero)v).Valor += 1;
+                return v;
+            }
+            return null;
+        }
     }
 
     class ExpMenosMenos : Expresiones
@@ -521,6 +878,17 @@ namespace Project_Compiladores1.Arbol
         public override Tipo validarSemantica()
         {
             //FALTA
+            return null;
+        }
+
+        public override Valor interpretar()
+        {
+            if (ID.accesor == null)
+            {
+                Valor v = ID.interpretar();
+                ((ValorEntero)v).Valor -= 1;
+                return v;
+            }
             return null;
         }
     }
@@ -536,16 +904,17 @@ namespace Project_Compiladores1.Arbol
             //FALTA
             return null;
         }
-    }
 
-    class OperacionUnaria : Expresiones
-    {
-        public Expresiones parametro;
-        public override Tipo validarSemantica()
+        public override Valor interpretar()
         {
-            //FALTA
             return null;
         }
+    }
+
+    abstract class OperacionUnaria : Expresiones
+    {
+        public Expresiones parametro;
+        
     }
 
     class Not : OperacionUnaria
@@ -559,6 +928,12 @@ namespace Project_Compiladores1.Arbol
         {
             //FALTA
             return null;
+        }
+
+        public override Valor interpretar()
+        {
+            Valor t = parametro.interpretar();
+            return new ValorBooleano(!((ValorBooleano)t).Valor); 
         }
     }
 
@@ -598,6 +973,12 @@ namespace Project_Compiladores1.Arbol
             //FALTA
             return null;
         }
+
+        public override Valor interpretar()
+        {
+            Valor valor = InfInterpretador.getInstance().getValor(id);            
+            return valor;
+        }
     }
 
     class AccessFunc : Access
@@ -607,6 +988,11 @@ namespace Project_Compiladores1.Arbol
         public override Tipo validarSemantica()
         {
             //FALTA
+            return null;
+        }
+
+        public override Valor interpretar()
+        {
             return null;
         }
     }
@@ -626,14 +1012,18 @@ namespace Project_Compiladores1.Arbol
             //FALTA
             return null;
         }
+
+        public override Valor interpretar()
+        {
+            Valor valor = InfInterpretador.getInstance().getValor(id);
+            return valor;
+        }
     }
 
     class AccessArreglo : Access
     {
         private ArrayList cont =new ArrayList();
-
        
-
         public void addexp(Expresiones par)
         {
             cont.Add(par);
@@ -649,6 +1039,11 @@ namespace Project_Compiladores1.Arbol
         public override Tipo validarSemantica()
         {
             //FALTA
+            return null;
+        }
+
+        public override Valor interpretar()
+        {
             return null;
         }
     }

@@ -27,7 +27,7 @@ namespace Project_Compiladores1.Interpretador
 
         public override string ToString()
         {
-            return valor.ToString();
+            return Valor.ToString();
         }
     }
 }
