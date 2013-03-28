@@ -29,7 +29,7 @@ namespace Project_Compiladores1.Sintactico
                 currentToken.Tipo == Lexico.TipoToken.TK_WHILE || currentToken.Tipo == Lexico.TipoToken.TK_DO || currentToken.Tipo == Lexico.TipoToken.TK_FOR ||
                 currentToken.Tipo == Lexico.TipoToken.TK_BREAK || currentToken.Tipo == Lexico.TipoToken.TK_SWITCH || currentToken.Tipo == Lexico.TipoToken.TK_RETURN ||
                 currentToken.Tipo == Lexico.TipoToken.TK_ID || currentToken.Tipo == Lexico.TipoToken.TK_INT || currentToken.Tipo == Lexico.TipoToken.TK_FLOAT ||
-                currentToken.Tipo == Lexico.TipoToken.TK_CHAR || currentToken.Tipo == Lexico.TipoToken.TK_BOOL || currentToken.Tipo == Lexico.TipoToken.TK_STRUCT)
+                currentToken.Tipo == Lexico.TipoToken.TK_CHAR || currentToken.Tipo == Lexico.TipoToken.TK_BOOL || currentToken.Tipo == Lexico.TipoToken.TK_STRUCT||currentToken.Tipo == Lexico.TipoToken.TK_VOID)
             {
                 Sentencia s = Statement();
                 s.sig = StatementList();
@@ -589,28 +589,29 @@ namespace Project_Compiladores1.Sintactico
             currentToken = lex.NextToken();
             decl.Tip = tipo;
             decl.Var = nombre;
-            FParams(decl.Sig);
+            decl.Sig = FParams();            
             return decl;
         }
 
-        public Declaracion FParams(Declaracion d)
+        public Declaracion FParams()
         {
+            Declaracion d = new Declaracion();
             if (currentToken.Tipo == Lexico.TipoToken.TK_COMA)
             {
                 currentToken = lex.NextToken();
-                Declaracion decl = new Declaracion();
+                //Declaracion decl = new Declaracion();
                 Tipo tipo = Tipo();
                 if (tipo == null)
-                    return decl;
+                    return d;
                 if (currentToken.Tipo != Lexico.TipoToken.TK_ID)
                     throw new Exception("Se esperaba el token ID");
 
                 Variable nombre = new Variable(currentToken.Lexema, null);
                 currentToken = lex.NextToken();
-                decl.Tip = tipo;
-                decl.Var = nombre;
-                FParams(decl.Sig);
-                return decl;
+                d.Tip = tipo;
+                d.Var = nombre;
+                d.Sig= FParams();
+                return d;
             }
             return d;
         }
