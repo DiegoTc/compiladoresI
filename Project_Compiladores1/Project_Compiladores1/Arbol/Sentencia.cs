@@ -326,10 +326,7 @@ namespace Project_Compiladores1.Arbol
             }  
             if (Var == null)
             {
-                if (Retorno != null)
-                    InfSemantica.getInstance().tblFunciones.Add(this.Var, Retorno);
-                else
-                    InfSemantica.getInstance().tblFunciones.Add(this.Var, new Voids());
+                InfSemantica.getInstance().tblFunciones.Add(this.Var, Retorno);                
             }
             else
             {
@@ -405,7 +402,6 @@ namespace Project_Compiladores1.Arbol
                 {
                     
                 }
-
             }
             if (Valor != null)
             {
