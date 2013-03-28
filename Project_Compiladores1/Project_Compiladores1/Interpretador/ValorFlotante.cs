@@ -5,24 +5,24 @@ using System.Text;
 
 namespace Project_Compiladores1.Interpretador
 {
-    class ValorCaracter : Valor
+    class ValorFlotante : Valor
     {
-        private string valor;
+        private float valor;
 
-        public string Valor
+        public float Valor
         {
             get { return valor; }
             set { valor = value; }
         }
 
-        public ValorCaracter(string carac)
+        public ValorFlotante(float val)
         {
-            Valor = carac;
+            Valor = val;            
         }
 
         public override Valor Clonar()
         {
-            return new ValorCaracter(Valor);
+            return new ValorFlotante(Valor);
         }
 
         public override string ToString()

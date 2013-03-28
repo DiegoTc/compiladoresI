@@ -7,27 +7,27 @@ namespace Project_Compiladores1.Interpretador
 {
     class ValorCadena : Valor
     {
-        private string _cadena;
+        private string valor;
 
-        public string Cadena
+        public string Valor
         {
-            get { return _cadena; }
-            set { _cadena = value; }
+            get { return valor; }
+            set { valor = value; }
         }
 
         public ValorCadena(string cad)
         {
-            Cadena = cad;
+            Valor = cad;
         }
 
         public override Valor Clonar()
         {
-            return new ValorCadena(Cadena);
+            return new ValorCadena(Valor);
         }
 
         public override string ToString()
         {
-            return Cadena;
+            return Valor;
         }
 
     }

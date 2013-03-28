@@ -27,6 +27,8 @@ namespace Project_Compiladores1
 
             Sentencia raiz = s.parse();
             raiz.SentValSemantica();
+            raiz.interpretar();
+            
             Console.ReadKey();
 
 

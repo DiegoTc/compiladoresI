@@ -5,24 +5,24 @@ using System.Text;
 
 namespace Project_Compiladores1.Interpretador
 {
-    class ValorCaracter : Valor
+    class ValorBooleano : Valor
     {
-        private string valor;
+        private bool valor;
 
-        public string Valor
+        public bool Valor
         {
             get { return valor; }
             set { valor = value; }
         }
 
-        public ValorCaracter(string carac)
+        public ValorBooleano(bool val)
         {
-            Valor = carac;
+            Valor = val;
         }
 
         public override Valor Clonar()
         {
-            return new ValorCaracter(Valor);
+            return new ValorBooleano(Valor);
         }
 
         public override string ToString()

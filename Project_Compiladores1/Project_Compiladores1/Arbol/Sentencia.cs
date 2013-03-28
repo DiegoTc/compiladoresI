@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Project_Compiladores1.Interpretador;
 using Project_Compiladores1.Semantico;
 
 namespace Project_Compiladores1.Arbol
@@ -20,7 +21,7 @@ namespace Project_Compiladores1.Arbol
             if (sig != null)
             {
                 sig.SentValSemantica();
-            }
+            }            
         }
 
         protected abstract void interpretarSentencia();
@@ -47,7 +48,17 @@ namespace Project_Compiladores1.Arbol
 
         protected override void interpretarSentencia()
         {
-            
+            Valor tmp = Expr.interpretar();     
+            if (tmp is ValorEntero)
+                Console.WriteLine(((ValorEntero)tmp).Valor.ToString());
+            if (tmp is ValorFlotante)
+                Console.WriteLine(((ValorFlotante)tmp).Valor.ToString());
+            if (tmp is ValorCadena)
+                Console.WriteLine(((ValorCadena)tmp).Valor.ToString());
+            if (tmp is ValorCaracter)
+                Console.WriteLine(((ValorCaracter)tmp).Valor.ToString());
+            if (tmp is ValorBooleano)
+                Console.WriteLine(((ValorBooleano)tmp).Valor.ToString());
         }
     }
 
@@ -129,7 +140,48 @@ namespace Project_Compiladores1.Arbol
 
         protected override void interpretarSentencia()
         {
-            
+            Valor val = Valor.interpretar();
+
+            Access a = id.accesor;
+            ArrayList lista = new ArrayList();
+            String campo;
+            Valor ident = InfInterpretador.getInstance().getValor(id.id);
+
+            while (a != null)
+            {
+                if (a is AccessArreglo)
+                {
+                    lista = new ArrayList();
+                    AccessArreglo tmp = (AccessArreglo) a;
+                    ArrayList indices = tmp.Cont;
+                    for (int i = 0; i < indices.Count; i++)
+                    {
+                        lista.Add((ValorEntero) ((Expresiones) indices[i]).interpretar());
+                    }
+                    if (a.Next != null)
+                    {
+                        ident = ((ValorArreglo) ident).get(lista);
+                    } //TODO ADD ELSE CLAUSE
+                }
+                a = a.Next;
+            }
+            if (id.accesor != null)
+            {
+                if (ident is ValorArreglo)
+                {
+                    ((ValorArreglo) ident).set(lista, val.Clonar());
+                }
+                else
+                {
+                    //TODO: ADD CODE
+                }
+            }
+            else
+            {
+                InfInterpretador.getInstance().asignarValor(id.id, val.Clonar());
+
+                //System.out.println(var.getId()+"="+val);
+            }
         }
     }
 
@@ -156,7 +208,11 @@ namespace Project_Compiladores1.Arbol
 
         protected override void interpretarSentencia()
         {
-            
+            Valor tmp = Condicion.interpretar();
+            if (((ValorBooleano)tmp).Valor)            
+                Cierto.interpretar();
+            else
+                Falso.interpretar();
         }
     }
 
@@ -478,6 +534,7 @@ namespace Project_Compiladores1.Arbol
             else
             {
                 InfSemantica.getInstance().tblSimbolos.Add(Var.id, Tip);
+                InfInterpretador.getInstance().asignarValor(Var.id, null);
                 var = InfSemantica.getInstance().tblSimbolos[Var.id];
                 if (Tip is Struct)
                 {

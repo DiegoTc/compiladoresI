@@ -21,7 +21,15 @@ namespace Project_Compiladores1.Interpretador
 
         public void asignarValor(String id, Valor valor)
         {
-            valores.Add(id, valor);
+            if (valores.ContainsKey(id))
+            {
+                valores[id] = valor;
+            }
+            else
+            {
+                valores.Add(id, valor);
+            }
+            
         }
 
         public Valor getValor(String id)
