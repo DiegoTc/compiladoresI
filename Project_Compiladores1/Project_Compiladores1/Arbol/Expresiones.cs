@@ -890,6 +890,17 @@ namespace Project_Compiladores1.Arbol
             }
             return null;
         }
+
+        public override Valor interpretar()
+        {
+            if (ID.accesor == null)
+            {
+                Valor v = ID.interpretar();
+                ((ValorEntero)v).Valor -= 1;
+                return v;
+            }
+            return null;
+        }
     }
 
     class ExprFuncion : Expresiones
