@@ -62,6 +62,11 @@
     <Compile Include="Arbol\Operadores.cs" />
     <Compile Include="Arbol\Sentencia.cs" />
     <Compile Include="Arbol\Tipo.cs" />
+    <Compile Include="Interpretador\InfInterpretador.cs" />
+    <Compile Include="Interpretador\Valor.cs" />
+    <Compile Include="Interpretador\ValorCadena.cs" />
+    <Compile Include="Interpretador\ValorCaracter.cs" />
+    <Compile Include="Interpretador\ValorEntero.cs" />
     <Compile Include="Lexico\Lexico.cs" />
     <Compile Include="Lexico\LexicoC.cs" />
     <Compile Include="Lexico\LexicoJava.cs" />

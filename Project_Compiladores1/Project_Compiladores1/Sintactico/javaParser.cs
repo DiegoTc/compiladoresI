@@ -1468,7 +1468,7 @@ namespace Project_Compiladores1.Sintactico
                 }
                 else
                 {
-                    return V;
+                    return V.ID;
                 }
             }
             return null;

@@ -22,6 +22,18 @@ namespace Project_Compiladores1.Arbol
                 sig.SentValSemantica();
             }
         }
+
+        protected abstract void interpretarSentencia();
+
+        public void interpretar()
+        {
+            interpretarSentencia();
+            if (sig != null)
+            {
+                sig.interpretar();
+            }
+
+        }
     }
 
     class S_Print : Sentencia
@@ -32,6 +44,11 @@ namespace Project_Compiladores1.Arbol
         {
             Expr.validarSemantica();
         }
+
+        protected override void interpretarSentencia()
+        {
+            
+        }
     }
 
     class S_Read : Sentencia
@@ -40,6 +57,11 @@ namespace Project_Compiladores1.Arbol
         public override void validarSemantica()
         {
             var.validarSemantica();
+        }
+
+        protected override void interpretarSentencia()
+        {
+            
         }
     }
 
@@ -104,6 +126,11 @@ namespace Project_Compiladores1.Arbol
                 throw new Exception("Error Semantico - No existe la variable " + id.id);
             }
         }
+
+        protected override void interpretarSentencia()
+        {
+            
+        }
     }
 
     class S_If : Sentencia
@@ -126,6 +153,11 @@ namespace Project_Compiladores1.Arbol
             }
             else throw new Exception("La condicion debe ser booleana");
         }
+
+        protected override void interpretarSentencia()
+        {
+            
+        }
     }
 
     class S_While : Sentencia
@@ -143,6 +175,11 @@ namespace Project_Compiladores1.Arbol
             }
             else throw new Exception("La condicion debe ser booleana");
         }
+
+        protected override void interpretarSentencia()
+        {
+            
+        }
     }
 
     class S_Do : Sentencia
@@ -159,6 +196,11 @@ namespace Project_Compiladores1.Arbol
                     S.SentValSemantica();
             }
             else throw new Exception("La condicion debe ser booleana");
+        }
+
+        protected override void interpretarSentencia()
+        {
+            
         }
     }
 
@@ -207,6 +249,11 @@ namespace Project_Compiladores1.Arbol
                 S.SentValSemantica();
 
         }
+
+        protected override void interpretarSentencia()
+        {
+            
+        }
     }
 
     class Structs : TypeDef
@@ -247,6 +294,10 @@ namespace Project_Compiladores1.Arbol
             //c.validarSemantica();
         }
 
+        protected override void interpretarSentencia()
+        {
+            
+        }
     }
 
     class Cases : Sentencia
@@ -270,6 +321,11 @@ namespace Project_Compiladores1.Arbol
             S.SentValSemantica();
             Sig.validarSemantica();
         }
+
+        protected override void interpretarSentencia()
+        {
+            
+        }
     }
 
     class S_Switch : Sentencia
@@ -292,6 +348,11 @@ namespace Project_Compiladores1.Arbol
             }
             Casos.validarSemantica();
             sdefault.SentValSemantica();
+        }
+
+        protected override void interpretarSentencia()
+        {
+            
         }
     }
 
@@ -378,6 +439,11 @@ namespace Project_Compiladores1.Arbol
                 #endregion
             }
         }
+
+        protected override void interpretarSentencia()
+        {
+            
+        }
     }
 
     class Declaracion : Sentencia
@@ -428,6 +494,11 @@ namespace Project_Compiladores1.Arbol
             if(Sig!=null)
                 Sig.validarSemantica();
         }
+
+        protected override void interpretarSentencia()
+        {
+            
+        }
     }
 
     class S_Break : Sentencia
@@ -435,6 +506,11 @@ namespace Project_Compiladores1.Arbol
         public override void validarSemantica()
         {
             //no FALTA
+        }
+
+        protected override void interpretarSentencia()
+        {
+            
         }
     }
 
@@ -444,6 +520,11 @@ namespace Project_Compiladores1.Arbol
         {
             //no FALTA
         }
+
+        protected override void interpretarSentencia()
+        {
+            
+        }
     }
 
     class S_Return : Sentencia
@@ -452,6 +533,11 @@ namespace Project_Compiladores1.Arbol
         public override void validarSemantica()
         {
             Expr.validarSemantica();
+        }
+
+        protected override void interpretarSentencia()
+        {
+            
         }
     }
 
@@ -473,6 +559,11 @@ namespace Project_Compiladores1.Arbol
 
             if (var == null)
                 throw new Exception("Error Semantico - La variable " + Var.id + " no existe");
+        }
+
+        protected override void interpretarSentencia()
+        {
+            
         }
     }
 
@@ -523,6 +614,11 @@ namespace Project_Compiladores1.Arbol
             }    
 
         }
+
+        protected override void interpretarSentencia()
+        {
+            
+        }
     }
 
     abstract class TypeDef : Sentencia
@@ -536,6 +632,11 @@ namespace Project_Compiladores1.Arbol
         public override void validarSemantica()
         {
             InfSemantica.getInstance().tblTipos.Add(type.Nombre, type.Tip);
+        }
+
+        protected override void interpretarSentencia()
+        {
+            
         }
     }
 }
