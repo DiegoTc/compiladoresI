@@ -83,6 +83,7 @@ namespace WebUI.Lexico
         TK_CONTINUE,
         TK_EXIT,
         TK_RECORD,
+        TK_DOWNTO,
         TK_PRIVATE,
         TK_NEW
     }
@@ -123,7 +124,6 @@ namespace WebUI.Lexico
             PalabrasReservadas = new Dictionary<string, TipoToken>();
             Operadores = new Dictionary<string, TipoToken>();
         }
-
 
         protected char nextSymbol()
         {

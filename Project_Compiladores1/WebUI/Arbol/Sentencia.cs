@@ -46,7 +46,7 @@ namespace WebUI.Arbol
     class S_Asignacion : Sentencia
     {
         public Operadores Op;
-        public Variable id;// = new Variable();
+        public Variable id = new Variable("", null);
         public Expresiones Valor;
         public Declaracion campos; //Para las asignaciones de arreglos.
 
@@ -60,9 +60,43 @@ namespace WebUI.Arbol
             Tipo val = Valor.validarSemantica();
             if (var != null)
             {
-                if (!var.esEquivalente(val))
+                if (var is Struct)
                 {
-                    throw new Exception("Error Semantico - No se pueden asignar tipos diferentes " + var + " con " + val);
+                    Access ac = id.accesor;
+                    Struct sts = ((Struct)var);
+                    Tipo tmptipo = InfSemantica.getInstance().tblTipos[sts.nombre];
+
+                    while (ac != null)
+                    {
+                        AccessMiembro access = ((AccessMiembro)ac);
+                        Struct st = ((Struct)tmptipo);
+                        tmptipo = st.Campos[access.Id];
+
+                        if (tmptipo is Struct)
+                        {
+                            Struct str = ((Struct)tmptipo);
+                            if (InfSemantica.getInstance().tblTipos.ContainsKey(str.nombre))
+                            {
+                                tmptipo = InfSemantica.getInstance().tblTipos[str.nombre];
+                                ac = ac.Next;
+                            }
+                            else
+                            {
+                                throw new Exception("Error semantico -- No existe dicho accessor" + access.Id);
+                            }
+                        }
+                        else
+                        {
+
+                            tmptipo = st.Campos[access.Id];
+                            ac = ac.Next;
+                        }
+                    }
+                    if (!tmptipo.esEquivalente(val))
+                    {
+                        throw new Exception("Error Semantico - No se pueden asignar tipos diferentes " + var + " con " + val);
+                    }
+
                 }
             }
             else
@@ -122,7 +156,7 @@ namespace WebUI.Arbol
     class S_For : Sentencia
     {
         public Tipo Tip;
-        public Variable Var;
+        public Variable Var = new Variable("", null);
         public Expresiones Inicio;
         public Expresiones Condicion;
         public Expresiones Iteracion;
@@ -166,7 +200,7 @@ namespace WebUI.Arbol
         }
     }
 
-    class Structs : Sentencia
+    class Structs : TypeDef
     {
         public string nombre;// = new Variable();
         public Declaracion campos;
@@ -176,26 +210,30 @@ namespace WebUI.Arbol
         {
             //FALTA            
             Tipo var = null;
-            if (InfSemantica.getInstance().tblFunciones.ContainsKey(nombre))
+            if (InfSemantica.getInstance().tblTipos.ContainsKey(nombre))
             {
-                var = InfSemantica.getInstance().tblFunciones[nombre];
-            }
-            if (InfSemantica.getInstance().tblSimbolos.ContainsKey(nombre))
-            {
-                throw new Exception("Error Semantico - La variable " + nombre + " ya existe");
+                var = InfSemantica.getInstance().tblTipos[nombre];
             }
 
             if (var != null)
                 throw new Exception("Error Semantico - La variable " + nombre + " ya esta siendo utilizada");
             else
             {
-                //InfSemantica.getInstance().tblFunciones.Add(nombre, new Struct()); AGREGAR LUEGO
-            }
-            Declaracion tmp = campos;
-            while (tmp != null)
-            {
-                // tblSimbolosStruct.Add(tmp.Var.id, tmp.Tip);
-                tmp = tmp.Sig;
+                Struct s = new Struct();
+                s.Campos = new T_Campos();
+                s.nombre = nombre;
+                Declaracion tmp = campos;
+                while (tmp != null)
+                {
+                    string id = tmp.Var.id;
+                    if (s.Campos.ContainsKey(id))
+                    {
+                        throw new Exception("Error Semantico - La variable " + id + " ya esta siendo utilizada");
+                    }
+                    s.Campos.Add(id, tmp.Tip);
+                    tmp = tmp.Sig;
+                }
+                InfSemantica.getInstance().tblTipos.Add(nombre, s);
             }
             //c.validarSemantica();
         }
@@ -354,6 +392,11 @@ namespace WebUI.Arbol
             {
                 InfSemantica.getInstance().tblSimbolos.Add(Var.id, Tip);
                 var = InfSemantica.getInstance().tblSimbolos[Var.id];
+                if (Tip is Struct)
+                {
+
+                }
+
             }
             if (Valor != null)
             {
@@ -460,5 +503,20 @@ namespace WebUI.Arbol
             }
 
         }
+    }
+
+    class TypeDef : Sentencia
+    {
+        public TypeDef Sig;
+
+        public override void validarSemantica()
+        {
+        }
+
+    }
+
+    class Alias : TypeDef
+    {
+        public UserType type;
     }
 }

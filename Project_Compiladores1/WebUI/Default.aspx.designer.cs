@@ -22,39 +22,57 @@ namespace WebUI {
         protected global::System.Web.UI.UpdatePanel UpdatePanel1;
         
         /// <summary>
-        /// cbLenguaje control.
+        /// btnCompilarJava control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlSelect cbLenguaje;
+        protected global::System.Web.UI.WebControls.Button btnCompilarJava;
         
         /// <summary>
-        /// txtContenido control.
+        /// txtResultadoJava control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTextArea txtContenido;
+        protected global::System.Web.UI.HtmlControls.HtmlTextArea txtResultadoJava;
         
         /// <summary>
-        /// btnCompilar control.
+        /// BtnCompilarC control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnCompilar;
+        protected global::System.Web.UI.WebControls.Button BtnCompilarC;
         
         /// <summary>
-        /// txtResultado control.
+        /// txtResultadoC control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTextArea txtResultado;
+        protected global::System.Web.UI.HtmlControls.HtmlTextArea txtResultadoC;
+        
+        /// <summary>
+        /// BtnCompilarPascal control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button BtnCompilarPascal;
+        
+        /// <summary>
+        /// txtResultadoPascal control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTextArea txtResultadoPascal;
     }
 }

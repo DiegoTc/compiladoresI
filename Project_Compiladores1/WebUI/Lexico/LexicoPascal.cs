@@ -74,7 +74,7 @@ namespace WebUI.Lexico
             PalabrasReservadas.Add("record", TipoToken.TK_RECORD);
             PalabrasReservadas.Add("array", TipoToken.TK_ARRAY);
             PalabrasReservadas.Add("string", TipoToken.TK_STRING);
-
+            PalabrasReservadas.Add("downto", TipoToken.TK_DOWNTO);
             symbol = nextSymbol();
         }
     }

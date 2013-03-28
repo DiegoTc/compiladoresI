@@ -22,51 +22,68 @@ namespace WebUI
         protected void BtnCompilarOnClick(object sender, EventArgs e)
         {
             //Evaluo si el textbox no esta vacio
-            if (!string.IsNullOrEmpty(txtContenido.Value))
-            {
-                EvaluarSentencia();
-            }
-            else
-            {
-                txtResultado.Value = "No se ingreso ninguna sentencia en la caja de texto!!!.";
-            }
+            //if (!string.IsNullOrEmpty(txtContenido.Value))
+            //{
+            //    EvaluarSentencia();
+            //}
+            //else
+            //{
+            //    txtResultado.Value = "No se ingreso ninguna sentencia en la caja de texto!!!.";
+            //}
         }
 
         protected void EvaluarSentencia()
         {
-            switch (cbLenguaje.Value)
-            {
-                case "Java":
+            //switch (cbLenguaje.Value)
+            //{
+            //    case "Java":
 
-                    //Declaro la variable de sesion para el capturar el mensaje del analisis sintactico
-                    Session["MsjJava"] = string.Empty;
+            //        //Declaro la variable de sesion para el capturar el mensaje del analisis sintactico
+            //        Session["MsjJava"] = string.Empty;
 
-                    var lj = new LexicoJava(txtContenido.Value);
-                    var jp = new javaParser(lj);
+            //        var lj = new LexicoJava(txtContenido.Value);
+            //        var jp = new javaParser(lj);
                     
-                    var raiz = jp.parse();
-                    raiz.SentValSemantica();
+            //        var raizJ = jp.parse();
+            //        //raiz.SentValSemantica();
 
-                    txtResultado.Value = Session["MsjJava"].ToString();
-
-                    break;
+            //        txtResultado.Value = Session["MsjJava"].ToString();
+                    
+            //        break;
                                                                                                                                                                                                                                                                                                                                                                                                                                           
-                case "C":
+            //    case "C":
 
-                    var lc = new LexicoC(txtContenido.Value);
+            //        //Declaro la variable de sesion para el capturar el mensaje del analisis sintactico
+            //        Session["MsjC"] = string.Empty;
 
-                    break;
+            //        var lc = new LexicoC(txtContenido.Value);
+            //        var cp = new parserC(lc);
 
-                case "Pascal":
+            //        var raizC = cp.parse();
 
-                    var lp = new LexicoPascal(txtContenido.Value);
+            //        txtResultado.Value = Session["MsjC"].ToString();
 
-                    break;
+            //        break;
 
-                default:
-                    break;
+            //    case "Pascal":
 
-            }
+            //        //Declaro la variable de sesion para el capturar el mensaje del analisis sintactico
+            //        Session["MsjPascal"] = string.Empty;
+                                        
+            //        var lp = new LexicoPascal(txtContenido.Value);
+            //        var pp = new pascalParser(lp);
+
+            //        var raizP = pp.parse();
+
+            //        txtResultado.Value = Session["MsjPascal"].ToString();
+
+
+            //        break;
+
+            //    default:
+            //        break;
+
+            //}
         }
     }
 }
