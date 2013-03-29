@@ -46,7 +46,7 @@ namespace Project_Compiladores1.Arbol
         }
 
         protected override void interpretarSentencia()
-        {
+        {            
             Valor tmp = Expr.interpretar();     
             if (tmp is ValorEntero)
                 Console.WriteLine(((ValorEntero)tmp).Valor.ToString());
@@ -58,6 +58,13 @@ namespace Project_Compiladores1.Arbol
                 Console.WriteLine(((ValorCaracter)tmp).Valor.ToString());
             if (tmp is ValorBooleano)
                 Console.WriteLine(((ValorBooleano)tmp).Valor.ToString());
+            if (tmp is ValorArreglo)
+            {
+                Variable tmpvar = (Variable) Expr;
+                Access tmpacc = ((AccessArreglo) tmpvar.accesor).Last();
+                Console.WriteLine(((ValorArreglo)tmp).get(((AccessArreglo)tmpacc).Cont));
+            }
+            
         }
     }
 
@@ -163,11 +170,11 @@ namespace Project_Compiladores1.Arbol
                     if (a.Next != null)
                     {
                         ident = ((ValorArreglo) ident).get(lista);
-                    } //TODO ADD ELSE CLAUSE
+                    } //TO DO ADD ELSE CLAUSE
                 }
                 a = a.Next;
             }
-            if (id.accesor != null)
+            if (id.accesor != null)//ACA ES DISTINTO
             {
                 if (ident is ValorArreglo)
                 {
@@ -175,7 +182,7 @@ namespace Project_Compiladores1.Arbol
                 }
                 else
                 {
-                    //TODO: ADD CODE
+                    //TO DO: ADD CODE
                 }
             }
             else
@@ -621,9 +628,20 @@ namespace Project_Compiladores1.Arbol
         }
 
         protected override void interpretarSentencia()
-        {   
+        {
             if (Valor == null)
-                InfInterpretador.getInstance().asignarValor(Var.id, null);
+            {
+                if (Tip is Arreglo)
+                {
+                    Arreglo tmptip = (Arreglo)Tip;                    
+                    ValorArreglo tmp = new ValorArreglo(tmptip);
+                    InfInterpretador.getInstance().asignarValor(Var.id, tmp);
+                }
+                else
+                {
+                    InfInterpretador.getInstance().asignarValor(Var.id, null);
+                }
+            }
             else
             {
                 Valor tmp = Valor.interpretar();

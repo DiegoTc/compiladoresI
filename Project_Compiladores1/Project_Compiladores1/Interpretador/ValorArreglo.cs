@@ -15,30 +15,57 @@ namespace Project_Compiladores1.Interpretador
         public ValorArreglo(Arreglo tipo)
         {
             ArrayList dimensiones = tipo.Rangos; //Dimensiones Expresiones
-            int size = 0;
-            for (int i = 0; i < dimensiones.Count; i++)
+            Valor tmpsize = ((Expresiones) (dimensiones[0])).interpretar();
+            int size = ((ValorEntero)tmpsize).Valor;
+            for (int i = 1; i < dimensiones.Count; i++)
             {
                 Valor tmp = ((Expresiones) (dimensiones[i])).interpretar();
-                size += ((ValorEntero)tmp).Valor;
+                size *= ((ValorEntero)tmp).Valor;//POIO LO TIENE CON MAS
             }
-            Elementos = new ArrayList(size);
+            Elementos = new ArrayList();
+            for (int i = 0; i < size;i++)
+            {
+                if (tipo.Contenido is Entero)
+                    Elementos.Add(new ValorEntero(0));
+                if (tipo.Contenido is Cadena)                   
+                    Elementos.Add(new ValorCadena(""));
+                if (tipo.Contenido is Flotante)
+                    Elementos.Add(new ValorFlotante((float)(0.0)));
+                if (tipo.Contenido is Caracter)
+                    Elementos.Add(new ValorCaracter(""));
+                if (tipo.Contenido is Booleano)
+                    Elementos.Add(new ValorBooleano(true));
+
+            }           
             this.Tipo = tipo;
         }
         
         private int MultipleToLineal(ArrayList indices)
         {
             Arreglo arr = (Arreglo)this.Tipo;
-            int pos = 0;
+            int pos = 0;          
             for (int i = 0; i < indices.Count; i++)
             {
-                int tmp = 1;
+                int tmp = 1;                
                 for (int j = i + 1; j < arr.Rangos.Count; j++)
                 {
                     Valor tmpv = ((Expresiones)(arr.Rangos[j])).interpretar();
-                    tmp *= ((ValorEntero)tmpv).Valor;                    
+                    tmp *= ((ValorEntero)tmpv).Valor;  //POIO TENIA CON POR                  
                 }
-                Valor tmpp = ((Expresiones)(indices[i])).interpretar();
-                pos += tmp * ((ValorEntero)tmpp).Valor;                
+                //Valor tmpp = (ValorEntero)((Expresiones)(indices[i])).interpretar();
+                Valor tmpp ;
+                if (indices[i] is Valor)
+                {    
+                    tmpp = (ValorEntero)indices[i];
+                    pos += tmp * ((ValorEntero)tmpp).Valor;                
+                }
+                else
+                {
+                    Valor tmpv = ((Expresiones) (indices[i])).interpretar();
+                    //tmpp = new ValorEntero(((ValorEntero)tmpv).Valor);
+                    pos += tmp * ((ValorEntero)tmpv).Valor;
+                }
+                
             }
             return pos;
         }

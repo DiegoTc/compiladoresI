@@ -19,6 +19,7 @@ namespace Project_Compiladores1
             string text = streamReader.ReadToEnd();
             streamReader.Close();
             LexicoC C = new LexicoC(text);
+
             parserC s = new parserC(C);
             Sentencia raiz = s.parse();
             raiz.SentValSemantica();

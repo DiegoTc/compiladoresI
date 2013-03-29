@@ -70,6 +70,7 @@
     <Compile Include="Interpretador\ValorCaracter.cs" />
     <Compile Include="Interpretador\ValorEntero.cs" />
     <Compile Include="Interpretador\ValorFlotante.cs" />
+    <Compile Include="Interpretador\ValorRegistro.cs" />
     <Compile Include="Lexico\Lexico.cs" />
     <Compile Include="Lexico\LexicoC.cs" />
     <Compile Include="Lexico\LexicoJava.cs" />
