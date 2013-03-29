@@ -855,9 +855,27 @@ namespace Project_Compiladores1.Arbol
 
         public override Valor interpretar()
         {
-            Valor valor = InfInterpretador.getInstance().getValor(id);
+            if (accesor == null)
+            {
+                Valor valor = InfInterpretador.getInstance().getValor(id);
+                return valor;
+            }
+            else
+            {
+                Access tmp = accesor;
+                while (tmp != null)
+                {
+                    if (tmp is AccessArreglo)
+                    {
+                        //((AccessArreglo) tmp).Cont
+                        return InfInterpretador.getInstance().getValor(id);
+                    }
+                    tmp = tmp.Next;
+                }
+            }
             //TO DO arreglo registro (si acces es distinto de null)
-            return valor;
+            return null;//NUEVO
+
         }
     }
 
@@ -1024,12 +1042,17 @@ namespace Project_Compiladores1.Arbol
 
         public Access Last()
         {
-            Access tmp = Next;
-            while (tmp.Next != null)
+            if (Next != null)
             {
-                tmp = tmp.Next;
+                Access tmp = Next;
+                while (tmp.Next != null)
+                {
+                    tmp = tmp.Next;
+                }
+                return tmp;
             }
-            return tmp;
+            return this;
+
         }
     }
 
