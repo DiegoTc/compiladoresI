@@ -2,6 +2,19 @@
     CodeBehind="Default.aspx.cs" Inherits="WebUI._Default" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Encabezado" runat="server">
+
+
+
+<script type="text/c#" runat="server">
+[System.Web.Services.WebMethod]
+public static string test()
+{
+    return "Sexo!!!!!!!!!!!!!!";
+}
+</script>
+
+
+
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="Contenido" runat="server">
     <%--header--%>
@@ -41,7 +54,7 @@
                         <div id="pane1" class="tab-pane active">
                             <div class="container">
                                 <div class="row-fluid">
-                                    <textarea id="codejava" name="codec" class="span12" rows="6"></textarea>
+                                    <textarea id="codejava"  name="codec" class="span12" rows="6"></textarea>
                                 </div>
                                 <br />
                                 <script type="text/javascript">
@@ -52,12 +65,15 @@
                                     });
                                 </script>
                                 <div class="row-fluid">
-                                    <asp:Button ID="btnCompilarJava" OnClick="BtnCompilarOnClick" CssClass="btn btn-primary btn-large"
-                                        runat="server" Text="Compilar Sentencia" />
+                                    <%--<asp:Button ID="btnCompilarJava" OnClick="BtnCompilarOnClick" CssClass="btn btn-primary btn-large"
+                                        runat="server" Text="Compilar Sentencia" />--%>
+                                        <input type="button" class="btn btn-primary" id="botonCompilar" value="Compilar Sentencia" onclick="ObtenerResultadoJavaClient()" />
+                                   
+    
                                 </div>
                                 <br />
                                 <div class="row-fluid">
-                                    <textarea id="txtResultadoJava" disabled="disabled" runat="server" placeholder="El Resultado se muestra aqui!"
+                                    <textarea id="txtResultadoJava" disabled="disabled"  placeholder="El Resultado se muestra aqui!"
                                         class="span12" rows="10"></textarea>
                                 </div>
                             </div>
@@ -115,4 +131,44 @@
             </ContentTemplate>
         </asp:UpdatePanel>
     </div>
+
+
+    <script type="text/javascript">
+        function ObtenerResultadoJavaClient() {
+            var sentencia = editor.getValue();
+            $.ajax({
+                type: 'POST',
+                url: '<%= ResolveUrl("~/Default.aspx/ObtenerResultadoJava") %>',
+                data: JSON.stringify({ sentencia: sentencia }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (msg) {
+                    //editor.setValue(msg.d)
+                    txtResultadoJava.value=msg.d
+                }
+            });
+            
+        }
+
+
+        function ObtenerResultadoC() {
+            var res = window.PageMethods.CargarComponente();
+            txtResultadoC.value = res;
+        }
+
+        //    function CallParametersPageMethod() {
+        //        var hh = $get("editor").value;
+        //        alert(hh);
+        //        window.PageMethods.SalvarInfo(hh);
+        //    }
+
+        //    function onSucceeded(result, userContext, methodName) {
+        //        $get('div1').innerHTML = result;
+        //    }
+
+        //    function onFailed(error, userContext, methodName) {
+        //        alert("An error occurred");
+        //    }
+
+    </script>
 </asp:Content>

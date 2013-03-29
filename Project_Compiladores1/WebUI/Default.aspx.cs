@@ -6,13 +6,16 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using WebUI.Lexico;
 using WebUI.Sintactico;
+using System.Web.Services;
 
 namespace WebUI
 {
     public partial class _Default : System.Web.UI.Page
     {
+
         protected void Page_Load(object sender, EventArgs e)
         {
+            
             if(IsPostBack)
             {
                 
@@ -32,8 +35,18 @@ namespace WebUI
             //}
         }
 
-        protected void EvaluarSentencia()
+
+
+
+        [WebMethod(EnableSession = true)]
+        public static string ObtenerResultadoJava(string sentencia)
         {
+            HttpContext.Current.Session["MsjJava"] = string.Empty;
+            var lj = new LexicoJava(sentencia);
+            var jp = new javaParser(lj);
+
+            var raizJ = jp.parse();
+            return HttpContext.Current.Session["MsjJava"].ToString();
             //switch (cbLenguaje.Value)
             //{
             //    case "Java":

@@ -22,24 +22,6 @@ namespace WebUI {
         protected global::System.Web.UI.UpdatePanel UpdatePanel1;
         
         /// <summary>
-        /// btnCompilarJava control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnCompilarJava;
-        
-        /// <summary>
-        /// txtResultadoJava control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTextArea txtResultadoJava;
-        
-        /// <summary>
         /// BtnCompilarC control.
         /// </summary>
         /// <remarks>
