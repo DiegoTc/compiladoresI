@@ -22,15 +22,6 @@ namespace WebUI {
         protected global::System.Web.UI.UpdatePanel UpdatePanel1;
         
         /// <summary>
-        /// BtnCompilarC control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button BtnCompilarC;
-        
-        /// <summary>
         /// txtResultadoC control.
         /// </summary>
         /// <remarks>
@@ -38,15 +29,6 @@ namespace WebUI {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlTextArea txtResultadoC;
-        
-        /// <summary>
-        /// BtnCompilarPascal control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button BtnCompilarPascal;
         
         /// <summary>
         /// txtResultadoPascal control.

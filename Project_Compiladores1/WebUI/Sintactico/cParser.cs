@@ -4,6 +4,7 @@ using System.Collections;
 using System.Linq;
 using System.Text;
 using WebUI.Arbol;
+using System.Web;
 
 namespace WebUI.Sintactico
 {
@@ -18,7 +19,10 @@ namespace WebUI.Sintactico
         {
             Sentencia S = StatementList();
             if (currentToken.Tipo != Lexico.TipoToken.TK_FINFLUJO)
-                throw new Exception("Se esperaba fin flujo");
+            {
+                HttpContext.Current.Session["MsjC"] = "Se esperaba fin flujo!";
+                //throw new Exception("Se esperaba fin flujo");
+            }
             Console.WriteLine("Proyecto Terminado\n");
             return S;
         }

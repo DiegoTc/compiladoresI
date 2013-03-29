@@ -2,19 +2,13 @@
     CodeBehind="Default.aspx.cs" Inherits="WebUI._Default" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Encabezado" runat="server">
-
-
-
-<script type="text/c#" runat="server">
-[System.Web.Services.WebMethod]
-public static string test()
-{
-    return "Sexo!!!!!!!!!!!!!!";
-}
-</script>
-
-
-
+    <script type="text/c#" runat="server">
+        [System.Web.Services.WebMethod]
+        public static string test()
+        {
+            return "Sexo!!!!!!!!!!!!!!";
+        }
+    </script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="Contenido" runat="server">
     <%--header--%>
@@ -54,7 +48,7 @@ public static string test()
                         <div id="pane1" class="tab-pane active">
                             <div class="container">
                                 <div class="row-fluid">
-                                    <textarea id="codejava"  name="codec" class="span12" rows="6"></textarea>
+                                    <textarea id="codejava" name="codec" class="span12" rows="6"></textarea>
                                 </div>
                                 <br />
                                 <script type="text/javascript">
@@ -65,15 +59,12 @@ public static string test()
                                     });
                                 </script>
                                 <div class="row-fluid">
-                                    <%--<asp:Button ID="btnCompilarJava" OnClick="BtnCompilarOnClick" CssClass="btn btn-primary btn-large"
-                                        runat="server" Text="Compilar Sentencia" />--%>
-                                        <input type="button" class="btn btn-primary" id="botonCompilar" value="Compilar Sentencia" onclick="ObtenerResultadoJavaClient()" />
-                                   
-    
+                                    <input type="button" class="btn btn-primary" id="botonCompilar" value="Compilar Sentencia Java"
+                                        onclick="ObtenerResultadoJavaClient()" />
                                 </div>
                                 <br />
                                 <div class="row-fluid">
-                                    <textarea id="txtResultadoJava" disabled="disabled"  placeholder="El Resultado se muestra aqui!"
+                                    <textarea id="txtResultadoJava" disabled="disabled" placeholder="El Resultado se muestra aqui!"
                                         class="span12" rows="10"></textarea>
                                 </div>
                             </div>
@@ -92,8 +83,8 @@ public static string test()
                                     });
                                 </script>
                                 <div class="row-fluid">
-                                    <asp:Button ID="BtnCompilarC" OnClick="BtnCompilarOnClick" CssClass="btn btn-primary btn-large"
-                                        runat="server" Text="Compilar Sentencia" />
+                                    <input type="button" class="btn btn-primary" id="BtnCompilarC" value="Compilar Sentencia C"
+                                        onclick="ObtenerResultadoCClient()" />
                                 </div>
                                 <br />
                                 <div class="row-fluid">
@@ -116,8 +107,8 @@ public static string test()
                                     });
                                 </script>
                                 <div class="row-fluid">
-                                    <asp:Button ID="BtnCompilarPascal" OnClick="BtnCompilarOnClick" CssClass="btn btn-primary btn-large"
-                                        runat="server" Text="Compilar Sentencia" />
+                                    <input type="button" class="btn btn-primary" id="BtnCompilarPascal" value="Compilar Sentencia Pascal"
+                                        onclick="ObtenerResultadoPascalClient()" />
                                 </div>
                                 <br />
                                 <div class="row-fluid">
@@ -131,8 +122,6 @@ public static string test()
             </ContentTemplate>
         </asp:UpdatePanel>
     </div>
-
-
     <script type="text/javascript">
         function ObtenerResultadoJavaClient() {
             var sentencia = editor.getValue();
@@ -144,31 +133,43 @@ public static string test()
                 dataType: 'json',
                 success: function (msg) {
                     //editor.setValue(msg.d)
-                    txtResultadoJava.value=msg.d
+                    txtResultadoJava.value = msg.d
                 }
             });
-            
+
         }
 
 
-        function ObtenerResultadoC() {
-            var res = window.PageMethods.CargarComponente();
-            txtResultadoC.value = res;
+        function ObtenerResultadoCClient() {
+            var sentencia = editor2.getValue();
+            $.ajax({
+                type: 'POST',
+                url: '<%= ResolveUrl("~/Default.aspx/ObtenerResultadoC") %>',
+                data: JSON.stringify({ sentencia: sentencia }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (msg) {
+                    //editor.setValue(msg.d)
+                    txtResultadoC.value = msg.d
+                }
+            });
         }
 
-        //    function CallParametersPageMethod() {
-        //        var hh = $get("editor").value;
-        //        alert(hh);
-        //        window.PageMethods.SalvarInfo(hh);
-        //    }
 
-        //    function onSucceeded(result, userContext, methodName) {
-        //        $get('div1').innerHTML = result;
-        //    }
-
-        //    function onFailed(error, userContext, methodName) {
-        //        alert("An error occurred");
-        //    }
+        function ObtenerResultadoPascalClient() {
+            var sentencia = editor3.getValue();
+            $.ajax({
+                type: 'POST',
+                url: '<%= ResolveUrl("~/Default.aspx/ObtenerResultadoPascal") %>',
+                data: JSON.stringify({ sentencia: sentencia }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (msg) {
+                    //editor.setValue(msg.d)
+                    txtResultadoPascal.value = msg.d
+                }
+            });
+        }
 
     </script>
 </asp:Content>

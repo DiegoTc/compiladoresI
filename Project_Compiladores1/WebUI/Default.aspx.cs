@@ -14,28 +14,52 @@ namespace WebUI
     {
 
         protected void Page_Load(object sender, EventArgs e)
-        {
-            
+        {           
             if(IsPostBack)
             {
                 
             }
         }
 
-        protected void BtnCompilarOnClick(object sender, EventArgs e)
+        //protected void BtnCompilarOnClick(object sender, EventArgs e)
+        //{
+        //    //Evaluo si el textbox no esta vacio
+        //    //if (!string.IsNullOrEmpty(txtContenido.Value))
+        //    //{
+        //    //    EvaluarSentencia();
+        //    //}
+        //    //else
+        //    //{
+        //    //    txtResultado.Value = "No se ingreso ninguna sentencia en la caja de texto!!!.";
+        //    //}
+        //}
+
+        [WebMethod(EnableSession = true)]
+        public static string ObtenerResultadoPascal(string sentencia)
         {
-            //Evaluo si el textbox no esta vacio
-            //if (!string.IsNullOrEmpty(txtContenido.Value))
-            //{
-            //    EvaluarSentencia();
-            //}
-            //else
-            //{
-            //    txtResultado.Value = "No se ingreso ninguna sentencia en la caja de texto!!!.";
-            //}
+            HttpContext.Current.Session["MsjPascal"] = string.Empty;
+
+            var lp = new LexicoPascal(sentencia);
+            var pp = new pascalParser(lp);
+
+            var raizP = pp.parse();
+
+            return HttpContext.Current.Session["MsjPascal"].ToString();
         }
 
 
+        [WebMethod(EnableSession = true)]
+        public static string ObtenerResultadoC(string sentencia)
+        {          
+            HttpContext.Current.Session["MsjC"] = string.Empty;
+
+            var lc = new LexicoC(sentencia);
+            var cp = new parserC(lc);
+
+            var raizC = cp.parse();
+
+            return HttpContext.Current.Session["MsjC"].ToString();
+        }
 
 
         [WebMethod(EnableSession = true)]
@@ -47,56 +71,7 @@ namespace WebUI
 
             var raizJ = jp.parse();
             return HttpContext.Current.Session["MsjJava"].ToString();
-            //switch (cbLenguaje.Value)
-            //{
-            //    case "Java":
-
-            //        //Declaro la variable de sesion para el capturar el mensaje del analisis sintactico
-            //        Session["MsjJava"] = string.Empty;
-
-            //        var lj = new LexicoJava(txtContenido.Value);
-            //        var jp = new javaParser(lj);
-                    
-            //        var raizJ = jp.parse();
-            //        //raiz.SentValSemantica();
-
-            //        txtResultado.Value = Session["MsjJava"].ToString();
-                    
-            //        break;
-                                                                                                                                                                                                                                                                                                                                                                                                                                          
-            //    case "C":
-
-            //        //Declaro la variable de sesion para el capturar el mensaje del analisis sintactico
-            //        Session["MsjC"] = string.Empty;
-
-            //        var lc = new LexicoC(txtContenido.Value);
-            //        var cp = new parserC(lc);
-
-            //        var raizC = cp.parse();
-
-            //        txtResultado.Value = Session["MsjC"].ToString();
-
-            //        break;
-
-            //    case "Pascal":
-
-            //        //Declaro la variable de sesion para el capturar el mensaje del analisis sintactico
-            //        Session["MsjPascal"] = string.Empty;
-                                        
-            //        var lp = new LexicoPascal(txtContenido.Value);
-            //        var pp = new pascalParser(lp);
-
-            //        var raizP = pp.parse();
-
-            //        txtResultado.Value = Session["MsjPascal"].ToString();
-
-
-            //        break;
-
-            //    default:
-            //        break;
-
-            //}
+           
         }
     }
 }
