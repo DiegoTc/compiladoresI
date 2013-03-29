@@ -8,9 +8,6 @@ using Project_Compiladores1.Semantico;
 
 namespace Project_Compiladores1.Arbol
 {
-
-   
-
     public abstract class Sentencia
     {
         public Sentencia sig;
@@ -371,7 +368,7 @@ namespace Project_Compiladores1.Arbol
 
     class Cases : Sentencia
     {
-        public Expresiones Valor;
+        public LiteralEntero Valor;
         public Sentencia S;
         public Cases Sig;
 
@@ -379,7 +376,7 @@ namespace Project_Compiladores1.Arbol
         {
             //FALTA
             Tipo T = Valor.validarSemantica();
-            if (T is Entero || T is Cadena || T is Caracter)
+            if (T is Entero)
             {
                 //NADA
             }
@@ -389,15 +386,11 @@ namespace Project_Compiladores1.Arbol
             }
             S.SentValSemantica();
             Cases tmp = Sig;
-            if (tmp != null)
+            while (tmp != null)
             {
-                while (tmp != null)
-                {
-                    tmp.validarSemantica();
-                    tmp = tmp.Sig;
-                }
+                tmp.validarSemantica();
+                tmp = tmp.Sig;
             }
-            
         }
 
         protected override void interpretarSentencia()
@@ -408,7 +401,7 @@ namespace Project_Compiladores1.Arbol
 
     class S_Switch : Sentencia
     {
-        public Expresiones Var;
+        public Variable Var;
         public Cases Casos;
         public Sentencia sdefault;
 
@@ -416,7 +409,7 @@ namespace Project_Compiladores1.Arbol
         {
             //ya no FALTA
             Tipo T = Var.validarSemantica();
-            if (T is Entero || T is Cadena || T is Caracter)
+            if (T is Entero)
             {
                 //NADA
             }
@@ -757,6 +750,38 @@ namespace Project_Compiladores1.Arbol
         protected override void interpretarSentencia()
         {
             
+        }
+    }
+
+    class s_masmas : Sentencia
+    {
+        public ExpMasMas param;
+        public override void validarSemantica()
+        {
+            try { param.validarSemantica(); }
+            catch (Exception ex) { throw ex; }
+        }
+
+        protected override void interpretarSentencia()
+        {
+            try { param.interpretar(); }
+            catch (Exception ex) { throw ex; }
+        }
+    }
+
+    class s_menosmenos : Sentencia
+    {
+        public ExpMenosMenos param;
+        public override void validarSemantica()
+        {
+            try { param.validarSemantica(); }
+            catch (Exception ex) { throw ex; }
+        }
+
+        protected override void interpretarSentencia()
+        {
+            try { param.interpretar(); }
+            catch (Exception ex) { throw ex; }
         }
     }
 }

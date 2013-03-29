@@ -59,6 +59,10 @@ namespace Project_Compiladores1.Sintactico
                         currentToken = lex.NextToken();
                         return parseWhile();
 
+                    case TipoToken.TK_CASE:
+                        currentToken = lex.NextToken();
+                        return parseSwitch();
+
                     case TipoToken.TK_REPEAT:
                         currentToken = lex.NextToken();
                         return parseDo();
@@ -266,6 +270,10 @@ namespace Project_Compiladores1.Sintactico
                         currentToken = lex.NextToken();
                         return parseWhile();
 
+                    case TipoToken.TK_CASE:
+                        currentToken = lex.NextToken();
+                        return parseSwitch();
+
                     case TipoToken.TK_REPEAT:
                         currentToken = lex.NextToken();
                         return parseDo();
@@ -456,6 +464,66 @@ namespace Project_Compiladores1.Sintactico
                 }
                 catch (Exception ex) { throw ex; }
                 return ret;
+            }
+        }
+
+        S_Switch parseSwitch()
+        {
+            if (currentToken.Tipo != TipoToken.TK_ID)
+                throw new Exception("Se esperaba identificador.");
+            else
+            {
+                string tmp = currentToken.Lexema;
+                currentToken = lex.NextToken();
+                S_Switch ret = new S_Switch();
+                try { ret.Var = new Variable(tmp, AccessList()); }
+                catch (Exception ex) { throw ex; }
+                if (currentToken.Tipo != TipoToken.TK_OF)
+                    throw new Exception("Se esperaba of.");
+                else
+                {
+                    currentToken = lex.NextToken();
+                    try { ret.Casos = caseList(); }
+                    catch (Exception ex) { throw ex; }
+                    if (currentToken.Tipo == TipoToken.TK_ELSE)
+                    {
+                        currentToken = lex.NextToken();
+                        try { ret.sdefault = CodeBlock(); }
+                        catch (Exception ex) { throw ex; }
+                    }
+                    return ret;
+                }
+            }
+        }
+
+        Cases caseList()
+        {
+            Cases ret = parseCase();
+            while (currentToken.Tipo == TipoToken.TK_INT_LIT)
+            {
+                ret.Sig = caseList();
+            }
+            return ret;
+        }
+
+        Cases parseCase()
+        {
+            if (currentToken.Tipo != TipoToken.TK_INT_LIT)
+                throw new Exception("Se esperaba una constante numérica.");
+            else
+            {
+                Cases ret = new Cases();
+                ret.Valor = new LiteralEntero(int.Parse(currentToken.Lexema));
+                currentToken = lex.NextToken();
+                if (currentToken.Tipo != TipoToken.TK_DOSPUNTOS)
+                    throw new Exception("se esperaba :");
+                else
+                {
+                    currentToken = lex.NextToken();
+                    try { ret.S = CodeBlock(); }
+                    catch (Exception ex) { throw ex; }
+                    return ret;
+                }
             }
         }
 

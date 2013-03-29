@@ -921,7 +921,12 @@ namespace Project_Compiladores1.Arbol
         public Variable ID;// = new Variable();
         public override Tipo validarSemantica()
         {
-            return null;//falta
+            Tipo T = ID.validarSemantica();
+            if (T is Entero)
+            { }
+            else
+                throw new Exception("Error Semantico - Se esperaba un valor Entero");
+            return null;
         }
 
         public override Valor interpretar()
