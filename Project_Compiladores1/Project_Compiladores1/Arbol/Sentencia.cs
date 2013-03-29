@@ -8,6 +8,8 @@ using Project_Compiladores1.Semantico;
 namespace Project_Compiladores1.Arbol
 {
 
+   
+
     public abstract class Sentencia
     {
         public Sentencia sig;
@@ -64,14 +66,14 @@ namespace Project_Compiladores1.Arbol
                 {
                     Access ac = id.accesor;
                     Struct sts = ((Struct)var);
-                    Tipo tmptipo=InfSemantica.getInstance().tblTipos[sts.nombre];
-                                    
+                    Tipo tmptipo = InfSemantica.getInstance().tblTipos[sts.nombre];
+
                     while (ac != null)
                     {
                         AccessMiembro access = ((AccessMiembro)ac);
-                        Struct st = ((Struct)tmptipo); 
+                        Struct st = ((Struct)tmptipo);
                         tmptipo = st.Campos[access.Id];
-                        
+
                         if (tmptipo is Struct)
                         {
                             Struct str = ((Struct)tmptipo);
@@ -87,7 +89,7 @@ namespace Project_Compiladores1.Arbol
                         }
                         else
                         {
-                           
+
                             tmptipo = st.Campos[access.Id];
                             ac = ac.Next;
                         }
@@ -313,35 +315,35 @@ namespace Project_Compiladores1.Arbol
         {
             //FALTA
             #region Validar Existe Variable
-
-
+            funciones func = new funciones();
+            func.parametros = new T_Campos();
+            func.retorno = Retorno;
             Tipo Var = null;
             if (InfSemantica.getInstance().tblFunciones.ContainsKey(this.Var))
             {
-                Var = InfSemantica.getInstance().tblFunciones[this.Var];
+                throw new Exception("Error Semantico - La funcion " + this.Var + " ya existe");
             }
             if (InfSemantica.getInstance().tblSimbolos.ContainsKey(this.Var))
             {
-                throw new Exception("Error Semantico - La variable " + this.Var + " ya existe");
-            }  
+                throw new Exception("Error Semantico - La variable " + this.Var + " ya existe declarada en una funcion");
+            }
             if (Var == null)
             {
-                Campo.validarSemantica();
-                /*Declaracion tmp=Campo;
-                while(tmp!=null)
+                //Campo.validarSemantica();
+
+                Declaracion tmp = Campo;
+                while (tmp != null)
                 {
                     Variable v = tmp.Var;
-                    if(v.id!="")
+                    if (func.parametros.ContainsKey(v.id))
                     {
-                        if (InfSemantica.getInstance().tblTipos.ContainsKey(v.id))
-                        {
-                            throw new Exception("Error Semantico - La variable " + v.id + " ya existe");
-                        }
-                        InfSemantica.getInstance().tblSimbolos.Add(v.id, tmp.Tip);
+                        throw new Exception("Error Semantico - La variable " + v.id + " ya existe");
                     }
+                    func.parametros.Add(v.id, tmp.Tip);
+                    InfSemantica.getInstance().tblSimbolos.Add(v.id, tmp.Tip);
+                    //InfSemantica.getInstance().tblSimbolos.Add(v.id, tmp.Tip);
                     tmp = tmp.Sig;
-                }*/
-                InfSemantica.getInstance().tblFunciones.Add(this.Var, Retorno);                
+                }
             }
             else
             {
@@ -349,14 +351,21 @@ namespace Project_Compiladores1.Arbol
             }
             #endregion
 
-           
+
 
             if (Retorno != null)
             {
                 #region Valida Valor de Retorno
 
                 Sentencia tmp = S;
-                while (tmp != null)
+                bool flag = (tmp is S_Return);
+                while (tmp != null && flag == false)
+                {
+                    tmp.SentValSemantica();
+                    tmp = tmp.sig;
+                    flag = (tmp is S_Return);
+                }
+                if (!(Retorno is Voids))
                 {
                     if (tmp is S_Return)
                     {
@@ -364,16 +373,24 @@ namespace Project_Compiladores1.Arbol
                         Tipo T = ret.Expr.validarSemantica();
                         if (!Retorno.esEquivalente(T))
                         {
-                            throw new Exception(
-                                "Error Semantico - Expresion de retorno no es el mismo que el retorno de la funcion");
+                            throw new Exception("Error Semantico - Expresion de retorno no es el mismo que el retorno de la funcion");
                         }
+                        
                     }
                     else
                     {
-                        tmp.SentValSemantica();
+                        throw new Exception("Error Semantico - Se esperaba el valor de retorno que tiene que ser " + Retorno.ToString());
                     }
-                    tmp = tmp.sig;
                 }
+                else
+                {
+                    if (tmp is S_Return)
+                    {
+                        throw new Exception("Error Semantico - La funcion es tipo void no tiene que retornar nada.");
+                    }
+                }
+                InfSemantica.getInstance().tblFunciones.Add(this.Var, func);
+
 
                 #endregion
             }
@@ -395,7 +412,7 @@ namespace Project_Compiladores1.Arbol
             if (InfSemantica.getInstance().tblSimbolos.ContainsKey(Var.id))
             {
                 var = InfSemantica.getInstance().tblSimbolos[Var.id];
-            }            
+            }
             if (InfSemantica.getInstance().tblFunciones.ContainsKey(Var.id))
             {
                 throw new Exception("Error Semantico - La variable " + Var.id + " ya existe");
@@ -407,16 +424,12 @@ namespace Project_Compiladores1.Arbol
             }
             if (var != null)
             {
-                throw new Exception("Error Semantico - La variable " + Var.id + " ya existe");    
+                throw new Exception("Error Semantico - La variable " + Var.id + " ya existe");
             }
             else
             {
                 InfSemantica.getInstance().tblSimbolos.Add(Var.id, Tip);
                 var = InfSemantica.getInstance().tblSimbolos[Var.id];
-                if (Tip is Struct)
-                {
-                    
-                }
             }
             if (Valor != null)
             {
@@ -425,7 +438,7 @@ namespace Project_Compiladores1.Arbol
                     throw new Exception("Error Semantico - No se puede inicializar variables con tipos diferentes");
                 }
             }
-            if(Sig!=null)
+            if (Sig != null)
                 Sig.validarSemantica();
         }
     }
@@ -459,7 +472,7 @@ namespace Project_Compiladores1.Arbol
     {
         public Variable Var; // = new Variable();
         public ListaExpre Variables;
-        
+
 
         public override void validarSemantica()
         {
@@ -520,7 +533,7 @@ namespace Project_Compiladores1.Arbol
                     tmp.validarSemantica();
                 }
                 tmp = tmp.sig;
-            }    
+            }
 
         }
     }

@@ -125,6 +125,25 @@ namespace Project_Compiladores1.Arbol
 
     }
 
+    class funciones: Tipo
+    {
+        public Tipo retorno;
+        public Sentencia S;
+        private T_Campos _parametros;
+
+        public String nombre;
+        public T_Campos parametros
+        {
+            get { return _parametros; }
+            set { _parametros = value; }
+        }
+        
+        public override bool esEquivalente(Tipo t)
+        {
+            return t is Arreglo;
+        }
+    }
+
     class T_Campos : Dictionary<string, Tipo>
     {
         private ArrayList ids = new ArrayList();

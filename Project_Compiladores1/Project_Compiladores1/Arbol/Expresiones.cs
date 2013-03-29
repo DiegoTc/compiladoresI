@@ -10,6 +10,7 @@ namespace Project_Compiladores1.Arbol
     public abstract class Expresiones
     {
         public abstract Tipo validarSemantica();
+        public char flag;
     }
 
     class LiteralEntero : Expresiones
@@ -418,11 +419,16 @@ namespace Project_Compiladores1.Arbol
 
         public override Tipo validarSemantica()
         {
-            Tipo t = InfSemantica.getInstance().tblSimbolos[id];
+            Tipo t;
 
-            if (t == null)
+            if (InfSemantica.getInstance().tblSimbolos.ContainsKey(id))
+            {
+                t = InfSemantica.getInstance().tblSimbolos[id];
+            }
+            else
+            {
                 throw new Exception("Error Semantico - Variable " + id + " no existe");
-
+            }
 
             #region Validacion Accessories
 
@@ -467,7 +473,20 @@ namespace Project_Compiladores1.Arbol
         public override Tipo validarSemantica()
         {
             //FALTA
-            return null;
+            Expresiones expre;
+            ArrayList lista = new ArrayList();
+            for (int i = 0; i < Ex.Count; i++)
+            {
+                if (Ex[i] is Expresiones)
+                {
+                    expre = ((Expresiones)Ex[i]);
+                    expre.validarSemantica();
+                    lista.Add(expre);
+                }
+                else
+                    throw new Exception("Errro semantico " + Ex[i].ToString() + " no es el tipo correspondiente");
+            }
+                return null;
         }
 
     }
@@ -506,6 +525,38 @@ namespace Project_Compiladores1.Arbol
         public override Tipo validarSemantica()
         {
             //FALTA
+            Tipo var = null;
+            if (InfSemantica.getInstance().tblFunciones.ContainsKey(ID.id))
+            {
+                var = InfSemantica.getInstance().tblFunciones[ID.id];
+            }
+            else
+                throw new Exception("Error Semantico --No se encuentra declarada esa funcion");
+
+            if (var is funciones)
+            {
+                funciones func = ((funciones)var);
+                if (func.parametros.Count == VarList.Ex.Count)
+                {
+                    for (int i = 0; i < func.parametros.Count; i++)
+                    {
+                        string value = func.parametros.Ids[i].ToString();
+                        Tipo t = func.parametros[value];
+                        Expresiones ex = ((Expresiones)VarList.Ex[i]);
+                        Tipo tp = ex.validarSemantica();
+                        if (!(t.esEquivalente(tp)))
+                            throw new Exception("Error Semantico ---  El tipo no corresponde con el declarado en la funcion");
+                        
+                       
+                    }
+                    return func.retorno;
+                }
+                else
+                {
+                    throw new Exception("Error Semantico --La cantidad de parametros no es la misma con la funcion declarada");
+                }
+            }
+
             return null;
         }
     }
