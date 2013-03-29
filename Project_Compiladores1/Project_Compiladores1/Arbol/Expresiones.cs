@@ -620,6 +620,30 @@ namespace Project_Compiladores1.Arbol
                 else throw new Exception("No se puede comparar un numero con otra cosa.");
             else throw new Exception("Tipos incompatibles.");
         }
+
+        public override Valor interpretar()
+        {
+            Valor vizq = Izq.interpretar();
+            Valor vder = Der.interpretar();
+
+            if (vizq is ValorEntero && vder is ValorEntero)
+            {
+                return new ValorBooleano(((ValorEntero)vizq).Valor > ((ValorEntero)vder).Valor);
+            }
+            if (vizq is ValorFlotante && vder is ValorFlotante)
+            {
+                return new ValorBooleano(((ValorFlotante)vizq).Valor > ((ValorFlotante)vder).Valor);
+            }
+            if (vizq is ValorEntero && vder is ValorFlotante)
+            {
+                return new ValorBooleano(((ValorEntero)vizq).Valor > ((ValorFlotante)vder).Valor);
+            }
+            if (vizq is ValorFlotante && vder is ValorEntero)
+            {
+                return new ValorBooleano(((ValorFlotante)vizq).Valor > ((ValorEntero)vder).Valor);
+            }
+            return null;
+        }
     }
 
     class MenorQue : OperacionBinaria
