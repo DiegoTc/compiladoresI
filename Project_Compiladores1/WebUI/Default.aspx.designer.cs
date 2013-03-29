@@ -22,39 +22,21 @@ namespace WebUI {
         protected global::System.Web.UI.UpdatePanel UpdatePanel1;
         
         /// <summary>
-        /// cbLenguaje control.
+        /// txtResultadoC control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlSelect cbLenguaje;
+        protected global::System.Web.UI.HtmlControls.HtmlTextArea txtResultadoC;
         
         /// <summary>
-        /// txtContenido control.
+        /// txtResultadoPascal control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTextArea txtContenido;
-        
-        /// <summary>
-        /// btnCompilar control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnCompilar;
-        
-        /// <summary>
-        /// txtResultado control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTextArea txtResultado;
+        protected global::System.Web.UI.HtmlControls.HtmlTextArea txtResultadoPascal;
     }
 }
