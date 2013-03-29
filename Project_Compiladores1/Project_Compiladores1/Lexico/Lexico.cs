@@ -272,6 +272,7 @@ namespace Project_Compiladores1.Lexico
                         }
                         else if(lexema == "\"")
                         {
+                            lexema = "";
                             estado = 9;
                         }
                         else if (lexema == "'")
@@ -284,7 +285,7 @@ namespace Project_Compiladores1.Lexico
                     case 9:
                         if (symbol == '"')
                         {
-                            lexema += symbol;
+                            //lexema += symbol;
                             symbol = nextSymbol();
                             return new Token(lexema, TipoToken.TK_STRING_LIT, Fil, Col);
                         }

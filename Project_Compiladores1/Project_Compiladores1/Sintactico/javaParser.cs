@@ -719,14 +719,14 @@ namespace Project_Compiladores1.Sintactico
                         
                         throw ex;
                     }                    
-                    currentToken = lex.NextToken();
+                    //currentToken = lex.NextToken();
                     if (currentToken.Tipo == TipoToken.TK_DOSPUNTOS)
                     {
                         currentToken = lex.NextToken();
                         try
                         {
                             C.S = StatementList();
-                            C.sig = Cases();
+                            C.Sig = Cases();
                         }
                         catch (Exception ex)
                         {                            

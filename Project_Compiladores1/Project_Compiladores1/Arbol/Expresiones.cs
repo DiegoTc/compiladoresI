@@ -138,13 +138,15 @@ namespace Project_Compiladores1.Arbol
             }
             catch (Exception ex) { throw ex; }
             if (left is Entero)
-                if (right is Entero || right is Flotante)
+                if (right is Entero || right is Flotante || right is Cadena)
                     return right;
                 else
                     throw new Exception("Tipos incompatibles.");
             else if (left is Flotante)
                 if (right is Entero || right is Flotante)
                     return left;
+                else if (right is Cadena)
+                    return right;
                 else
                     throw new Exception("Tipos incompatibles.");
             else if (left is Booleano)

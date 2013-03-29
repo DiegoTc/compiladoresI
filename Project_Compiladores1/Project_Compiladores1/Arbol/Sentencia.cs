@@ -236,7 +236,12 @@ namespace Project_Compiladores1.Arbol
 
         protected override void interpretarSentencia()
         {
-            
+            Valor tmp = Condicion.interpretar();
+            while (((ValorBooleano)tmp).Valor)
+            {
+                S.interpretar();
+                tmp = Condicion.interpretar();
+            }
         }
     }
 
@@ -258,7 +263,13 @@ namespace Project_Compiladores1.Arbol
 
         protected override void interpretarSentencia()
         {
-            
+            S.interpretar();
+            Valor tmp = Condicion.interpretar();
+            while (((ValorBooleano)tmp).Valor)
+            {
+                S.interpretar();
+                tmp = Condicion.interpretar();
+            }
         }
     }
 
@@ -354,7 +365,7 @@ namespace Project_Compiladores1.Arbol
 
         protected override void interpretarSentencia()
         {
-            
+            //NO SE QUE P2 ACA
         }
     }
 
@@ -362,7 +373,7 @@ namespace Project_Compiladores1.Arbol
     {
         public Expresiones Valor;
         public Sentencia S;
-        Cases Sig;
+        public Cases Sig;
 
         public override void validarSemantica()
         {
@@ -377,12 +388,21 @@ namespace Project_Compiladores1.Arbol
                 throw new Exception("Error Semantico - Tipo de valor de evaluacion de case no soportado");
             }
             S.SentValSemantica();
-            Sig.validarSemantica();
+            Cases tmp = Sig;
+            if (tmp != null)
+            {
+                while (tmp != null)
+                {
+                    tmp.validarSemantica();
+                    tmp = tmp.Sig;
+                }
+            }
+            
         }
 
         protected override void interpretarSentencia()
         {
-            
+            S.interpretar();
         }
     }
 
@@ -410,7 +430,27 @@ namespace Project_Compiladores1.Arbol
 
         protected override void interpretarSentencia()
         {
-            
+            Valor val = Var.interpretar();
+            bool def = false;
+            if (Casos != null)
+            {                
+                Cases tmp = Casos;
+                while (tmp != null)
+                {
+                    Valor valtmp = tmp.Valor.interpretar();
+                    if (((ValorEntero)val).Valor == ((ValorEntero)valtmp).Valor)
+                    {
+                        tmp.interpretar();
+                        def = true;
+                        break;
+                    }
+                    tmp = tmp.Sig;
+                }
+            }
+            if (def==false && sdefault != null)
+                sdefault.interpretar();
+
+
         }
     }
 
@@ -515,7 +555,10 @@ namespace Project_Compiladores1.Arbol
 
         protected override void interpretarSentencia()
         {
-            
+            /*
+            Campo.interpretar();
+            S.interpretar();
+            */
         }
     }
 
@@ -551,7 +594,7 @@ namespace Project_Compiladores1.Arbol
             else
             {
                 InfSemantica.getInstance().tblSimbolos.Add(Var.id, Tip);
-                InfInterpretador.getInstance().asignarValor(Var.id, null);
+                //InfInterpretador.getInstance().asignarValor(Var.id, null);
                 var = InfSemantica.getInstance().tblSimbolos[Var.id];
             }
             if (Valor != null)
@@ -566,8 +609,14 @@ namespace Project_Compiladores1.Arbol
         }
 
         protected override void interpretarSentencia()
-        {
-            
+        {   
+            if (Valor == null)
+                InfInterpretador.getInstance().asignarValor(Var.id, null);
+            else
+            {
+                Valor tmp = Valor.interpretar();
+                InfInterpretador.getInstance().asignarValor(Var.id, tmp);
+            }
         }
     }
 
@@ -607,7 +656,7 @@ namespace Project_Compiladores1.Arbol
 
         protected override void interpretarSentencia()
         {
-            
+            //Expr.interpretar();
         }
     }
 
@@ -633,7 +682,7 @@ namespace Project_Compiladores1.Arbol
 
         protected override void interpretarSentencia()
         {
-            
+            //NIPI NIJA
         }
     }
 
@@ -687,7 +736,8 @@ namespace Project_Compiladores1.Arbol
 
         protected override void interpretarSentencia()
         {
-            
+            Var.interpretar();
+            CamposClase.interpretar();
         }
     }
 
