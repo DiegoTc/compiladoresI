@@ -371,7 +371,7 @@ namespace Project_Compiladores1.Arbol
 
     class Cases : Sentencia
     {
-        public LiteralEntero Valor;
+        public Expresiones Valor;
         public Sentencia S;
         public Cases Sig;
 
@@ -404,7 +404,7 @@ namespace Project_Compiladores1.Arbol
 
     class S_Switch : Sentencia
     {
-        public Variable Var;
+        public Expresiones Var;
         public Cases Casos;
         public Sentencia sdefault;
 
