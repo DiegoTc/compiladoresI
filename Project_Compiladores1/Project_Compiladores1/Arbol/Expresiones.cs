@@ -831,10 +831,20 @@ namespace Project_Compiladores1.Arbol
                     #region Si es Registro
 
                     AccessMiembro am = ((AccessMiembro) tmp);
+                    Struct regTmp=null;
                     if (!(t is Struct))
                         throw new Exception(id + " no es un registro");
                     Struct reg = ((Struct) t);
-                    t = reg.Campos[am.Id];
+                    Tipo tip;
+                    if (InfSemantica.getInstance().tblTipos.ContainsKey(reg.nombre))
+                    {
+                        tip = InfSemantica.getInstance().tblTipos[reg.nombre];
+                        regTmp = ((Struct)tip);
+                    }
+                    else
+                        throw new Exception("Error Semantico -- El registro no a sido declarado");
+
+                    t = regTmp.Campos[am.Id];
                     if (t == null)
                         throw new Exception("miembro " + am.Id + " no existe!");
 
@@ -951,37 +961,90 @@ namespace Project_Compiladores1.Arbol
         {
             //FALTA
             Tipo var = null;
-            if (InfSemantica.getInstance().tblFunciones.ContainsKey(ID.id))
+            if (InfSemantica.getInstance().tblSimbolos.ContainsKey(ID.id))
             {
-                var = InfSemantica.getInstance().tblFunciones[ID.id];
+                var = InfSemantica.getInstance().tblSimbolos[ID.id];
+                Class c= ((Class)var);
+                var = InfSemantica.getInstance().tblTipos[c.Nombre];
+            }
+            Class cl;
+            if (var is Class)
+            {
+                cl = ((Class)var);
+                AccessMiembro acc= ((AccessMiembro)ID.accesor);
+                while (acc != null)
+                {
+                    if (cl.Campos.ContainsKey(acc.Id))
+                    {
+                        Tipo tmp3 = cl.Campos[acc.Id];
+                        if (tmp3 is Class)
+                        {
+                            cl = ((Class)tmp3);
+                            var = InfSemantica.getInstance().tblTipos[cl.Nombre];
+                            cl = ((Class)var);
+                            acc = ((AccessMiembro)acc.Next);
+                        }
+                        else if (tmp3 is funciones)
+                        {
+                            funciones func = ((funciones)tmp3);
+                            if (func.parametros.Count == VarList.Ex.Count)
+                            {
+                                for (int i = 0; i < func.parametros.Count; i++)
+                                {
+                                    string value = func.parametros.Ids[i].ToString();
+                                    Tipo t = func.parametros[value];
+                                    Expresiones ex = ((Expresiones)VarList.Ex[i]);
+                                    Tipo tp = ex.validarSemantica();
+                                    if (!(t.esEquivalente(tp)))
+                                        throw new Exception("Error Semantico ---  El tipo no corresponde con el declarado en la funcion");
+                                }
+                                return func.retorno;
+                             }
+                            else
+                            {
+                                throw new Exception("Error Semantico --La cantidad de parametros no es la misma con la funcion declarada");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception("Error Semantico --- No se encuentra declarado " + acc.Id + " en la clase " + cl.Nombre);
+                    }
+                }
+                
             }
             else
-                throw new Exception("Error Semantico --No se encuentra declarada esa funcion");
-
-            if (var is funciones)
             {
-                funciones func = ((funciones)var);
-                if (func.parametros.Count == VarList.Ex.Count)
+
+                if (InfSemantica.getInstance().tblFunciones.ContainsKey(ID.id))
                 {
-                    for (int i = 0; i < func.parametros.Count; i++)
-                    {
-                        string value = func.parametros.Ids[i].ToString();
-                        Tipo t = func.parametros[value];
-                        Expresiones ex = ((Expresiones)VarList.Ex[i]);
-                        Tipo tp = ex.validarSemantica();
-                        if (!(t.esEquivalente(tp)))
-                            throw new Exception("Error Semantico ---  El tipo no corresponde con el declarado en la funcion");
-                        
-                       
-                    }
-                    return func.retorno;
+                    var = InfSemantica.getInstance().tblFunciones[ID.id];
                 }
                 else
+                    throw new Exception("Error Semantico --No se encuentra declarada esa funcion");
+
+                if (var is funciones)
                 {
-                    throw new Exception("Error Semantico --La cantidad de parametros no es la misma con la funcion declarada");
+                    funciones func = ((funciones)var);
+                    if (func.parametros.Count == VarList.Ex.Count)
+                    {
+                        for (int i = 0; i < func.parametros.Count; i++)
+                        {
+                            string value = func.parametros.Ids[i].ToString();
+                            Tipo t = func.parametros[value];
+                            Expresiones ex = ((Expresiones)VarList.Ex[i]);
+                            Tipo tp = ex.validarSemantica();
+                            if (!(t.esEquivalente(tp)))
+                                throw new Exception("Error Semantico ---  El tipo no corresponde con el declarado en la funcion");
+                        }
+                        return func.retorno;
+                    }
+                    else
+                    {
+                        throw new Exception("Error Semantico --La cantidad de parametros no es la misma con la funcion declarada");
+                    }
                 }
             }
-
             return null;
         }
 

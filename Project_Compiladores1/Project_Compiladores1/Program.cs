@@ -25,6 +25,6 @@ namespace Project_Compiladores1
             raiz.interpretar();
             
             Console.ReadKey();
-        }
+        }   
     }
 }

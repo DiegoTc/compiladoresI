@@ -507,7 +507,8 @@ namespace Project_Compiladores1.Sintactico
                 {
                     try
                     {
-                        Accesories(var.accesor);
+                        Access a=Accesories(var.accesor);
+                        var.accesor = a;
                     }
                     catch (Exception ex)
                     {                        
@@ -632,6 +633,7 @@ namespace Project_Compiladores1.Sintactico
                 {
                     if (currentToken.Tipo != TipoToken.TK_FINSENTENCIA)
                         throw new Exception("Error Sintactico - Se esperaba fin sentencia");
+                    currentToken = lex.NextToken();
                     if (var.accesor.Last() is AccessFunc)
                     {
                         S_LlamadaFunc sLlamadaFunc = new S_LlamadaFunc();
@@ -889,7 +891,7 @@ namespace Project_Compiladores1.Sintactico
 
         public Sentencia ListaDeclaracion(Sentencia Decls)
         {
-            if (currentToken.Tipo == TipoToken.TK_CHAR || currentToken.Tipo == TipoToken.TK_BOOL || currentToken.Tipo == TipoToken.TK_STRING || currentToken.Tipo == TipoToken.TK_FLOAT ||
+            if (currentToken.Tipo == TipoToken.TK_CHAR || currentToken.Tipo == TipoToken.TK_BOOL || currentToken.Tipo == TipoToken.TK_STRING || currentToken.Tipo == TipoToken.TK_FLOAT || 
                 currentToken.Tipo == TipoToken.TK_INT || currentToken.Tipo == TipoToken.TK_PRIVATE || currentToken.Tipo == TipoToken.TK_PUBLIC || currentToken.Tipo == TipoToken.TK_CLASS || currentToken.Tipo == TipoToken.TK_VOID)
             {
                 try
@@ -903,6 +905,21 @@ namespace Project_Compiladores1.Sintactico
                     throw ex;
                 }
                 
+                return Decls;
+            }
+            else if (currentToken.Tipo == TipoToken.TK_ID)
+            {
+                try
+                {
+                    Decls = DeclaracionesClase();
+                    Decls.sig = ListaDeclaracion(Decls);
+                }
+                catch (Exception ex)
+                {
+
+                    throw ex;
+                }
+
                 return Decls;
             }
             return null;
@@ -1456,8 +1473,14 @@ namespace Project_Compiladores1.Sintactico
                         {
                             tmp = tmp.Last();
                         }
+                    
                         if (V.ID.accesor != null && tmp is AccessFunc)
+                        {
+                            AccessFunc v = ((AccessFunc)tmp);
+                            V.VarList = v.Variables;
                             return V;
+                            
+                        }
                         else
                             return V.ID;
                     }
@@ -1501,14 +1524,25 @@ namespace Project_Compiladores1.Sintactico
                     currentToken = lex.NextToken();
                     AccessFunc accFun = new AccessFunc();
                     ListaExpre listaExpre = new ListaExpre();
-                    listaExpre.Ex.Add(Expr());
-                    if (listaExpre.Ex.Count > 0)
+                    Expresiones e = Expr();
+                    if(e!=null)
+                        listaExpre.Ex.Add(e);
+                    //if (listaExpre.Ex.Count > 0)
+                    //{
                         accFun.Variables = ExprList(listaExpre);
-                    List = accFun;
-                    if (currentToken.Tipo != TipoToken.TK_CLOSEPAR)
-                        throw new Exception("Error Sintactico - Se Esperaba un )");
-                    currentToken = lex.NextToken();
-                    return List;
+                        List = accFun;
+                        if (currentToken.Tipo != TipoToken.TK_CLOSEPAR)
+                            throw new Exception("Error Sintactico - Se Esperaba un )");
+                        currentToken = lex.NextToken();
+                        return List;
+                    /*}
+                    else
+                    {
+                        if (currentToken.Tipo != TipoToken.TK_CLOSEPAR)
+                            throw new Exception("Error Sintactico - Se Esperaba un )");
+                        currentToken = lex.NextToken();
+                        return null;
+                    }*/
                 }
                 return List;
             }
@@ -1561,6 +1595,147 @@ namespace Project_Compiladores1.Sintactico
                 throw ex;
             }
         }
+
+        public Sentencia DeclaracionesClase()
+        {
+            Declaracion Decl = new Declaracion();
+
+            VARTYPE();
+            try
+            {
+                Class c = new Class();
+                c.Nombre = currentToken.Lexema;
+                c.Campos=new T_Campos();
+                Decl.Tip =c;
+                currentToken = lex.NextToken();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            if (currentToken.Tipo == TipoToken.TK_OPENCOR) //ARREGLO
+            {
+                int dim = arrayDimensions(1);
+                Arreglo ArrTip = new Arreglo();
+                ArrTip.Contenido = Decl.Tip;
+                ArrTip.Dimensiones = dim;
+                Decl.Tip = ArrTip;
+                if (currentToken.Tipo == TipoToken.TK_ID)
+                {
+                    Decl.Var.id = currentToken.Lexema;
+                    currentToken = lex.NextToken();
+                    if (currentToken.Tipo == TipoToken.TK_FINSENTENCIA)
+                    {
+                        currentToken = lex.NextToken();
+                        return Decl;
+                    }
+                    try
+                    {
+                        Decl = DeclOption(Decl);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw ex;
+                    }
+
+                    if (currentToken.Tipo != TipoToken.TK_FINSENTENCIA)
+                    {
+                        currentToken = lex.NextToken();
+                        return Decl;
+                    }
+                    else
+                    {
+                        throw new Exception("Error Sintactico - Se esperaba Fin Sentencia");
+                    }
+                }
+                else
+                {
+                    throw new Exception("Error Sintactico - Se esperaba un ID");
+                }
+
+            }
+            else if (currentToken.Tipo == TipoToken.TK_ID)
+            {
+                Decl.Var.id = currentToken.Lexema;
+                currentToken = lex.NextToken();
+                if (currentToken.Tipo == TipoToken.TK_COMA || currentToken.Tipo == TipoToken.TK_ASSIGN)
+                {
+                    try
+                    {
+                        DeclaracionesVarias(Decl);
+                        DeclOption(Decl);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw ex;
+                    }
+                }
+                else if (currentToken.Tipo == TipoToken.TK_OPENPAR)
+                {
+                    currentToken = lex.NextToken();
+                    S_Functions sFunctions = new S_Functions();
+                    sFunctions.Retorno = Decl.Tip;
+                    sFunctions.Var = Decl.Var.id;
+                    try
+                    {
+                        sFunctions.Campo = ParameterList();
+                    }
+                    catch (Exception ex)
+                    {
+                        throw ex;
+                    }
+
+                    if (currentToken.Tipo == TipoToken.TK_CLOSEPAR)
+                    {
+                        currentToken = lex.NextToken();
+                        try
+                        {
+                            sFunctions.S = CompoundStatement();
+                        }
+                        catch (Exception ex)
+                        {
+                            throw ex;
+                        }
+
+                        return sFunctions;
+                    }
+                    else
+                    {
+                        throw new Exception("Error Sintactico - Se esperaba simbolo )");
+                    }
+                }
+                else if (currentToken.Tipo == TipoToken.TK_OPENLLAVE)
+                {
+                    currentToken = lex.NextToken();
+                    S_Class sClass = new S_Class();
+                    sClass.Var.id = Decl.Var.id;
+
+                    try
+                    {
+                        sClass.CamposClase = ListaDeclaracion(sClass.CamposClase);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw ex;
+                    }
+
+                    if (currentToken.Tipo != TipoToken.TK_CLOSELLAVE)
+                        throw new Exception("Error Sintactico - Se esperaba simbolo }");
+                    currentToken = lex.NextToken();
+                    return sClass;
+                }
+                else if (currentToken.Tipo == TipoToken.TK_FINSENTENCIA)
+                {
+                    currentToken = lex.NextToken();
+                    return Decl;
+                }
+                else
+                    throw new Exception("Error Sintactico - Se esperaba simbolo ;");
+            }
+            return Decl;
+        }
+
 
         #endregion
 

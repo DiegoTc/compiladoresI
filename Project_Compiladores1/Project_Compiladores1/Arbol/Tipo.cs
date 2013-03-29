@@ -64,11 +64,16 @@ namespace Project_Compiladores1.Arbol
     class Class : Tipo
     {
         private string nombre;
-
+        private T_Campos _campos;
         public string Nombre
         {
             get { return nombre; }
             set { nombre = value; }
+        }
+        public T_Campos Campos
+        {
+            get { return _campos; }
+            set { _campos = value; }
         }
 
         public override bool esEquivalente(Tipo t)

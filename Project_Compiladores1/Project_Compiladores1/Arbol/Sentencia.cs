@@ -100,28 +100,31 @@ namespace Project_Compiladores1.Arbol
 
                     while (ac != null)
                     {
-                        AccessMiembro access = ((AccessMiembro)ac);
-                        Struct st = ((Struct)tmptipo);
-                        tmptipo = st.Campos[access.Id];
-
-                        if (tmptipo is Struct)
+                        if (ac is AccessMiembro)
                         {
-                            Struct str = ((Struct)tmptipo);
-                            if (InfSemantica.getInstance().tblTipos.ContainsKey(str.nombre))
+                            AccessMiembro access = ((AccessMiembro)ac);
+                            Struct st = ((Struct)tmptipo);
+                            tmptipo = st.Campos[access.Id];
+
+                            if (tmptipo is Struct)
                             {
-                                tmptipo = InfSemantica.getInstance().tblTipos[str.nombre];
-                                ac = ac.Next;
+                                Struct str = ((Struct)tmptipo);
+                                if (InfSemantica.getInstance().tblTipos.ContainsKey(str.nombre))
+                                {
+                                    tmptipo = InfSemantica.getInstance().tblTipos[str.nombre];
+                                    ac = ac.Next;
+                                }
+                                else
+                                {
+                                    throw new Exception("Error semantico -- No existe dicho accessor" + access.Id);
+                                }
                             }
                             else
                             {
-                                throw new Exception("Error semantico -- No existe dicho accessor" + access.Id);
-                            }
-                        }
-                        else
-                        {
 
-                            tmptipo = st.Campos[access.Id];
-                            ac = ac.Next;
+                                tmptipo = st.Campos[access.Id];
+                                ac = ac.Next;
+                            }
                         }
                     }
                     if (!tmptipo.esEquivalente(val))
@@ -564,8 +567,24 @@ namespace Project_Compiladores1.Arbol
 
         public override void validarSemantica()
         {
-            //FALTA                        
 
+            if (Tip is Class)
+            {
+                Class ctmp = ((Class)Tip);
+                if(!(InfSemantica.getInstance().tblTipos.ContainsKey(ctmp.Nombre)))
+                {
+                    throw new Exception("Error Semantico -- La clase "+ ctmp.Nombre+ " no a sido declarada");
+                }
+
+            }
+            else if (Tip is Struct)
+            {
+                Struct stmp = ((Struct)Tip);
+                if(!(InfSemantica.getInstance().tblTipos.ContainsKey(stmp.nombre)))
+                {
+                    throw new Exception("Error Semantico -- El struct " + stmp.nombre + " no a sido declarada");
+                }
+            }
             Tipo var = null;
             if (InfSemantica.getInstance().tblSimbolos.ContainsKey(Var.id))
             {
@@ -700,9 +719,43 @@ namespace Project_Compiladores1.Arbol
                 throw new Exception("Error Semantico - La variable " + Var.id + " ya existe");
             }
 
-            if (var != null)
+            if (var == null)
             {
-                InfSemantica.getInstance().tblFunciones.Add(Var.id, new Class());
+                Class cl = new Class();
+                cl.Campos = new T_Campos();
+                Sentencia tmp=CamposClase;
+                while(tmp!=null)
+                {
+                    if (tmp is Declaracion)
+                    {
+                        Declaracion d = ((Declaracion)tmp);
+                        tmp.validarSemantica();
+                        //if (d.Tip == null)
+                         //   d.Tip = new T_Campos();
+                        cl.Campos.Add(d.Var.id, d.Tip);
+                        tmp = tmp.sig;
+                    }
+                    else if (tmp is S_Functions)
+                    {
+                        S_Functions s = ((S_Functions)tmp);
+                        s.validarSemantica();
+                        if (InfSemantica.getInstance().tblFunciones.ContainsKey(s.Var))
+                        {
+                            Tipo t = InfSemantica.getInstance().tblFunciones[s.Var];
+                            funciones func = ((funciones)t);
+                            cl.Campos.Add(s.Var, func);
+                            tmp = tmp.sig;
+                        }
+                        else
+                            throw new Exception("Error Semantico ---  Hubo un error al momento de declarar la variable");
+                    }
+                    else
+                    {
+
+                        throw new Exception("Error Semantico --- No se puede declarar esa sentencia aqui");
+                    }
+                }
+                InfSemantica.getInstance().tblTipos.Add(Var.id, cl);
             }
             else
             {
@@ -710,20 +763,7 @@ namespace Project_Compiladores1.Arbol
             }
             #endregion
 
-            Sentencia tmp = CamposClase;
-            while (tmp != null)
-            {
-                if (tmp is Declaracion)
-                {
-                    Declaracion tmpCampo = ((Declaracion)tmp);
-                    tblSimbolosClass.Add(tmpCampo.Var.id, tmpCampo.Tip);
-                }
-                else
-                {
-                    tmp.validarSemantica();
-                }
-                tmp = tmp.sig;
-            }
+           
 
         }
 

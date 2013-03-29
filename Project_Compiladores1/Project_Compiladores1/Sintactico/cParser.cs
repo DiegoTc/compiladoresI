@@ -1107,7 +1107,7 @@ namespace Project_Compiladores1.Sintactico
                             }
                             if (V.ID.accesor != null && tmp is AccessFunc)
                             {
-                                AccessFunc v = ((AccessFunc)V.ID.accesor);
+                                AccessFunc v = ((AccessFunc)tmp);
                                 V.VarList = v.Variables;
                                 return V;
                             }
@@ -1173,7 +1173,9 @@ namespace Project_Compiladores1.Sintactico
                     currentToken = lex.NextToken();
                     AccessFunc accFun = new AccessFunc();
                     ListaExpre listaExpre = new ListaExpre();
-                    listaExpre.Ex.Add(Expression());
+                    Expresiones e = Expression();
+                    if (e != null)
+                        listaExpre.Ex.Add(e);
                     if (listaExpre.Ex.Count > 0)
                         accFun.Variables = ExpreList(listaExpre);
                     List = accFun;
