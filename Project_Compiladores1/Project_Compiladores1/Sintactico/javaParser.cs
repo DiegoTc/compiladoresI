@@ -629,6 +629,24 @@ namespace Project_Compiladores1.Sintactico
                         }                        
                     }
                 }
+                else if (currentToken.Tipo == TipoToken.TK_MASMAS)
+                {
+                    currentToken = lex.NextToken();
+                    s_masmas sMasmas = new s_masmas();
+                    ExpMasMas expMasMas = new ExpMasMas();
+                    expMasMas.ID = var;
+                    sMasmas.param = expMasMas;
+                    return sMasmas;
+                }
+                else if (currentToken.Tipo == TipoToken.TK_MENOSMENOS)
+                {
+                    currentToken = lex.NextToken();
+                    s_menosmenos sMenosmenos = new s_menosmenos();
+                    ExpMenosMenos expMenosMenos = new ExpMenosMenos();
+                    expMenosMenos.ID = var;
+                    sMenosmenos.param = expMenosMenos;
+                    return sMenosmenos;
+                }
                 else
                 {
                     if (currentToken.Tipo != TipoToken.TK_FINSENTENCIA)
