@@ -1189,7 +1189,7 @@ namespace Project_Compiladores1.Arbol
     class AccessArreglo : Access
     {
         private ArrayList cont =new ArrayList();
-       
+        public string nombre;
         public void addexp(Expresiones par)
         {
             cont.Add(par);

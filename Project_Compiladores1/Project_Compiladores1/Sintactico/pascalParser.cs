@@ -101,7 +101,7 @@ namespace Project_Compiladores1.Sintactico
                             else
                             {
                                 S_Read ret = new S_Read();
-                                ret.var = new Variable(currentToken.Lexema, AccessList());
+                                ret.var = new Variable(currentToken.Lexema, AccessList(currentToken.Lexema));
                                 return ret;
                             }
                         }
@@ -297,7 +297,7 @@ namespace Project_Compiladores1.Sintactico
                             else
                             {
                                 S_Read ret = new S_Read();
-                                ret.var = new Variable(currentToken.Lexema, AccessList());
+                                ret.var = new Variable(currentToken.Lexema, AccessList(currentToken.Lexema));
                                 return ret;
                             }
                         }
@@ -476,7 +476,7 @@ namespace Project_Compiladores1.Sintactico
                 string tmp = currentToken.Lexema;
                 currentToken = lex.NextToken();
                 S_Switch ret = new S_Switch();
-                try { ret.Var = new Variable(tmp, AccessList()); }
+                try { ret.Var = new Variable(tmp, AccessList(tmp)); }
                 catch (Exception ex) { throw ex; }
                 if (currentToken.Tipo != TipoToken.TK_OF)
                     throw new Exception("Se esperaba of.");
@@ -539,7 +539,7 @@ namespace Project_Compiladores1.Sintactico
                         S_Asignacion ret = new S_Asignacion();
                         try
                         {
-                            ret.id = new Variable(tmp, AccessList());
+                            ret.id = new Variable(tmp, AccessList(tmp));
                         }
                         catch (Exception ex) { throw ex; }
                         if (currentToken.Tipo != TipoToken.TK_ASSIGN)
@@ -661,6 +661,17 @@ namespace Project_Compiladores1.Sintactico
                         else
                         {
                             currentToken = lex.NextToken();
+                            Struct type = new Struct();
+                            type.Campos = new T_Campos();
+                            type.nombre = ret.nombre;
+                            Declaracion temp = ret.campos;
+                            while (temp != null)
+                            {
+                                type.Campos.Add(temp.Var.id, temp.Tip);
+                                temp = temp.Sig;
+                            }
+                            try { InfSemantica.getInstance().tblTipos.Add(type.nombre, type); }
+                            catch (Exception ex) { throw new Exception("Ya se ha definido un tipo con ese nombre."); }
                             return ret;
                         }
                     }
@@ -674,13 +685,14 @@ namespace Project_Compiladores1.Sintactico
                             ret.type.Tip = ParseType();
                         }
                         catch (Exception ex) { throw ex; }
+                        InfSemantica.getInstance().tblTipos.Add(ret.type.Nombre, ret.type);
                         return ret;
                     }
                 }
             }
         }
 
-        Access AccessList()
+        Access AccessList(string par)
         {
             switch (currentToken.Tipo)
             {
@@ -691,36 +703,45 @@ namespace Project_Compiladores1.Sintactico
                             throw new Exception("Se esperaba identificador.");
                         else
                         {
-                            AccessMiembro ret = new AccessMiembro();
-                            ret.Id = currentToken.Lexema;
+                            string tmp = currentToken.Lexema;
                             currentToken = lex.NextToken();
-                            try
+                            if (currentToken.Tipo == TipoToken.TK_OPENCOR)
                             {
-                                ret.Next = AccessList();
+                                Access ret;
+                                try
+                                {
+                                    ret = AccessList(tmp);
+                                    ret.Next = AccessList(null);
+                                }
+                                catch (Exception ex) { throw ex; }
+                                return ret;
                             }
-                            catch (Exception ex) { throw ex; }
-                            return ret;
+                            else
+                            {
+                                AccessMiembro ret = new AccessMiembro();
+                                ret.Id = tmp;
+                                try { ret.Next = AccessList(null); }
+                                catch (Exception ex) { throw ex; }
+                                return ret;
+                            }
                         }
                     }
 
                 case TipoToken.TK_OPENCOR:
                     {
+                        if (par == null)
+                            throw new Exception("Se esperaba otro accesor.");
                         currentToken = lex.NextToken();
                         AccessArreglo ret = new AccessArreglo();
-                        try
-                        {
-                            ret.Cont = ExprList();
-                        }
+                        ret.nombre = par;
+                        try { ret.Cont = ExprList(); }
                         catch (Exception ex) { throw ex; }
                         if (currentToken.Tipo != TipoToken.TK_CLOSECOR)
                             throw new Exception("Se esperaba ].");
                         else
                         {
                             currentToken = lex.NextToken();
-                            try
-                            {
-                                ret.Next = AccessList();
-                            }
+                            try { ret.Next = AccessList(null); }
                             catch (Exception ex) { throw ex; }
                             return ret;
                         }
@@ -773,7 +794,9 @@ namespace Project_Compiladores1.Sintactico
                     {
                         if (InfSemantica.getInstance().tblTipos.ContainsKey(currentToken.Lexema))
                         {
-                            return InfSemantica.getInstance().tblTipos[currentToken.Lexema];
+                            string nom = currentToken.Lexema;
+                            currentToken = lex.NextToken();
+                            return InfSemantica.getInstance().tblTipos[nom];
                         }
                         else throw new Exception("Tipo no reconocido.");
                     }
@@ -1024,7 +1047,7 @@ namespace Project_Compiladores1.Sintactico
                 {
                     try
                     {
-                        return new Variable(tmp, AccessList());
+                        return new Variable(tmp, AccessList(tmp));
                     }
                     catch (Exception ex) { throw ex; }
                 }

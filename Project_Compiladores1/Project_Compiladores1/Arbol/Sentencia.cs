@@ -341,6 +341,7 @@ namespace Project_Compiladores1.Arbol
         public override void validarSemantica()
         {
             //FALTA            
+            /*
             Tipo var = null;
             if (InfSemantica.getInstance().tblTipos.ContainsKey(nombre))
             {
@@ -367,12 +368,12 @@ namespace Project_Compiladores1.Arbol
                 }
                 InfSemantica.getInstance().tblTipos.Add(nombre, s);
             }
-            //c.validarSemantica();
+            *///c.validarSemantica();
         }
 
         protected override void interpretarSentencia()
         {
-            //NO SE QUE P2 ACA
+            //NO SE hace nada ACA
         }
     }
 
