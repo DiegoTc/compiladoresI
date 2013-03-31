@@ -960,6 +960,28 @@ namespace Project_Compiladores1.Sintactico
                     MenorIgual menorI = new MenorIgual(E, Addexp());
                     return menorI;
                 }
+                else if (currentToken.Tipo == Lexico.TipoToken.TK_MASMAS)
+                {
+                    ExpMasMas mas = new ExpMasMas();
+                    if (E is Variable)
+                    {
+                        Variable v = ((Variable)E);
+                        mas.ID = v;
+                        currentToken = lex.NextToken();
+                    }
+                    return mas;
+                }
+                else if (currentToken.Tipo == Lexico.TipoToken.TK_MENOSMENOS)
+                {
+                    ExpMenosMenos menos = new ExpMenosMenos();
+                    if (E is Variable)
+                    {
+                        Variable v = ((Variable)E);
+                        menos.ID = v;
+                        currentToken = lex.NextToken();
+                    }
+                    return menos;
+                }
                 return E;
             }
             catch (Exception ex)
@@ -1155,11 +1177,25 @@ namespace Project_Compiladores1.Sintactico
                     currentToken = lex.NextToken();
                     if (currentToken.Tipo != Lexico.TipoToken.TK_ID)
                         throw new Exception("Error Sintactico  -- Se esperaba un ID");
-                    AccessMiembro accM = new AccessMiembro();
-                    accM.Id = currentToken.Lexema;
-                    List = accM;
-                    currentToken = lex.NextToken();
-                    List.Next = Accesories(List.Next);
+                    Lexico.Token tmp = currentToken;
+                    currentToken=lex.NextToken();
+                    if (currentToken.Tipo == Lexico.TipoToken.TK_OPENCOR)
+                    {
+                        AccessArreglo accAr = new AccessArreglo();
+                        accAr.Cont = ArrayDim(accAr.Cont);
+                        accAr.nombre = tmp.Lexema;
+                        List = accAr;
+                        List.Next = Accesories(List.Next);
+                    }
+                    else
+                    {
+
+                        AccessMiembro accM = new AccessMiembro();
+                        accM.Id = tmp.Lexema;
+                        List = accM;
+                        //currentToken = lex.NextToken();
+                        List.Next = Accesories(List.Next);
+                    }
                 }
                 else if (currentToken.Tipo == Lexico.TipoToken.TK_OPENCOR)
                 {

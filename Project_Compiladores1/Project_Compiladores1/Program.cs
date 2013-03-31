@@ -14,7 +14,7 @@ namespace Project_Compiladores1
     {
         static void Main(string[] args)
         {
-            /*
+            
             StreamReader streamReader = new StreamReader("C:\\Pascal.txt");
             string text = streamReader.ReadToEnd();
             streamReader.Close();
@@ -24,17 +24,17 @@ namespace Project_Compiladores1
             Sentencia raiz = s.parse();
             raiz.SentValSemantica();
             raiz.interpretar();
-            */
-
+            
+            /*
             StreamReader streamReader = new StreamReader("C:\\Pascal.txt");
             string text = streamReader.ReadToEnd();
             streamReader.Close();
-            LexicoPascal C = new LexicoPascal(text);
-
-            pascalParser s = new pascalParser(C);
+            LexicoJava C = new LexicoJava(text);
+            
+            javaParser s = new javaParser(C);
             Sentencia raiz = s.parse();
             raiz.SentValSemantica();
-            raiz.interpretar();
+            raiz.interpretar();*/
 
             Console.ReadKey();
         }   

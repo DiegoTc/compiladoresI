@@ -326,6 +326,7 @@ namespace Project_Compiladores1.Sintactico
                                     currentToken = lex.NextToken();
                                     try
                                     {
+                                        Expresiones e = Expr();
                                         sFor.Iteracion = Expr();
                                     }
                                     catch (Exception ex)
@@ -1328,6 +1329,28 @@ namespace Project_Compiladores1.Sintactico
 
                     return eMayI;
                 }
+                else if (currentToken.Tipo == TipoToken.TK_MASMAS)
+                {
+                    ExpMasMas mas = new ExpMasMas();
+                    if (E is Variable)
+                    {
+                        Variable v = ((Variable)E);
+                        mas.ID = v;
+                        currentToken = lex.NextToken();
+                    }
+                    return mas;
+                }
+                else if (currentToken.Tipo == TipoToken.TK_MENOSMENOS)
+                {
+                    ExpMenosMenos menos = new ExpMenosMenos();
+                    if (E is Variable)
+                    {
+                        Variable v = ((Variable)E);
+                        menos.ID = v;
+                        currentToken = lex.NextToken();
+                    }
+                    return menos;
+                }
                 else
                 {
                     return E;
@@ -1529,6 +1552,8 @@ namespace Project_Compiladores1.Sintactico
                     List = accM;
                     currentToken = lex.NextToken();
                     List.Next = Accesories(List.Next);
+                    Access a= Accesories(List.Next);
+
                 }
                 else if (currentToken.Tipo == TipoToken.TK_OPENCOR)
                 {

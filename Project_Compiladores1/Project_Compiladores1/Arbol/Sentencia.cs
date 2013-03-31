@@ -133,6 +133,50 @@ namespace Project_Compiladores1.Arbol
                                 ac = ac.Next;
                             }
                         }
+                        else if (ac is AccessArreglo)
+                        {
+                            AccessArreglo access = ((AccessArreglo)ac);
+                            Struct st = ((Struct)tmptipo);
+                            tmptipo = st.Campos[access.nombre];
+
+                            if (tmptipo is Struct)
+                            {
+                                Struct str = ((Struct)tmptipo);
+                                if (InfSemantica.getInstance().tblTipos.ContainsKey(str.nombre))
+                                {
+                                    tmptipo = InfSemantica.getInstance().tblTipos[str.nombre];
+                                    ac = ac.Next;
+                                }
+                                else
+                                {
+                                    throw new Exception("Error semantico -- No existe dicho accessor" + access.nombre);
+                                }
+                            }
+                            else if (tmptipo is Arreglo)
+                            {
+                                Arreglo str = ((Arreglo)tmptipo);
+                                if (st.Campos.ContainsKey(access.nombre))
+                                {
+                                    tmptipo = st.Campos[access.nombre];
+                                    if (tmptipo is Arreglo)
+                                    {
+                                        str = ((Arreglo)tmptipo);
+                                        tmptipo = str.Contenido;
+                                    }
+                                    ac = ac.Next;
+                                }
+                                else
+                                {
+                                    throw new Exception("Error semantico -- No existe dicho accessor" + access.nombre);
+                                }
+                            }
+                            else
+                            {
+
+                                tmptipo = st.Campos[access.nombre];
+                                ac = ac.Next;
+                            }
+                        }
                     }
                     if (!tmptipo.esEquivalente(val))
                     {
@@ -341,7 +385,7 @@ namespace Project_Compiladores1.Arbol
         public override void validarSemantica()
         {
             //FALTA            
-            /*
+            
             Tipo var = null;
             if (InfSemantica.getInstance().tblTipos.ContainsKey(nombre))
             {
@@ -368,7 +412,7 @@ namespace Project_Compiladores1.Arbol
                 }
                 InfSemantica.getInstance().tblTipos.Add(nombre, s);
             }
-            *///c.validarSemantica();
+            /*///c.validarSemantica();*/
         }
 
         protected override void interpretarSentencia()
