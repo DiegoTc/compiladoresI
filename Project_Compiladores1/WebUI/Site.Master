@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head id="Head1" runat="server">
-    <title>Hola Mundo</title>
+    <title>MultiInterpretador - Compiladores I</title>
     <%-- CSS --%>
     <link href="css/bootstrap.css" rel="stylesheet" />
     <link href="css/bootstrap-responsive.css" rel="stylesheet" />
@@ -25,14 +25,52 @@
 </head>
 <body>
     <form id="form1" runat="server">
+    <%-- Header--%>
+    <div class="navbar navbar-static-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <div class="row-fluid">
+                    <div class="span3">
+                        <div class="brand" href="http://www.unitec.edu">
+                            <img src="img/UnitecLogo250.png" width="250" height="59" alt="" />
+                        </div>
+                    </div>
+                    <div class="span9" align="right">
+                        <div style="margin: 30px 3px 30px 30px;">
+                            <div>
+                                <h4>
+                                    Multi-Interpretador - Proyecto Compiladores I</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <asp:ContentPlaceHolder ID="Encabezado" runat="server">
     </asp:ContentPlaceHolder>
     <div>
         <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true">
         </asp:ScriptManager>
+        <br/>
         <asp:ContentPlaceHolder ID="Contenido" runat="server">
         </asp:ContentPlaceHolder>
+        <br/>
     </div>
     </form>
+    <div class="footer">
+        <div class="container">
+            <div class="navbar navbar-fixed-bottom navbar-inverse">
+                <div class="navbar-inner">
+                    <div class="row-fluid">
+                        <div style="margin: 5px 5px 5px 5px;">
+                            <h6>
+                                Cucarachas Fumadoras - YEAH!</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

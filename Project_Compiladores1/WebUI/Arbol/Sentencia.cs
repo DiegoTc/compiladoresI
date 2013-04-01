@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using WebUI.Semantico;
+using WebUI.Interpretador;
 
 
 namespace WebUI.Arbol
@@ -22,6 +23,18 @@ namespace WebUI.Arbol
                 sig.SentValSemantica();
             }
         }
+
+        protected abstract void interpretarSentencia();
+
+        public void interpretar()
+        {
+            interpretarSentencia();
+            if (sig != null)
+            {
+                sig.interpretar();
+            }
+
+        }
     }
 
     class S_Print : Sentencia
@@ -32,6 +45,28 @@ namespace WebUI.Arbol
         {
             Expr.validarSemantica();
         }
+
+        protected override void interpretarSentencia()
+        {
+            Valor tmp = Expr.interpretar();
+            if (tmp is ValorEntero)
+                Console.WriteLine(((ValorEntero)tmp).Valor.ToString());
+            if (tmp is ValorFlotante)
+                Console.WriteLine(((ValorFlotante)tmp).Valor.ToString());
+            if (tmp is ValorCadena)
+                Console.WriteLine(((ValorCadena)tmp).Valor.ToString());
+            if (tmp is ValorCaracter)
+                Console.WriteLine(((ValorCaracter)tmp).Valor.ToString());
+            if (tmp is ValorBooleano)
+                Console.WriteLine(((ValorBooleano)tmp).Valor.ToString());
+            if (tmp is ValorArreglo)
+            {
+                Variable tmpvar = (Variable)Expr;
+                Access tmpacc = ((AccessArreglo)tmpvar.accesor).Last();
+                Console.WriteLine(((ValorArreglo)tmp).get(((AccessArreglo)tmpacc).Cont));
+            }
+
+        }
     }
 
     class S_Read : Sentencia
@@ -40,6 +75,11 @@ namespace WebUI.Arbol
         public override void validarSemantica()
         {
             var.validarSemantica();
+        }
+
+        protected override void interpretarSentencia()
+        {
+
         }
     }
 
@@ -68,28 +108,75 @@ namespace WebUI.Arbol
 
                     while (ac != null)
                     {
-                        AccessMiembro access = ((AccessMiembro)ac);
-                        Struct st = ((Struct)tmptipo);
-                        tmptipo = st.Campos[access.Id];
-
-                        if (tmptipo is Struct)
+                        if (ac is AccessMiembro)
                         {
-                            Struct str = ((Struct)tmptipo);
-                            if (InfSemantica.getInstance().tblTipos.ContainsKey(str.nombre))
+                            AccessMiembro access = ((AccessMiembro)ac);
+                            Struct st = ((Struct)tmptipo);
+                            tmptipo = st.Campos[access.Id];
+
+                            if (tmptipo is Struct)
                             {
-                                tmptipo = InfSemantica.getInstance().tblTipos[str.nombre];
-                                ac = ac.Next;
+                                Struct str = ((Struct)tmptipo);
+                                if (InfSemantica.getInstance().tblTipos.ContainsKey(str.nombre))
+                                {
+                                    tmptipo = InfSemantica.getInstance().tblTipos[str.nombre];
+                                    ac = ac.Next;
+                                }
+                                else
+                                {
+                                    throw new Exception("Error semantico -- No existe dicho accessor" + access.Id);
+                                }
                             }
                             else
                             {
-                                throw new Exception("Error semantico -- No existe dicho accessor" + access.Id);
+
+                                tmptipo = st.Campos[access.Id];
+                                ac = ac.Next;
                             }
                         }
-                        else
+                        else if (ac is AccessArreglo)
                         {
+                            AccessArreglo access = ((AccessArreglo)ac);
+                            Struct st = ((Struct)tmptipo);
+                            tmptipo = st.Campos[access.nombre];
 
-                            tmptipo = st.Campos[access.Id];
-                            ac = ac.Next;
+                            if (tmptipo is Struct)
+                            {
+                                Struct str = ((Struct)tmptipo);
+                                if (InfSemantica.getInstance().tblTipos.ContainsKey(str.nombre))
+                                {
+                                    tmptipo = InfSemantica.getInstance().tblTipos[str.nombre];
+                                    ac = ac.Next;
+                                }
+                                else
+                                {
+                                    throw new Exception("Error semantico -- No existe dicho accessor" + access.nombre);
+                                }
+                            }
+                            else if (tmptipo is Arreglo)
+                            {
+                                Arreglo str = ((Arreglo)tmptipo);
+                                if (st.Campos.ContainsKey(access.nombre))
+                                {
+                                    tmptipo = st.Campos[access.nombre];
+                                    if (tmptipo is Arreglo)
+                                    {
+                                        str = ((Arreglo)tmptipo);
+                                        tmptipo = str.Contenido;
+                                    }
+                                    ac = ac.Next;
+                                }
+                                else
+                                {
+                                    throw new Exception("Error semantico -- No existe dicho accessor" + access.nombre);
+                                }
+                            }
+                            else
+                            {
+
+                                tmptipo = st.Campos[access.nombre];
+                                ac = ac.Next;
+                            }
                         }
                     }
                     if (!tmptipo.esEquivalente(val))
@@ -102,6 +189,52 @@ namespace WebUI.Arbol
             else
             {
                 throw new Exception("Error Semantico - No existe la variable " + id.id);
+            }
+        }
+
+        protected override void interpretarSentencia()
+        {
+            Valor val = Valor.interpretar();
+
+            Access a = id.accesor;
+            ArrayList lista = new ArrayList();
+            String campo;
+            Valor ident = InfInterpretador.getInstance().getValor(id.id);
+
+            while (a != null)
+            {
+                if (a is AccessArreglo)
+                {
+                    lista = new ArrayList();
+                    AccessArreglo tmp = (AccessArreglo)a;
+                    ArrayList indices = tmp.Cont;
+                    for (int i = 0; i < indices.Count; i++)
+                    {
+                        lista.Add((ValorEntero)((Expresiones)indices[i]).interpretar());
+                    }
+                    if (a.Next != null)
+                    {
+                        ident = ((ValorArreglo)ident).get(lista);
+                    } //TO DO ADD ELSE CLAUSE
+                }
+                a = a.Next;
+            }
+            if (id.accesor != null)//ACA ES DISTINTO
+            {
+                if (ident is ValorArreglo)
+                {
+                    ((ValorArreglo)ident).set(lista, val.Clonar());
+                }
+                else
+                {
+                    //TO DO: ADD CODE
+                }
+            }
+            else
+            {
+                InfInterpretador.getInstance().asignarValor(id.id, val.Clonar());
+
+                //System.out.println(var.getId()+"="+val);
             }
         }
     }
@@ -117,10 +250,23 @@ namespace WebUI.Arbol
         {
             Tipo Con = Condicion.validarSemantica();
             //VALIDAR CONDICION SEA BOOL
-            if (Cierto != null)
-                Cierto.SentValSemantica();
-            if (Falso != null)
-                Cierto.SentValSemantica();
+            if (Con is Booleano)
+            {
+                if (Cierto != null)
+                    Cierto.SentValSemantica();
+                if (Falso != null)
+                    Cierto.SentValSemantica();
+            }
+            else throw new Exception("La condicion debe ser booleana");
+        }
+
+        protected override void interpretarSentencia()
+        {
+            Valor tmp = Condicion.interpretar();
+            if (((ValorBooleano)tmp).Valor)
+                Cierto.interpretar();
+            else
+                Falso.interpretar();
         }
     }
 
@@ -132,9 +278,22 @@ namespace WebUI.Arbol
         public override void validarSemantica()
         {
             Tipo Con = Condicion.validarSemantica();
-            //VALIDAR QUE SEA BOOL
-            if (S != null)
-                S.SentValSemantica();
+            if (Con is Booleano)
+            {
+                if (S != null)
+                    S.SentValSemantica();
+            }
+            else throw new Exception("La condicion debe ser booleana");
+        }
+
+        protected override void interpretarSentencia()
+        {
+            Valor tmp = Condicion.interpretar();
+            while (((ValorBooleano)tmp).Valor)
+            {
+                S.interpretar();
+                tmp = Condicion.interpretar();
+            }
         }
     }
 
@@ -146,10 +305,23 @@ namespace WebUI.Arbol
         public override void validarSemantica()
         {
             Tipo Con = Condicion.validarSemantica();
-            //VALIDAR QUE SEA BOOL
-            if (S != null)
-                S.SentValSemantica();
+            if (Con is Booleano)
+            {
+                if (S != null)
+                    S.SentValSemantica();
+            }
+            else throw new Exception("La condicion debe ser booleana");
+        }
 
+        protected override void interpretarSentencia()
+        {
+            S.interpretar();
+            Valor tmp = Condicion.interpretar();
+            while (((ValorBooleano)tmp).Valor)
+            {
+                S.interpretar();
+                tmp = Condicion.interpretar();
+            }
         }
     }
 
@@ -198,6 +370,11 @@ namespace WebUI.Arbol
                 S.SentValSemantica();
 
         }
+
+        protected override void interpretarSentencia()
+        {
+
+        }
     }
 
     class Structs : TypeDef
@@ -209,6 +386,7 @@ namespace WebUI.Arbol
         public override void validarSemantica()
         {
             //FALTA            
+
             Tipo var = null;
             if (InfSemantica.getInstance().tblTipos.ContainsKey(nombre))
             {
@@ -235,22 +413,26 @@ namespace WebUI.Arbol
                 }
                 InfSemantica.getInstance().tblTipos.Add(nombre, s);
             }
-            //c.validarSemantica();
+            /*///c.validarSemantica();*/
         }
 
+        protected override void interpretarSentencia()
+        {
+            //NO SE hace nada ACA
+        }
     }
 
     class Cases : Sentencia
     {
         public Expresiones Valor;
         public Sentencia S;
-        Cases Sig;
+        public Cases Sig;
 
         public override void validarSemantica()
         {
             //FALTA
             Tipo T = Valor.validarSemantica();
-            if (T is Entero || T is Cadena || T is Caracter)
+            if (T is Entero)
             {
                 //NADA
             }
@@ -259,7 +441,17 @@ namespace WebUI.Arbol
                 throw new Exception("Error Semantico - Tipo de valor de evaluacion de case no soportado");
             }
             S.SentValSemantica();
-            Sig.validarSemantica();
+            Cases tmp = Sig;
+            while (tmp != null)
+            {
+                tmp.validarSemantica();
+                tmp = tmp.Sig;
+            }
+        }
+
+        protected override void interpretarSentencia()
+        {
+            S.interpretar();
         }
     }
 
@@ -271,9 +463,9 @@ namespace WebUI.Arbol
 
         public override void validarSemantica()
         {
-            //FALTA
+            //ya no FALTA
             Tipo T = Var.validarSemantica();
-            if (T is Entero || T is Cadena || T is Caracter)
+            if (T is Entero)
             {
                 //NADA
             }
@@ -283,6 +475,31 @@ namespace WebUI.Arbol
             }
             Casos.validarSemantica();
             sdefault.SentValSemantica();
+        }
+
+        protected override void interpretarSentencia()
+        {
+            Valor val = Var.interpretar();
+            bool def = false;
+            if (Casos != null)
+            {
+                Cases tmp = Casos;
+                while (tmp != null)
+                {
+                    Valor valtmp = tmp.Valor.interpretar();
+                    if (((ValorEntero)val).Valor == ((ValorEntero)valtmp).Valor)
+                    {
+                        tmp.interpretar();
+                        def = true;
+                        break;
+                    }
+                    tmp = tmp.Sig;
+                }
+            }
+            if (def == false && sdefault != null)
+                sdefault.interpretar();
+
+
         }
     }
 
@@ -304,23 +521,35 @@ namespace WebUI.Arbol
         {
             //FALTA
             #region Validar Existe Variable
-
-
+            funciones func = new funciones();
+            func.parametros = new T_Campos();
+            func.retorno = Retorno;
             Tipo Var = null;
             if (InfSemantica.getInstance().tblFunciones.ContainsKey(this.Var))
             {
-                Var = InfSemantica.getInstance().tblFunciones[this.Var];
+                throw new Exception("Error Semantico - La funcion " + this.Var + " ya existe");
             }
             if (InfSemantica.getInstance().tblSimbolos.ContainsKey(this.Var))
             {
-                throw new Exception("Error Semantico - La variable " + this.Var + " ya existe");
+                throw new Exception("Error Semantico - La variable " + this.Var + " ya existe declarada en una funcion");
             }
             if (Var == null)
             {
-                if (Retorno != null)
-                    InfSemantica.getInstance().tblFunciones.Add(this.Var, Retorno);
-                else
-                    InfSemantica.getInstance().tblFunciones.Add(this.Var, new Voids());
+                //Campo.validarSemantica();
+
+                Declaracion tmp = Campo;
+                while (tmp != null)
+                {
+                    Variable v = tmp.Var;
+                    if (func.parametros.ContainsKey(v.id))
+                    {
+                        throw new Exception("Error Semantico - La variable " + v.id + " ya existe");
+                    }
+                    func.parametros.Add(v.id, tmp.Tip);
+                    InfSemantica.getInstance().tblSimbolos.Add(v.id, tmp.Tip);
+                    //InfSemantica.getInstance().tblSimbolos.Add(v.id, tmp.Tip);
+                    tmp = tmp.Sig;
+                }
             }
             else
             {
@@ -328,14 +557,21 @@ namespace WebUI.Arbol
             }
             #endregion
 
-            Campo.validarSemantica();
+
 
             if (Retorno != null)
             {
                 #region Valida Valor de Retorno
 
                 Sentencia tmp = S;
-                while (tmp != null)
+                bool flag = (tmp is S_Return);
+                while (tmp != null && flag == false)
+                {
+                    tmp.SentValSemantica();
+                    tmp = tmp.sig;
+                    flag = (tmp is S_Return);
+                }
+                if (!(Retorno is Voids))
                 {
                     if (tmp is S_Return)
                     {
@@ -343,19 +579,35 @@ namespace WebUI.Arbol
                         Tipo T = ret.Expr.validarSemantica();
                         if (!Retorno.esEquivalente(T))
                         {
-                            throw new Exception(
-                                "Error Semantico - Expresion de retorno no es el mismo que el retorno de la funcion");
+                            throw new Exception("Error Semantico - Expresion de retorno no es el mismo que el retorno de la funcion");
                         }
+
                     }
                     else
                     {
-                        tmp.SentValSemantica();
+                        throw new Exception("Error Semantico - Se esperaba el valor de retorno que tiene que ser " + Retorno.ToString());
                     }
-                    tmp = tmp.sig;
                 }
+                else
+                {
+                    if (tmp is S_Return)
+                    {
+                        throw new Exception("Error Semantico - La funcion es tipo void no tiene que retornar nada.");
+                    }
+                }
+                InfSemantica.getInstance().tblFunciones.Add(this.Var, func);
+
 
                 #endregion
             }
+        }
+
+        protected override void interpretarSentencia()
+        {
+            /*
+            Campo.interpretar();
+            S.interpretar();
+            */
         }
     }
 
@@ -368,8 +620,24 @@ namespace WebUI.Arbol
 
         public override void validarSemantica()
         {
-            //FALTA                        
 
+            if (Tip is Class)
+            {
+                Class ctmp = ((Class)Tip);
+                if (!(InfSemantica.getInstance().tblTipos.ContainsKey(ctmp.Nombre)))
+                {
+                    throw new Exception("Error Semantico -- La clase " + ctmp.Nombre + " no a sido declarada");
+                }
+
+            }
+            else if (Tip is Struct)
+            {
+                Struct stmp = ((Struct)Tip);
+                if (!(InfSemantica.getInstance().tblTipos.ContainsKey(stmp.nombre)))
+                {
+                    throw new Exception("Error Semantico -- El struct " + stmp.nombre + " no a sido declarada");
+                }
+            }
             Tipo var = null;
             if (InfSemantica.getInstance().tblSimbolos.ContainsKey(Var.id))
             {
@@ -391,12 +659,8 @@ namespace WebUI.Arbol
             else
             {
                 InfSemantica.getInstance().tblSimbolos.Add(Var.id, Tip);
+                //InfInterpretador.getInstance().asignarValor(Var.id, null);
                 var = InfSemantica.getInstance().tblSimbolos[Var.id];
-                if (Tip is Struct)
-                {
-
-                }
-
             }
             if (Valor != null)
             {
@@ -408,13 +672,40 @@ namespace WebUI.Arbol
             if (Sig != null)
                 Sig.validarSemantica();
         }
+
+        protected override void interpretarSentencia()
+        {
+            if (Valor == null)
+            {
+                if (Tip is Arreglo)
+                {
+                    Arreglo tmptip = (Arreglo)Tip;
+                    ValorArreglo tmp = new ValorArreglo(tmptip);
+                    InfInterpretador.getInstance().asignarValor(Var.id, tmp);
+                }
+                else
+                {
+                    InfInterpretador.getInstance().asignarValor(Var.id, null);
+                }
+            }
+            else
+            {
+                Valor tmp = Valor.interpretar();
+                InfInterpretador.getInstance().asignarValor(Var.id, tmp);
+            }
+        }
     }
 
     class S_Break : Sentencia
     {
         public override void validarSemantica()
         {
-            //FALTA
+            //no FALTA
+        }
+
+        protected override void interpretarSentencia()
+        {
+
         }
     }
 
@@ -422,7 +713,12 @@ namespace WebUI.Arbol
     {
         public override void validarSemantica()
         {
-            //FALTA
+            //no FALTA
+        }
+
+        protected override void interpretarSentencia()
+        {
+
         }
     }
 
@@ -432,6 +728,11 @@ namespace WebUI.Arbol
         public override void validarSemantica()
         {
             Expr.validarSemantica();
+        }
+
+        protected override void interpretarSentencia()
+        {
+            //Expr.interpretar();
         }
     }
 
@@ -453,6 +754,11 @@ namespace WebUI.Arbol
 
             if (var == null)
                 throw new Exception("Error Semantico - La variable " + Var.id + " no existe");
+        }
+
+        protected override void interpretarSentencia()
+        {
+            //NIPI NIJA
         }
     }
 
@@ -477,9 +783,43 @@ namespace WebUI.Arbol
                 throw new Exception("Error Semantico - La variable " + Var.id + " ya existe");
             }
 
-            if (var != null)
+            if (var == null)
             {
-                InfSemantica.getInstance().tblFunciones.Add(Var.id, new Class());
+                Class cl = new Class();
+                cl.Campos = new T_Campos();
+                Sentencia tmp = CamposClase;
+                while (tmp != null)
+                {
+                    if (tmp is Declaracion)
+                    {
+                        Declaracion d = ((Declaracion)tmp);
+                        tmp.validarSemantica();
+                        //if (d.Tip == null)
+                        //   d.Tip = new T_Campos();
+                        cl.Campos.Add(d.Var.id, d.Tip);
+                        tmp = tmp.sig;
+                    }
+                    else if (tmp is S_Functions)
+                    {
+                        S_Functions s = ((S_Functions)tmp);
+                        s.validarSemantica();
+                        if (InfSemantica.getInstance().tblFunciones.ContainsKey(s.Var))
+                        {
+                            Tipo t = InfSemantica.getInstance().tblFunciones[s.Var];
+                            funciones func = ((funciones)t);
+                            cl.Campos.Add(s.Var, func);
+                            tmp = tmp.sig;
+                        }
+                        else
+                            throw new Exception("Error Semantico ---  Hubo un error al momento de declarar la variable");
+                    }
+                    else
+                    {
+
+                        throw new Exception("Error Semantico --- No se puede declarar esa sentencia aqui");
+                    }
+                }
+                InfSemantica.getInstance().tblTipos.Add(Var.id, cl);
             }
             else
             {
@@ -487,36 +827,65 @@ namespace WebUI.Arbol
             }
             #endregion
 
-            Sentencia tmp = CamposClase;
-            while (tmp != null)
-            {
-                if (tmp is Declaracion)
-                {
-                    Declaracion tmpCampo = ((Declaracion)tmp);
-                    tblSimbolosClass.Add(tmpCampo.Var.id, tmpCampo.Tip);
-                }
-                else
-                {
-                    tmp.validarSemantica();
-                }
-                tmp = tmp.sig;
-            }
 
+
+        }
+
+        protected override void interpretarSentencia()
+        {
+            Var.interpretar();
+            CamposClase.interpretar();
         }
     }
 
-    class TypeDef : Sentencia
+    abstract class TypeDef : Sentencia
     {
         public TypeDef Sig;
-
-        public override void validarSemantica()
-        {
-        }
-
     }
 
     class Alias : TypeDef
     {
         public UserType type;
+        public override void validarSemantica()
+        {
+            InfSemantica.getInstance().tblTipos.Add(type.Nombre, type.Tip);
+        }
+
+        protected override void interpretarSentencia()
+        {
+
+        }
+    }
+
+    class s_masmas : Sentencia
+    {
+        public ExpMasMas param;
+        public override void validarSemantica()
+        {
+            try { param.validarSemantica(); }
+            catch (Exception ex) { throw ex; }
+        }
+
+        protected override void interpretarSentencia()
+        {
+            try { param.interpretar(); }
+            catch (Exception ex) { throw ex; }
+        }
+    }
+
+    class s_menosmenos : Sentencia
+    {
+        public ExpMenosMenos param;
+        public override void validarSemantica()
+        {
+            try { param.validarSemantica(); }
+            catch (Exception ex) { throw ex; }
+        }
+
+        protected override void interpretarSentencia()
+        {
+            try { param.interpretar(); }
+            catch (Exception ex) { throw ex; }
+        }
     }
 }

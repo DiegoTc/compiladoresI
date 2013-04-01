@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using WebUI.Arbol;
 using WebUI.Lexico;
 using WebUI.Sintactico;
 using System.Web.Services;
@@ -21,19 +22,6 @@ namespace WebUI
             }
         }
 
-        //protected void BtnCompilarOnClick(object sender, EventArgs e)
-        //{
-        //    //Evaluo si el textbox no esta vacio
-        //    //if (!string.IsNullOrEmpty(txtContenido.Value))
-        //    //{
-        //    //    EvaluarSentencia();
-        //    //}
-        //    //else
-        //    //{
-        //    //    txtResultado.Value = "No se ingreso ninguna sentencia en la caja de texto!!!.";
-        //    //}
-        //}
-
         [WebMethod(EnableSession = true)]
         public static string ObtenerResultadoPascal(string sentencia)
         {
@@ -41,10 +29,12 @@ namespace WebUI
 
             var lp = new LexicoPascal(sentencia);
             var pp = new pascalParser(lp);
+            Sentencia raizP= pp.parse();
 
-            var raizP = pp.parse();
+            //raizP.SentValSemantica();
+            //raizP.interpretar();
 
-            return HttpContext.Current.Session["MsjPascal"].ToString();
+            return HttpContext.Current.Session["MsjPascal"].ToString()  ;
         }
 
 
@@ -56,7 +46,10 @@ namespace WebUI
             var lc = new LexicoC(sentencia);
             var cp = new parserC(lc);
 
-            var raizC = cp.parse();
+            Sentencia raipzC = cp.parse();
+
+            //raipzC.SentValSemantica();
+            //raipzC.interpretar();
 
             return HttpContext.Current.Session["MsjC"].ToString();
         }
@@ -69,7 +62,11 @@ namespace WebUI
             var lj = new LexicoJava(sentencia);
             var jp = new javaParser(lj);
 
-            var raizJ = jp.parse();
+            Sentencia raizJ = jp.parse();
+
+            //raizJ.SentValSemantica();
+            //raizJ.interpretar();
+
             return HttpContext.Current.Session["MsjJava"].ToString();
            
         }

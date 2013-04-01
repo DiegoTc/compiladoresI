@@ -22,13 +22,14 @@ namespace WebUI.Sintactico
         {
             try
             {
+                HttpContext.Current.Session["MsjPascal"] = "Evaluación Sintáctica Correcta!";
                 return StatementList();
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
-                HttpContext.Current.Session["MsjPascal"] = ex.Message.ToString();
+                HttpContext.Current.Session["MsjPascal"] = ex.Message;
                 return null;
-                //throw ex; 
+                //throw ex;
             }
         }
 
@@ -64,6 +65,10 @@ namespace WebUI.Sintactico
                     case TipoToken.TK_WHILE:
                         currentToken = lex.NextToken();
                         return parseWhile();
+
+                    case TipoToken.TK_CASE:
+                        currentToken = lex.NextToken();
+                        return parseSwitch();
 
                     case TipoToken.TK_REPEAT:
                         currentToken = lex.NextToken();
@@ -103,7 +108,7 @@ namespace WebUI.Sintactico
                             else
                             {
                                 S_Read ret = new S_Read();
-                                ret.var = new Variable(currentToken.Lexema, AccessList());
+                                ret.var = new Variable(currentToken.Lexema, AccessList(currentToken.Lexema));
                                 return ret;
                             }
                         }
@@ -272,6 +277,10 @@ namespace WebUI.Sintactico
                         currentToken = lex.NextToken();
                         return parseWhile();
 
+                    case TipoToken.TK_CASE:
+                        currentToken = lex.NextToken();
+                        return parseSwitch();
+
                     case TipoToken.TK_REPEAT:
                         currentToken = lex.NextToken();
                         return parseDo();
@@ -295,7 +304,7 @@ namespace WebUI.Sintactico
                             else
                             {
                                 S_Read ret = new S_Read();
-                                ret.var = new Variable(currentToken.Lexema, AccessList());
+                                ret.var = new Variable(currentToken.Lexema, AccessList(currentToken.Lexema));
                                 return ret;
                             }
                         }
@@ -465,6 +474,66 @@ namespace WebUI.Sintactico
             }
         }
 
+        S_Switch parseSwitch()
+        {
+            if (currentToken.Tipo != TipoToken.TK_ID)
+                throw new Exception("Se esperaba identificador.");
+            else
+            {
+                string tmp = currentToken.Lexema;
+                currentToken = lex.NextToken();
+                S_Switch ret = new S_Switch();
+                try { ret.Var = new Variable(tmp, AccessList(tmp)); }
+                catch (Exception ex) { throw ex; }
+                if (currentToken.Tipo != TipoToken.TK_OF)
+                    throw new Exception("Se esperaba of.");
+                else
+                {
+                    currentToken = lex.NextToken();
+                    try { ret.Casos = caseList(); }
+                    catch (Exception ex) { throw ex; }
+                    if (currentToken.Tipo == TipoToken.TK_ELSE)
+                    {
+                        currentToken = lex.NextToken();
+                        try { ret.sdefault = CodeBlock(); }
+                        catch (Exception ex) { throw ex; }
+                    }
+                    return ret;
+                }
+            }
+        }
+
+        Cases caseList()
+        {
+            Cases ret = parseCase();
+            while (currentToken.Tipo == TipoToken.TK_INT_LIT)
+            {
+                ret.Sig = caseList();
+            }
+            return ret;
+        }
+
+        Cases parseCase()
+        {
+            if (currentToken.Tipo != TipoToken.TK_INT_LIT)
+                throw new Exception("Se esperaba una constante numérica.");
+            else
+            {
+                Cases ret = new Cases();
+                ret.Valor = new LiteralEntero(int.Parse(currentToken.Lexema));
+                currentToken = lex.NextToken();
+                if (currentToken.Tipo != TipoToken.TK_DOSPUNTOS)
+                    throw new Exception("se esperaba :");
+                else
+                {
+                    currentToken = lex.NextToken();
+                    try { ret.S = CodeBlock(); }
+                    catch (Exception ex) { throw ex; }
+                    return ret;
+                }
+            }
+        }
+
         Sentencia parseAssignOrCall()//Asume que no se ha consumido el ID
         {
             string tmp = currentToken.Lexema;
@@ -477,7 +546,7 @@ namespace WebUI.Sintactico
                         S_Asignacion ret = new S_Asignacion();
                         try
                         {
-                            ret.id = new Variable(tmp, AccessList());
+                            ret.id = new Variable(tmp, AccessList(tmp));
                         }
                         catch (Exception ex) { throw ex; }
                         if (currentToken.Tipo != TipoToken.TK_ASSIGN)
@@ -599,6 +668,17 @@ namespace WebUI.Sintactico
                         else
                         {
                             currentToken = lex.NextToken();
+                            Struct type = new Struct();
+                            type.Campos = new T_Campos();
+                            type.nombre = ret.nombre;
+                            Declaracion temp = ret.campos;
+                            while (temp != null)
+                            {
+                                type.Campos.Add(temp.Var.id, temp.Tip);
+                                temp = temp.Sig;
+                            }
+                            try { InfSemantica.getInstance().tblTipos.Add(type.nombre, type); }
+                            catch (Exception ex) { throw new Exception("Ya se ha definido un tipo con ese nombre."); }
                             return ret;
                         }
                     }
@@ -612,13 +692,14 @@ namespace WebUI.Sintactico
                             ret.type.Tip = ParseType();
                         }
                         catch (Exception ex) { throw ex; }
+                        InfSemantica.getInstance().tblTipos.Add(ret.type.Nombre, ret.type);
                         return ret;
                     }
                 }
             }
         }
 
-        Access AccessList()
+        Access AccessList(string par)
         {
             switch (currentToken.Tipo)
             {
@@ -629,36 +710,45 @@ namespace WebUI.Sintactico
                             throw new Exception("Se esperaba identificador.");
                         else
                         {
-                            AccessMiembro ret = new AccessMiembro();
-                            ret.Id = currentToken.Lexema;
+                            string tmp = currentToken.Lexema;
                             currentToken = lex.NextToken();
-                            try
+                            if (currentToken.Tipo == TipoToken.TK_OPENCOR)
                             {
-                                ret.Next = AccessList();
+                                Access ret;
+                                try
+                                {
+                                    ret = AccessList(tmp);
+                                    ret.Next = AccessList(null);
+                                }
+                                catch (Exception ex) { throw ex; }
+                                return ret;
                             }
-                            catch (Exception ex) { throw ex; }
-                            return ret;
+                            else
+                            {
+                                AccessMiembro ret = new AccessMiembro();
+                                ret.Id = tmp;
+                                try { ret.Next = AccessList(null); }
+                                catch (Exception ex) { throw ex; }
+                                return ret;
+                            }
                         }
                     }
 
                 case TipoToken.TK_OPENCOR:
                     {
+                        if (par == null)
+                            throw new Exception("Se esperaba otro accesor.");
                         currentToken = lex.NextToken();
                         AccessArreglo ret = new AccessArreglo();
-                        try
-                        {
-                            ret.Cont = ExprList();
-                        }
+                        ret.nombre = par;
+                        try { ret.Cont = ExprList(); }
                         catch (Exception ex) { throw ex; }
                         if (currentToken.Tipo != TipoToken.TK_CLOSECOR)
                             throw new Exception("Se esperaba ].");
                         else
                         {
                             currentToken = lex.NextToken();
-                            try
-                            {
-                                ret.Next = AccessList();
-                            }
+                            try { ret.Next = AccessList(null); }
                             catch (Exception ex) { throw ex; }
                             return ret;
                         }
@@ -711,7 +801,9 @@ namespace WebUI.Sintactico
                     {
                         if (InfSemantica.getInstance().tblTipos.ContainsKey(currentToken.Lexema))
                         {
-                            return InfSemantica.getInstance().tblTipos[currentToken.Lexema];
+                            string nom = currentToken.Lexema;
+                            currentToken = lex.NextToken();
+                            return InfSemantica.getInstance().tblTipos[nom];
                         }
                         else throw new Exception("Tipo no reconocido.");
                     }
@@ -963,7 +1055,7 @@ namespace WebUI.Sintactico
                 {
                     try
                     {
-                        return new Variable(tmp, AccessList());
+                        return new Variable(tmp, AccessList(tmp));
                     }
                     catch (Exception ex) { throw ex; }
                 }

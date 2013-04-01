@@ -64,11 +64,16 @@ namespace WebUI.Arbol
     class Class : Tipo
     {
         private string nombre;
-
+        private T_Campos _campos;
         public string Nombre
         {
             get { return nombre; }
             set { nombre = value; }
+        }
+        public T_Campos Campos
+        {
+            get { return _campos; }
+            set { _campos = value; }
         }
 
         public override bool esEquivalente(Tipo t)
@@ -125,6 +130,25 @@ namespace WebUI.Arbol
 
     }
 
+    class funciones : Tipo
+    {
+        public Tipo retorno;
+        public Sentencia S;
+        private T_Campos _parametros;
+
+        public String nombre;
+        public T_Campos parametros
+        {
+            get { return _parametros; }
+            set { _parametros = value; }
+        }
+
+        public override bool esEquivalente(Tipo t)
+        {
+            return t is Arreglo;
+        }
+    }
+
     class T_Campos : Dictionary<string, Tipo>
     {
         private ArrayList ids = new ArrayList();
@@ -165,5 +189,6 @@ namespace WebUI.Arbol
             return Tip.esEquivalente(t);
         }
     }
+
 
 }

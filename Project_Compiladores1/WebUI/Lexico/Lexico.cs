@@ -274,6 +274,7 @@ namespace WebUI.Lexico
                         }
                         else if (lexema == "\"")
                         {
+                            lexema = "";
                             estado = 9;
                         }
                         else if (lexema == "'")
@@ -286,7 +287,7 @@ namespace WebUI.Lexico
                     case 9:
                         if (symbol == '"')
                         {
-                            lexema += symbol;
+                            //lexema += symbol;
                             symbol = nextSymbol();
                             return new Token(lexema, TipoToken.TK_STRING_LIT, Fil, Col);
                         }

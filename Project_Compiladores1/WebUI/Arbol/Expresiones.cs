@@ -4,12 +4,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using WebUI.Semantico;
+using WebUI.Interpretador;
 
 namespace WebUI.Arbol
 {
     public abstract class Expresiones
     {
         public abstract Tipo validarSemantica();
+        public abstract Valor interpretar();
+        public char flag;
     }
 
     class LiteralEntero : Expresiones
@@ -23,6 +26,11 @@ namespace WebUI.Arbol
         public override Tipo validarSemantica()
         {
             return InfSemantica.getInstance().tblTipos["ENTERO"];
+        }
+
+        public override Valor interpretar()
+        {
+            return new ValorEntero(Valor);
         }
     }
 
@@ -38,6 +46,11 @@ namespace WebUI.Arbol
         {
             return InfSemantica.getInstance().tblTipos["FLOTANTE"];
         }
+
+        public override Valor interpretar()
+        {
+            return new ValorFlotante(Valor);
+        }
     }
 
     class LitBool : Expresiones
@@ -51,6 +64,11 @@ namespace WebUI.Arbol
         public override Tipo validarSemantica()
         {
             return InfSemantica.getInstance().tblTipos["BOOLEANO"];
+        }
+
+        public override Valor interpretar()
+        {
+            return new ValorBooleano(Valor);
         }
     }
 
@@ -66,6 +84,11 @@ namespace WebUI.Arbol
         {
             return InfSemantica.getInstance().tblTipos["CARACTER"];
         }
+
+        public override Valor interpretar()
+        {
+            return new ValorCaracter(Valor);
+        }
     }
 
     class LitString : Expresiones
@@ -79,6 +102,11 @@ namespace WebUI.Arbol
         public override Tipo validarSemantica()
         {
             return InfSemantica.getInstance().tblTipos["CADENA"];
+        }
+
+        public override Valor interpretar()
+        {
+            return new ValorCadena(Valor);
         }
     }
 
@@ -102,13 +130,89 @@ namespace WebUI.Arbol
 
         public override Tipo validarSemantica()
         {
-            Tipo left = Izq.validarSemantica();
-            Tipo right = Der.validarSemantica();
-            if (left is Entero && right is Entero)
+            Tipo left, right;
+            try
             {
-                return left;
+                left = Izq.validarSemantica();
+                right = Der.validarSemantica();
             }
-            throw new Exception("Error Semantico - No se puede sumar " + left + " con " + right);
+            catch (Exception ex) { throw ex; }
+            if (left is Entero)
+                if (right is Entero || right is Flotante || right is Cadena)
+                    return right;
+                else
+                    throw new Exception("Tipos incompatibles.");
+            else if (left is Flotante)
+                if (right is Entero || right is Flotante)
+                    return left;
+                else if (right is Cadena)
+                    return right;
+                else
+                    throw new Exception("Tipos incompatibles.");
+            else if (left is Booleano)
+                throw new Exception("No se pueden sumar booleanos, con NADA, NADA!!!");
+            else if (left is Caracter)
+                if (right is Cadena)
+                    return right;
+                else throw new Exception("Tipos incompatibles");
+            else if (left is Cadena)
+                if (right is Booleano)
+                    throw new Exception("Tipos incompatibles.");
+                else return left;
+            else throw new Exception("WTF?");
+        }
+
+        public override Valor interpretar()
+        {
+            Valor vizq = Izq.interpretar();
+            Valor vder = Der.interpretar();
+
+            if (vizq is ValorEntero && vder is ValorEntero)
+            {
+                return new ValorEntero(((ValorEntero)vizq).Valor + ((ValorEntero)vder).Valor);
+            }
+            if (vizq is ValorFlotante && vder is ValorFlotante)
+            {
+                return new ValorFlotante(((ValorFlotante)vizq).Valor + ((ValorFlotante)vder).Valor);
+            }
+            if (vizq is ValorCadena && vder is ValorCadena)
+            {
+                return new ValorCadena(((ValorCadena)vizq).Valor + ((ValorCadena)vder).Valor);
+            }
+            if (vizq is ValorEntero && vder is ValorFlotante)
+            {
+                return new ValorFlotante(((ValorEntero)vizq).Valor + ((ValorFlotante)vder).Valor);
+            }
+            if (vizq is ValorFlotante && vder is ValorEntero)
+            {
+                return new ValorFlotante(((ValorFlotante)vizq).Valor + ((ValorEntero)vder).Valor);
+            }
+            if (vizq is ValorCadena && vder is ValorEntero)
+            {
+                return new ValorCadena(((ValorCadena)vizq).Valor + ((ValorEntero)vder).ToString());
+            }
+            if (vizq is ValorEntero && vder is ValorCadena)
+            {
+                return new ValorCadena(((ValorEntero)vizq).ToString() + ((ValorCadena)vder).Valor);
+            }
+            if (vizq is ValorCadena && vder is ValorFlotante)
+            {
+                return new ValorCadena(((ValorCadena)vizq).Valor + ((ValorFlotante)vder).ToString());
+            }
+            if (vizq is ValorFlotante && vder is ValorCadena)
+            {
+                return new ValorCadena(((ValorFlotante)vizq).ToString() + ((ValorCadena)vder).Valor);
+            }
+            if (vizq is ValorCadena && vder is ValorCaracter)
+            {
+                return new ValorCadena(((ValorCadena)vizq).Valor + ((ValorCaracter)vder).Valor);
+            }
+            if (vizq is ValorCaracter && vder is ValorCadena)
+            {
+                return new ValorCadena(((ValorCaracter)vizq).Valor + ((ValorCadena)vder).Valor);
+            }
+
+            return null;
         }
     }
 
@@ -120,13 +224,48 @@ namespace WebUI.Arbol
         }
         public override Tipo validarSemantica()
         {
-            Tipo left = Izq.validarSemantica();
-            Tipo right = Der.validarSemantica();
-            if (left is Entero && right is Entero)
+            Tipo left, right;
+            try
             {
-                return left;
+                left = Izq.validarSemantica();
+                right = Der.validarSemantica();
             }
-            throw new Exception("Error Semantico - No se puede restar " + left + " con " + right);
+            catch (Exception ex) { throw ex; }
+            if (left is Entero)
+                if (right is Entero || right is Flotante)
+                    return right;
+                else
+                    throw new Exception("Tipos incompatibles.");
+            else if (left is Flotante)
+                if (right is Entero || right is Flotante)
+                    return left;
+                else
+                    throw new Exception("Tipos incompatibles.");
+            else throw new Exception("Solo se pueden restar numeros!");
+        }
+
+        public override Valor interpretar()
+        {
+            Valor vizq = Izq.interpretar();
+            Valor vder = Der.interpretar();
+
+            if (vizq is ValorEntero && vder is ValorEntero)
+            {
+                return new ValorEntero(((ValorEntero)vizq).Valor - ((ValorEntero)vder).Valor);
+            }
+            if (vizq is ValorFlotante && vder is ValorFlotante)
+            {
+                return new ValorFlotante(((ValorFlotante)vizq).Valor - ((ValorFlotante)vder).Valor);
+            }
+            if (vizq is ValorEntero && vder is ValorFlotante)
+            {
+                return new ValorFlotante(((ValorEntero)vizq).Valor - ((ValorFlotante)vder).Valor);
+            }
+            if (vizq is ValorFlotante && vder is ValorEntero)
+            {
+                return new ValorFlotante(((ValorFlotante)vizq).Valor - ((ValorEntero)vder).Valor);
+            }
+            return null;
         }
     }
 
@@ -138,13 +277,48 @@ namespace WebUI.Arbol
         }
         public override Tipo validarSemantica()
         {
-            Tipo left = Izq.validarSemantica();
-            Tipo right = Der.validarSemantica();
-            if (left is Entero && right is Entero)
+            Tipo left, right;
+            try
             {
-                return left;
+                left = Izq.validarSemantica();
+                right = Der.validarSemantica();
             }
-            throw new Exception("Error Semantico - No se puede multiplicar " + left + " con " + right);
+            catch (Exception ex) { throw ex; }
+            if (left is Entero)
+                if (right is Entero || right is Flotante)
+                    return right;
+                else
+                    throw new Exception("Tipos incompatibles.");
+            else if (left is Flotante)
+                if (right is Entero || right is Flotante)
+                    return left;
+                else
+                    throw new Exception("Tipos incompatibles.");
+            else throw new Exception("Solo se pueden multiplicar numeros!");
+        }
+
+        public override Valor interpretar()
+        {
+            Valor vizq = Izq.interpretar();
+            Valor vder = Der.interpretar();
+
+            if (vizq is ValorEntero && vder is ValorEntero)
+            {
+                return new ValorEntero(((ValorEntero)vizq).Valor * ((ValorEntero)vder).Valor);
+            }
+            if (vizq is ValorFlotante && vder is ValorFlotante)
+            {
+                return new ValorFlotante(((ValorFlotante)vizq).Valor * ((ValorFlotante)vder).Valor);
+            }
+            if (vizq is ValorEntero && vder is ValorFlotante)
+            {
+                return new ValorFlotante(((ValorEntero)vizq).Valor * ((ValorFlotante)vder).Valor);
+            }
+            if (vizq is ValorFlotante && vder is ValorEntero)
+            {
+                return new ValorFlotante(((ValorFlotante)vizq).Valor * ((ValorEntero)vder).Valor);
+            }
+            return null;
         }
     }
 
@@ -157,13 +331,43 @@ namespace WebUI.Arbol
 
         public override Tipo validarSemantica()
         {
-            Tipo left = Izq.validarSemantica();
-            Tipo right = Der.validarSemantica();
-            if (left is Entero && right is Entero)
+            Tipo left, right;
+            try
             {
-                return left;
+                left = Izq.validarSemantica();
+                right = Der.validarSemantica();
             }
-            throw new Exception("Error Semantico - No se puede dividir " + left + " con " + right);
+            catch (Exception ex) { throw ex; }
+            if (left is Entero || left is Flotante)
+                if (right is Entero || right is Flotante)
+                    return new Flotante();
+                else
+                    throw new Exception("Tipos incompatibles.");
+            else throw new Exception("Solo se pueden dividir numeros!");
+        }
+
+        public override Valor interpretar()
+        {
+            Valor vizq = Izq.interpretar();
+            Valor vder = Der.interpretar();
+
+            if (vizq is ValorEntero && vder is ValorEntero)
+            {
+                return new ValorFlotante(((float)((ValorEntero)vizq).Valor) / ((float)((ValorEntero)vder).Valor));
+            }
+            if (vizq is ValorFlotante && vder is ValorFlotante)
+            {
+                return new ValorFlotante(((ValorFlotante)vizq).Valor / ((ValorFlotante)vder).Valor);
+            }
+            if (vizq is ValorEntero && vder is ValorFlotante)
+            {
+                return new ValorFlotante(((ValorEntero)vizq).Valor / ((ValorFlotante)vder).Valor);
+            }
+            if (vizq is ValorFlotante && vder is ValorEntero)
+            {
+                return new ValorFlotante(((ValorFlotante)vizq).Valor / ((ValorEntero)vder).Valor);
+            }
+            return null;
         }
     }
 
@@ -176,230 +380,416 @@ namespace WebUI.Arbol
 
         public override Tipo validarSemantica()
         {
-            Tipo left = Izq.validarSemantica();
-            Tipo right = Der.validarSemantica();
-            if (left is Entero && right is Entero)
+            Tipo left, right;
+            try
             {
-                return left;
+                left = Izq.validarSemantica();
+                right = Der.validarSemantica();
             }
-            throw new Exception("Error Semantico - No se puede realizar esta operacion entre " + left + " con " + right);
+            catch (Exception ex) { throw ex; }
+            if (left is Entero)
+            {
+                if (right is Entero || right is Flotante)
+                    return right;
+                else throw new Exception("Tipos incompatibles.");
+            }
+            else if (left is Flotante)
+            {
+                if (right is Entero || right is Flotante)
+                    return left;
+                else throw new Exception("Tipos incompatibles.");
+            }
+            else throw new Exception("Modulo solo acepta numeros!!!");
+        }
+
+        public override Valor interpretar()
+        {
+            Valor vizq = Izq.interpretar();
+            Valor vder = Der.interpretar();
+
+            if (vizq is ValorEntero && vder is ValorEntero)
+            {
+                return new ValorEntero(((ValorEntero)vizq).Valor / ((ValorEntero)vder).Valor);
+            }
+            if (vizq is ValorFlotante && vder is ValorFlotante)
+            {
+                return new ValorEntero(Convert.ToInt32(((ValorFlotante)vizq).Valor / ((ValorFlotante)vder).Valor));
+            }
+            if (vizq is ValorEntero && vder is ValorFlotante)
+            {
+                return new ValorEntero(Convert.ToInt32(((ValorEntero)vizq).Valor / ((ValorFlotante)vder).Valor));
+            }
+            if (vizq is ValorFlotante && vder is ValorEntero)
+            {
+                return new ValorEntero(Convert.ToInt32(((ValorFlotante)vizq).Valor / ((ValorEntero)vder).Valor));
+            }
+            return null;
         }
     }
 
-    class And : Expresiones
+    class And : OperacionBinaria
     {
-        public Expresiones Izq { get; set; }
-        public Expresiones Der { get; set; }
         public And(Expresiones izq, Expresiones der)
+            : base(izq, der)
         {
-            Izq = izq;
-            Der = der;
         }
 
         public override Tipo validarSemantica()
         {
-            Tipo left = Izq.validarSemantica();
-            Tipo right = Der.validarSemantica();
-
+            Tipo left, right;
+            try
+            {
+                left = Izq.validarSemantica();
+                right = Der.validarSemantica();
+            }
+            catch (Exception ex) { throw ex; }
             if (left is Booleano && right is Booleano)
                 return left;
             throw new Exception("Error Semantico - Comparacion Invalida");
         }
+
+        public override Valor interpretar()
+        {
+            Valor vizq = Izq.interpretar();
+            Valor vder = Der.interpretar();
+
+            if (((ValorBooleano)vizq).Valor && ((ValorBooleano)vizq).Valor)
+            {
+                return new ValorBooleano(true);
+            }
+            else
+            {
+                return new ValorBooleano(false);
+            }
+        }
     }
 
-    class Or : Expresiones
+    class Or : OperacionBinaria
     {
-        public Expresiones Izq { get; set; }
-        public Expresiones Der { get; set; }
         public Or(Expresiones izq, Expresiones der)
+            : base(izq, der)
         {
-            Izq = izq;
-            Der = der;
         }
 
         public override Tipo validarSemantica()
         {
-            Tipo left = Izq.validarSemantica();
-            Tipo right = Der.validarSemantica();
-
+            Tipo left, right;
+            try
+            {
+                left = Izq.validarSemantica();
+                right = Der.validarSemantica();
+            }
+            catch (Exception ex) { throw ex; }
             if (left is Booleano && right is Booleano)
                 return left;
             throw new Exception("Error Semantico - Comparacion Invalida");
         }
+
+        public override Valor interpretar()
+        {
+            Valor vizq = Izq.interpretar();
+            Valor vder = Der.interpretar();
+
+            if (((ValorBooleano)vizq).Valor == false && ((ValorBooleano)vizq).Valor == false)
+            {
+                return new ValorBooleano(false);
+            }
+            else
+            {
+                return new ValorBooleano(true);
+            }
+        }
     }
 
-    class Equal : Expresiones
+    class Equal : OperacionBinaria
     {
-        public Expresiones Izq { get; set; }
-        public Expresiones Der { get; set; }
         public Equal(Expresiones izq, Expresiones der)
+            : base(izq, der)
         {
-            Izq = izq;
-            Der = der;
         }
 
         public override Tipo validarSemantica()
         {
-            Tipo left = Izq.validarSemantica();
-            Tipo right = Der.validarSemantica();
+            Tipo left, right;
+            try
+            {
+                left = Izq.validarSemantica();
+                right = Der.validarSemantica();
+            }
+            catch (Exception ex) { throw ex; }
+            if (left.esEquivalente(right))
+                return new Booleano();
+            else throw new Exception("Error Semantico - Comparacion Invalida");
+        }
 
-            if (left is Entero && right is Entero)
-            {
-                return new Booleano();
-            }
-            if (left is Flotante && right is Flotante)
-            {
-                return new Booleano();
-            }
-            if (left is Cadena && right is Cadena)
-            {
-                return new Booleano();
-            }
-            if (left is Caracter && right is Caracter)
-            {
-                return new Booleano();
-            }
-            if (left is Booleano && right is Booleano)
-            {
-                return left;
-            }
+        public override Valor interpretar()
+        {
+            Valor vizq = Izq.interpretar();
+            Valor vder = Der.interpretar();
 
-            throw new Exception("Error Semantico - Comparacion Invalida");
+            if (vizq is ValorEntero)
+            {
+                return new ValorBooleano(((ValorEntero)vizq).Valor == ((ValorEntero)vder).Valor);
+            }
+            if (vizq is ValorFlotante)
+            {
+                return new ValorBooleano(((ValorFlotante)vizq).Valor == ((ValorFlotante)vder).Valor);
+            }
+            if (vizq is ValorCadena)
+            {
+                return new ValorBooleano(((ValorCadena)vizq).Valor == ((ValorCadena)vder).Valor);
+            }
+            if (vizq is ValorCaracter)
+            {
+                return new ValorBooleano(((ValorCaracter)vizq).Valor == ((ValorCaracter)vder).Valor);
+            }
+            if (vizq is ValorBooleano)
+            {
+                return new ValorBooleano(((ValorBooleano)vizq).Valor == ((ValorBooleano)vder).Valor);
+            }
+            return null;
         }
     }
 
-    class Distinto : Expresiones
+    class Distinto : OperacionBinaria
     {
-        public Expresiones Izq { get; set; }
-        public Expresiones Der { get; set; }
         public Distinto(Expresiones izq, Expresiones der)
+            : base(izq, der)
         {
-            Izq = izq;
-            Der = der;
         }
 
         public override Tipo validarSemantica()
         {
-            Tipo left = Izq.validarSemantica();
-            Tipo right = Der.validarSemantica();
-
-            if (!left.esEquivalente(right))
+            Tipo left, right;
+            try
             {
-                throw new Exception("Error Semantico - No se puede pueden comparar los tipos " + left + " con " + right);
+                left = Izq.validarSemantica();
+                right = Der.validarSemantica();
             }
-            return left;
+            catch (Exception ex) { throw ex; }
+            if (left.esEquivalente(right))
+                return new Booleano();
+            else throw new Exception("Error Semantico - No se puede pueden comparar los tipos " + left + " con " + right);
+        }
+
+        public override Valor interpretar()
+        {
+            Valor vizq = Izq.interpretar();
+            Valor vder = Der.interpretar();
+
+            if (vizq is ValorEntero)
+            {
+                return new ValorBooleano(((ValorEntero)vizq).Valor != ((ValorEntero)vder).Valor);
+            }
+            if (vizq is ValorFlotante)
+            {
+                return new ValorBooleano(((ValorFlotante)vizq).Valor != ((ValorFlotante)vder).Valor);
+            }
+            if (vizq is ValorCadena)
+            {
+                return new ValorBooleano(((ValorCadena)vizq).Valor != ((ValorCadena)vder).Valor);
+            }
+            if (vizq is ValorCaracter)
+            {
+                return new ValorBooleano(((ValorCaracter)vizq).Valor != ((ValorCaracter)vder).Valor);
+            }
+            if (vizq is ValorBooleano)
+            {
+                return new ValorBooleano(((ValorBooleano)vizq).Valor != ((ValorBooleano)vder).Valor);
+            }
+            return null;
         }
     }
 
-    class MayorQue : Expresiones
+    class MayorQue : OperacionBinaria
     {
-        public Expresiones Izq { get; set; }
-        public Expresiones Der { get; set; }
         public MayorQue(Expresiones izq, Expresiones der)
+            : base(izq, der)
         {
-            Izq = izq;
-            Der = der;
         }
 
         public override Tipo validarSemantica()
         {
-            Tipo left = Izq.validarSemantica();
-            Tipo right = Der.validarSemantica();
-
-            if (left is Entero && right is Entero)
+            Tipo left, right;
+            try
             {
-                return new Booleano();
+                left = Izq.validarSemantica();
+                right = Der.validarSemantica();
             }
-            if (left is Flotante && right is Flotante)
+            catch (Exception ex) { throw ex; }
+            if (left is Entero || left is Flotante)
+                if (right is Entero || right is Flotante)
+                    return new Booleano();
+                else throw new Exception("No se puede comparar un numero con otra cosa.");
+            else throw new Exception("Tipos incompatibles.");
+        }
+
+        public override Valor interpretar()
+        {
+            Valor vizq = Izq.interpretar();
+            Valor vder = Der.interpretar();
+
+            if (vizq is ValorEntero && vder is ValorEntero)
             {
-                return new Booleano();
+                return new ValorBooleano(((ValorEntero)vizq).Valor > ((ValorEntero)vder).Valor);
             }
-
-            throw new Exception("Error Semantico - Comparacion Invalida");
-
+            if (vizq is ValorFlotante && vder is ValorFlotante)
+            {
+                return new ValorBooleano(((ValorFlotante)vizq).Valor > ((ValorFlotante)vder).Valor);
+            }
+            if (vizq is ValorEntero && vder is ValorFlotante)
+            {
+                return new ValorBooleano(((ValorEntero)vizq).Valor > ((ValorFlotante)vder).Valor);
+            }
+            if (vizq is ValorFlotante && vder is ValorEntero)
+            {
+                return new ValorBooleano(((ValorFlotante)vizq).Valor > ((ValorEntero)vder).Valor);
+            }
+            return null;
         }
     }
 
-    class MenorQue : Expresiones
+    class MenorQue : OperacionBinaria
     {
-        public Expresiones Izq { get; set; }
-        public Expresiones Der { get; set; }
         public MenorQue(Expresiones izq, Expresiones der)
+            : base(izq, der)
         {
-            Izq = izq;
-            Der = der;
         }
 
         public override Tipo validarSemantica()
         {
-            Tipo left = Izq.validarSemantica();
-            Tipo right = Der.validarSemantica();
-
-            if (left is Entero && right is Entero)
+            Tipo left, right;
+            try
             {
-                return new Booleano();
+                left = Izq.validarSemantica();
+                right = Der.validarSemantica();
             }
-            if (left is Flotante && right is Flotante)
-            {
-                return new Booleano();
-            }
+            catch (Exception ex) { throw ex; }
+            if (left is Entero || left is Flotante)
+                if (right is Entero || right is Flotante)
+                    return new Booleano();
+                else throw new Exception("No se puede comparar un numero con otra cosa.");
+            else throw new Exception("Tipos incompatibles.");
+        }
 
-            throw new Exception("Error Semantico - Comparacion Invalida");
+        public override Valor interpretar()
+        {
+            Valor vizq = Izq.interpretar();
+            Valor vder = Der.interpretar();
+
+            if (vizq is ValorEntero && vder is ValorEntero)
+            {
+                return new ValorBooleano(((ValorEntero)vizq).Valor < ((ValorEntero)vder).Valor);
+            }
+            if (vizq is ValorFlotante && vder is ValorFlotante)
+            {
+                return new ValorBooleano(((ValorFlotante)vizq).Valor < ((ValorFlotante)vder).Valor);
+            }
+            if (vizq is ValorEntero && vder is ValorFlotante)
+            {
+                return new ValorBooleano(((ValorEntero)vizq).Valor < ((ValorFlotante)vder).Valor);
+            }
+            if (vizq is ValorFlotante && vder is ValorEntero)
+            {
+                return new ValorBooleano(((ValorFlotante)vizq).Valor < ((ValorEntero)vder).Valor);
+            }
+            return null;
         }
     }
 
-    class MayorIgual : Expresiones
+    class MayorIgual : OperacionBinaria
     {
-        public Expresiones Izq { get; set; }
-        public Expresiones Der { get; set; }
         public MayorIgual(Expresiones izq, Expresiones der)
+            : base(izq, der)
         {
-            Izq = izq;
-            Der = der;
         }
 
         public override Tipo validarSemantica()
         {
-            Tipo left = Izq.validarSemantica();
-            Tipo right = Der.validarSemantica();
+            Tipo left, right;
+            try
+            {
+                left = Izq.validarSemantica();
+                right = Der.validarSemantica();
+            }
+            catch (Exception ex) { throw ex; }
+            if (left is Entero || left is Flotante)
+                if (right is Entero || right is Flotante)
+                    return new Booleano();
+                else throw new Exception("No se puede comparar un numero con otra cosa.");
+            else throw new Exception("Tipos incompatibles.");
+        }
 
-            if (left is Entero && right is Entero)
+        public override Valor interpretar()
+        {
+            Valor vizq = Izq.interpretar();
+            Valor vder = Der.interpretar();
+
+            if (vizq is ValorEntero && vder is ValorEntero)
             {
-                return new Booleano();
+                return new ValorBooleano(((ValorEntero)vizq).Valor >= ((ValorEntero)vder).Valor);
             }
-            if (left is Flotante && right is Flotante)
+            if (vizq is ValorFlotante && vder is ValorFlotante)
             {
-                return new Booleano();
+                return new ValorBooleano(((ValorFlotante)vizq).Valor >= ((ValorFlotante)vder).Valor);
             }
-            throw new Exception("Error Semantico - Comparacion Invalida");
+            if (vizq is ValorEntero && vder is ValorFlotante)
+            {
+                return new ValorBooleano(((ValorEntero)vizq).Valor >= ((ValorFlotante)vder).Valor);
+            }
+            if (vizq is ValorFlotante && vder is ValorEntero)
+            {
+                return new ValorBooleano(((ValorFlotante)vizq).Valor >= ((ValorEntero)vder).Valor);
+            }
+            return null;
         }
     }
 
-    class MenorIgual : Expresiones
+    class MenorIgual : OperacionBinaria
     {
-        public Expresiones Izq { get; set; }
-        public Expresiones Der { get; set; }
         public MenorIgual(Expresiones izq, Expresiones der)
+            : base(izq, der)
         {
-            Izq = izq;
-            Der = der;
         }
 
         public override Tipo validarSemantica()
         {
-            Tipo left = Izq.validarSemantica();
-            Tipo right = Der.validarSemantica();
-
-            if (left is Entero && right is Entero)
+            Tipo left, right;
+            try
             {
-                return new Booleano();
+                left = Izq.validarSemantica();
+                right = Der.validarSemantica();
             }
-            if (left is Flotante && right is Flotante)
-            {
-                return new Booleano();
-            }
+            catch (Exception ex) { throw ex; }
+            if (left is Entero || left is Flotante)
+                if (right is Entero || right is Flotante)
+                    return new Booleano();
+                else throw new Exception("No se puede comparar un numero con otra cosa.");
+            else throw new Exception("Tipos incompatibles.");
+        }
 
-            throw new Exception("Error Semantico - Comparacion Invalida");
+        public override Valor interpretar()
+        {
+            Valor vizq = Izq.interpretar();
+            Valor vder = Der.interpretar();
+
+            if (vizq is ValorEntero && vder is ValorEntero)
+            {
+                return new ValorBooleano(((ValorEntero)vizq).Valor <= ((ValorEntero)vder).Valor);
+            }
+            if (vizq is ValorFlotante && vder is ValorFlotante)
+            {
+                return new ValorBooleano(((ValorFlotante)vizq).Valor <= ((ValorFlotante)vder).Valor);
+            }
+            if (vizq is ValorEntero && vder is ValorFlotante)
+            {
+                return new ValorBooleano(((ValorEntero)vizq).Valor <= ((ValorFlotante)vder).Valor);
+            }
+            if (vizq is ValorFlotante && vder is ValorEntero)
+            {
+                return new ValorBooleano(((ValorFlotante)vizq).Valor <= ((ValorEntero)vder).Valor);
+            }
+            return null;
         }
     }
 
@@ -418,11 +808,16 @@ namespace WebUI.Arbol
 
         public override Tipo validarSemantica()
         {
-            Tipo t = InfSemantica.getInstance().tblSimbolos[id];
+            Tipo t;
 
-            if (t == null)
+            if (InfSemantica.getInstance().tblSimbolos.ContainsKey(id))
+            {
+                t = InfSemantica.getInstance().tblSimbolos[id];
+            }
+            else
+            {
                 throw new Exception("Error Semantico - Variable " + id + " no existe");
-
+            }
 
             #region Validacion Accessories
 
@@ -437,10 +832,20 @@ namespace WebUI.Arbol
                     #region Si es Registro
 
                     AccessMiembro am = ((AccessMiembro)tmp);
+                    Struct regTmp = null;
                     if (!(t is Struct))
                         throw new Exception(id + " no es un registro");
                     Struct reg = ((Struct)t);
-                    t = reg.Campos[am.Id];
+                    Tipo tip;
+                    if (InfSemantica.getInstance().tblTipos.ContainsKey(reg.nombre))
+                    {
+                        tip = InfSemantica.getInstance().tblTipos[reg.nombre];
+                        regTmp = ((Struct)tip);
+                    }
+                    else
+                        throw new Exception("Error Semantico -- El registro no a sido declarado");
+
+                    t = regTmp.Campos[am.Id];
                     if (t == null)
                         throw new Exception("miembro " + am.Id + " no existe!");
 
@@ -459,6 +864,31 @@ namespace WebUI.Arbol
 
             return t;
         }
+
+        public override Valor interpretar()
+        {
+            if (accesor == null)
+            {
+                Valor valor = InfInterpretador.getInstance().getValor(id);
+                return valor;
+            }
+            else
+            {
+                Access tmp = accesor;
+                while (tmp != null)
+                {
+                    if (tmp is AccessArreglo)
+                    {
+                        //((AccessArreglo) tmp).Cont
+                        return InfInterpretador.getInstance().getValor(id);
+                    }
+                    tmp = tmp.Next;
+                }
+            }
+            //TO DO arreglo registro (si acces es distinto de null)
+            return null;//NUEVO
+
+        }
     }
 
     class ListaExpre : Expresiones
@@ -468,9 +898,26 @@ namespace WebUI.Arbol
         public override Tipo validarSemantica()
         {
             //FALTA
+            Expresiones expre;
+            ArrayList lista = new ArrayList();
+            for (int i = 0; i < Ex.Count; i++)
+            {
+                if (Ex[i] is Expresiones)
+                {
+                    expre = ((Expresiones)Ex[i]);
+                    expre.validarSemantica();
+                    lista.Add(expre);
+                }
+                else
+                    throw new Exception("Errro semantico " + Ex[i].ToString() + " no es el tipo correspondiente");
+            }
             return null;
         }
 
+        public override Valor interpretar()
+        {
+            return null;
+        }
     }
 
     class ExpMasMas : Expresiones
@@ -486,6 +933,17 @@ namespace WebUI.Arbol
                 throw new Exception("Error Semantico - Se esperaba un valor Entero");
             return null;
         }
+
+        public override Valor interpretar()
+        {
+            if (ID.accesor == null)
+            {
+                Valor v = ID.interpretar();
+                ((ValorEntero)v).Valor += 1;
+                return v;
+            }
+            return null;
+        }
     }
 
     class ExpMenosMenos : Expresiones
@@ -493,7 +951,22 @@ namespace WebUI.Arbol
         public Variable ID;// = new Variable();
         public override Tipo validarSemantica()
         {
-            //FALTA
+            Tipo T = ID.validarSemantica();
+            if (T is Entero)
+            { }
+            else
+                throw new Exception("Error Semantico - Se esperaba un valor Entero");
+            return null;
+        }
+
+        public override Valor interpretar()
+        {
+            if (ID.accesor == null)
+            {
+                Valor v = ID.interpretar();
+                ((ValorEntero)v).Valor -= 1;
+                return v;
+            }
             return null;
         }
     }
@@ -507,18 +980,104 @@ namespace WebUI.Arbol
         public override Tipo validarSemantica()
         {
             //FALTA
+            Tipo var = null;
+            if (InfSemantica.getInstance().tblSimbolos.ContainsKey(ID.id))
+            {
+                var = InfSemantica.getInstance().tblSimbolos[ID.id];
+                Class c = ((Class)var);
+                var = InfSemantica.getInstance().tblTipos[c.Nombre];
+            }
+            Class cl;
+            if (var is Class)
+            {
+                cl = ((Class)var);
+                AccessMiembro acc = ((AccessMiembro)ID.accesor);
+                while (acc != null)
+                {
+                    if (cl.Campos.ContainsKey(acc.Id))
+                    {
+                        Tipo tmp3 = cl.Campos[acc.Id];
+                        if (tmp3 is Class)
+                        {
+                            cl = ((Class)tmp3);
+                            var = InfSemantica.getInstance().tblTipos[cl.Nombre];
+                            cl = ((Class)var);
+                            acc = ((AccessMiembro)acc.Next);
+                        }
+                        else if (tmp3 is funciones)
+                        {
+                            funciones func = ((funciones)tmp3);
+                            if (func.parametros.Count == VarList.Ex.Count)
+                            {
+                                for (int i = 0; i < func.parametros.Count; i++)
+                                {
+                                    string value = func.parametros.Ids[i].ToString();
+                                    Tipo t = func.parametros[value];
+                                    Expresiones ex = ((Expresiones)VarList.Ex[i]);
+                                    Tipo tp = ex.validarSemantica();
+                                    if (!(t.esEquivalente(tp)))
+                                        throw new Exception("Error Semantico ---  El tipo no corresponde con el declarado en la funcion");
+                                }
+                                return func.retorno;
+                            }
+                            else
+                            {
+                                throw new Exception("Error Semantico --La cantidad de parametros no es la misma con la funcion declarada");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception("Error Semantico --- No se encuentra declarado " + acc.Id + " en la clase " + cl.Nombre);
+                    }
+                }
+
+            }
+            else
+            {
+
+                if (InfSemantica.getInstance().tblFunciones.ContainsKey(ID.id))
+                {
+                    var = InfSemantica.getInstance().tblFunciones[ID.id];
+                }
+                else
+                    throw new Exception("Error Semantico --No se encuentra declarada esa funcion");
+
+                if (var is funciones)
+                {
+                    funciones func = ((funciones)var);
+                    if (func.parametros.Count == VarList.Ex.Count)
+                    {
+                        for (int i = 0; i < func.parametros.Count; i++)
+                        {
+                            string value = func.parametros.Ids[i].ToString();
+                            Tipo t = func.parametros[value];
+                            Expresiones ex = ((Expresiones)VarList.Ex[i]);
+                            Tipo tp = ex.validarSemantica();
+                            if (!(t.esEquivalente(tp)))
+                                throw new Exception("Error Semantico ---  El tipo no corresponde con el declarado en la funcion");
+                        }
+                        return func.retorno;
+                    }
+                    else
+                    {
+                        throw new Exception("Error Semantico --La cantidad de parametros no es la misma con la funcion declarada");
+                    }
+                }
+            }
+            return null;
+        }
+
+        public override Valor interpretar()
+        {
             return null;
         }
     }
 
-    class OperacionUnaria : Expresiones
+    abstract class OperacionUnaria : Expresiones
     {
         public Expresiones parametro;
-        public override Tipo validarSemantica()
-        {
-            //FALTA
-            return null;
-        }
+
     }
 
     class Not : OperacionUnaria
@@ -532,6 +1091,12 @@ namespace WebUI.Arbol
         {
             //FALTA
             return null;
+        }
+
+        public override Valor interpretar()
+        {
+            Valor t = parametro.interpretar();
+            return new ValorBooleano(!((ValorBooleano)t).Valor);
         }
     }
 
@@ -547,12 +1112,17 @@ namespace WebUI.Arbol
 
         public Access Last()
         {
-            Access tmp = Next;
-            while (tmp.Next != null)
+            if (Next != null)
             {
-                tmp = tmp.Next;
+                Access tmp = Next;
+                while (tmp.Next != null)
+                {
+                    tmp = tmp.Next;
+                }
+                return tmp;
             }
-            return tmp;
+            return this;
+
         }
     }
 
@@ -571,6 +1141,12 @@ namespace WebUI.Arbol
             //FALTA
             return null;
         }
+
+        public override Valor interpretar()
+        {
+            Valor valor = InfInterpretador.getInstance().getValor(id);
+            return valor;
+        }
     }
 
     class AccessFunc : Access
@@ -580,6 +1156,11 @@ namespace WebUI.Arbol
         public override Tipo validarSemantica()
         {
             //FALTA
+            return null;
+        }
+
+        public override Valor interpretar()
+        {
             return null;
         }
     }
@@ -599,14 +1180,18 @@ namespace WebUI.Arbol
             //FALTA
             return null;
         }
+
+        public override Valor interpretar()
+        {
+            Valor valor = InfInterpretador.getInstance().getValor(id);
+            return valor;
+        }
     }
 
     class AccessArreglo : Access
     {
         private ArrayList cont = new ArrayList();
-
-
-
+        public string nombre;
         public void addexp(Expresiones par)
         {
             cont.Add(par);
@@ -622,6 +1207,11 @@ namespace WebUI.Arbol
         public override Tipo validarSemantica()
         {
             //FALTA
+            return null;
+        }
+
+        public override Valor interpretar()
+        {
             return null;
         }
     }
