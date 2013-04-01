@@ -151,9 +151,12 @@
                                             <div class="span4">
                                                 <asp:Image runat="server" ID="Image1" ImageUrl="img/USER.png" CssClass="img-rounded" />
                                             </div>
-                                            <div class="span8">
+                                            <div class="span4">
                                                 <h4 align="left">
                                                     Bienvenido</h4>
+                                            </div>
+                                            <div class="span4">
+                                                <asp:Button runat="server" ID="BtnCerrarCesion" CssClass="btn btn-warning" Text="Salir" OnClick="BtnCerrarSesionOnClick"/>
                                             </div>
                                         </tr>
                                     </tbody>
@@ -183,6 +186,14 @@
                                         </asp:Label>
                                     </td>
                                 </tr>
+                            </table>
+                            <label id="lblhdd" >Bitácora de Pruebas</label>
+                            <table class="table table-striped table-bordered">
+                                <tbody>
+                                    <td>
+                                        <textarea id="txtLog" class="span12" rows="15"></textarea>
+                                    </td>
+                                </tbody>
                             </table>
                         </div>
                     </ContentTemplate>

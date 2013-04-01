@@ -15,11 +15,35 @@ namespace WebUI
     {
 
         protected void Page_Load(object sender, EventArgs e)
-        {           
-            if(IsPostBack)
+        {
+            try
             {
-                
+                if ((Session["UsuarioId"]).Equals(string.Empty))
+                {
+                    Response.Redirect("Login.aspx");
+                }
+                if (IsPostBack)
+                {
+                    return;
+                }
             }
+            catch (Exception)
+            {
+                Response.Redirect("Login.aspx");
+
+            }
+
+            if (!IsPostBack)
+            {
+                lblNombre.Text = Session["UsuarioNombre"].ToString();
+                lblPerfil.Text = ObtenerPerfil();
+            }
+        }
+
+        public string ObtenerPerfil()
+        {
+            var h = Conexion.ObtenerUsuarioAdministrativo(Session["UsuarioNick"].ToString());
+            return h.perfil.Nombre;
         }
 
         [WebMethod(EnableSession = true)]
@@ -69,6 +93,13 @@ namespace WebUI
 
             return HttpContext.Current.Session["MsjJava"].ToString();
            
+        }
+
+        protected void BtnCerrarSesionOnClick(object sender, EventArgs e)
+        {
+            Session.Abandon();
+            Response.Cookies.Add(new HttpCookie("ASP.NET_SessionId", ""));
+            Response.Redirect("Login.aspx");
         }
     }
 }

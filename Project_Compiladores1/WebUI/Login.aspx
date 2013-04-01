@@ -27,8 +27,7 @@
                             <div class="span8">
                             </div>
                             <div class="span4">
-                                <input class="btn btn-large btn-primary" runat="server" id="btnIng" type="submit"
-                                    value="Ingresar" />
+                                <asp:Button ID="BtnIngresar" CssClass="btn btn-primary" OnClick="BtnIngresarOnClick" runat="server" Text="Ingresar" />
                             </div>
                         </div>
                     </div>

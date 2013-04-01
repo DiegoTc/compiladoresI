@@ -1,0 +1,350 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="multiinterpretadorModel.Store" Alias="Self" Provider="MySql.Data.MySqlClient" ProviderManifestToken="5.6" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+        <EntityContainer Name="multiinterpretadorModelStoreContainer">
+          <EntitySet Name="estado" EntityType="multiinterpretadorModel.Store.estado" store:Type="Tables" Schema="multiinterpretador" />
+          <EntitySet Name="perfil" EntityType="multiinterpretadorModel.Store.perfil" store:Type="Tables" Schema="multiinterpretador" />
+          <EntitySet Name="rol" EntityType="multiinterpretadorModel.Store.rol" store:Type="Tables" Schema="multiinterpretador" />
+          <EntitySet Name="rolperfil" EntityType="multiinterpretadorModel.Store.rolperfil" store:Type="Tables" Schema="multiinterpretador" />
+          <EntitySet Name="usuario" EntityType="multiinterpretadorModel.Store.usuario" store:Type="Tables" Schema="multiinterpretador" />
+          <AssociationSet Name="fk_estadoUsuario" Association="multiinterpretadorModel.Store.fk_estadoUsuario">
+            <End Role="estado" EntitySet="estado" />
+            <End Role="usuario" EntitySet="usuario" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PerfilId" Association="multiinterpretadorModel.Store.FK_PerfilId">
+            <End Role="perfil" EntitySet="perfil" />
+            <End Role="rolperfil" EntitySet="rolperfil" />
+          </AssociationSet>
+          <AssociationSet Name="fk_perfilUsuario" Association="multiinterpretadorModel.Store.fk_perfilUsuario">
+            <End Role="perfil" EntitySet="perfil" />
+            <End Role="usuario" EntitySet="usuario" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Rol_X_Id" Association="multiinterpretadorModel.Store.FK_Rol_X_Id">
+            <End Role="rol" EntitySet="rol" />
+            <End Role="rolperfil" EntitySet="rolperfil" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="estado">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Descripcion" Type="varchar" Nullable="false" MaxLength="45" />
+        </EntityType>
+        <EntityType Name="perfil">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Nombre" Type="varchar" Nullable="false" MaxLength="45" />
+        </EntityType>
+        <EntityType Name="rol">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Nombre" Type="varchar" Nullable="false" MaxLength="45" />
+        </EntityType>
+        <EntityType Name="rolperfil">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="PerfilId" Type="int" Nullable="false" />
+          <Property Name="RolId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="usuario">
+          <Key>
+            <PropertyRef Name="UsuarioId" />
+          </Key>
+          <Property Name="UsuarioId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="UsuarioNick" Type="varchar" Nullable="false" MaxLength="45" />
+          <Property Name="UsuarioClave" Type="varchar" Nullable="false" MaxLength="500" />
+          <Property Name="UsuarioEstado" Type="int" Nullable="false" />
+          <Property Name="UsuarioPerfilId" Type="int" Nullable="false" />
+          <Property Name="UsuarioNombre" Type="varchar" Nullable="false" MaxLength="45" />
+          <Property Name="UsuarioFoto" Type="blob" />
+          <Property Name="UsuarioEmail" Type="varchar" MaxLength="50" />
+          <Property Name="UsuarioIsReset" Type="int" />
+        </EntityType>
+        <Association Name="fk_estadoUsuario">
+          <End Role="estado" Type="multiinterpretadorModel.Store.estado" Multiplicity="1" />
+          <End Role="usuario" Type="multiinterpretadorModel.Store.usuario" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="estado">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="usuario">
+              <PropertyRef Name="UsuarioEstado" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PerfilId">
+          <End Role="perfil" Type="multiinterpretadorModel.Store.perfil" Multiplicity="1" />
+          <End Role="rolperfil" Type="multiinterpretadorModel.Store.rolperfil" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="perfil">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="rolperfil">
+              <PropertyRef Name="PerfilId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_perfilUsuario">
+          <End Role="perfil" Type="multiinterpretadorModel.Store.perfil" Multiplicity="1" />
+          <End Role="usuario" Type="multiinterpretadorModel.Store.usuario" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="perfil">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="usuario">
+              <PropertyRef Name="UsuarioPerfilId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Rol_X_Id">
+          <End Role="rol" Type="multiinterpretadorModel.Store.rol" Multiplicity="1" />
+          <End Role="rolperfil" Type="multiinterpretadorModel.Store.rolperfil" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="rol">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="rolperfil">
+              <PropertyRef Name="RolId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="multiinterpretadorModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+        <EntityContainer Name="multiinterpretadorEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="estado" EntityType="multiinterpretadorModel.estado" />
+          <EntitySet Name="perfil" EntityType="multiinterpretadorModel.perfil" />
+          <EntitySet Name="rol" EntityType="multiinterpretadorModel.rol" />
+          <EntitySet Name="rolperfil" EntityType="multiinterpretadorModel.rolperfil" />
+          <AssociationSet Name="FK_PerfilId" Association="multiinterpretadorModel.FK_PerfilId">
+            <End Role="perfil" EntitySet="perfil" />
+            <End Role="rolperfil" EntitySet="rolperfil" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Rol_X_Id" Association="multiinterpretadorModel.FK_Rol_X_Id">
+            <End Role="rol" EntitySet="rol" />
+            <End Role="rolperfil" EntitySet="rolperfil" />
+          </AssociationSet>
+          <EntitySet Name="usuario" EntityType="multiinterpretadorModel.usuario" />
+          <AssociationSet Name="fk_estadoUsuario" Association="multiinterpretadorModel.fk_estadoUsuario">
+            <End Role="estado" EntitySet="estado" />
+            <End Role="usuario" EntitySet="usuario" />
+          </AssociationSet>
+          <AssociationSet Name="fk_perfilUsuario" Association="multiinterpretadorModel.fk_perfilUsuario">
+            <End Role="perfil" EntitySet="perfil" />
+            <End Role="usuario" EntitySet="usuario" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="estado">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="Descripcion" Nullable="false" MaxLength="45" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="usuario" Relationship="multiinterpretadorModel.fk_estadoUsuario" FromRole="estado" ToRole="usuario" />
+        </EntityType>
+        <EntityType Name="perfil">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="Nombre" Nullable="false" MaxLength="45" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="rolperfil" Relationship="multiinterpretadorModel.FK_PerfilId" FromRole="perfil" ToRole="rolperfil" />
+          <NavigationProperty Name="usuario" Relationship="multiinterpretadorModel.fk_perfilUsuario" FromRole="perfil" ToRole="usuario" />
+        </EntityType>
+        <EntityType Name="rol">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="Nombre" Nullable="false" MaxLength="45" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="rolperfil" Relationship="multiinterpretadorModel.FK_Rol_X_Id" FromRole="rol" ToRole="rolperfil" />
+        </EntityType>
+        <EntityType Name="rolperfil">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="PerfilId" Nullable="false" />
+          <Property Type="Int32" Name="RolId" Nullable="false" />
+          <NavigationProperty Name="perfil" Relationship="multiinterpretadorModel.FK_PerfilId" FromRole="rolperfil" ToRole="perfil" />
+          <NavigationProperty Name="rol" Relationship="multiinterpretadorModel.FK_Rol_X_Id" FromRole="rolperfil" ToRole="rol" />
+        </EntityType>
+        <Association Name="FK_PerfilId">
+          <End Type="multiinterpretadorModel.perfil" Role="perfil" Multiplicity="1" />
+          <End Type="multiinterpretadorModel.rolperfil" Role="rolperfil" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="perfil">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="rolperfil">
+              <PropertyRef Name="PerfilId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Rol_X_Id">
+          <End Type="multiinterpretadorModel.rol" Role="rol" Multiplicity="1" />
+          <End Type="multiinterpretadorModel.rolperfil" Role="rolperfil" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="rol">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="rolperfil">
+              <PropertyRef Name="RolId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="usuario">
+          <Key>
+            <PropertyRef Name="UsuarioId" />
+          </Key>
+          <Property Type="Int32" Name="UsuarioId" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="UsuarioNick" Nullable="false" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="UsuarioClave" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="UsuarioEstado" Nullable="false" />
+          <Property Type="Int32" Name="UsuarioPerfilId" Nullable="false" />
+          <Property Type="String" Name="UsuarioNombre" Nullable="false" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Type="Binary" Name="UsuarioFoto" MaxLength="Max" FixedLength="false" />
+          <Property Type="String" Name="UsuarioEmail" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="UsuarioIsReset" />
+          <NavigationProperty Name="estado" Relationship="multiinterpretadorModel.fk_estadoUsuario" FromRole="usuario" ToRole="estado" />
+          <NavigationProperty Name="perfil" Relationship="multiinterpretadorModel.fk_perfilUsuario" FromRole="usuario" ToRole="perfil" />
+        </EntityType>
+        <Association Name="fk_estadoUsuario">
+          <End Type="multiinterpretadorModel.estado" Role="estado" Multiplicity="1" />
+          <End Type="multiinterpretadorModel.usuario" Role="usuario" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="estado">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="usuario">
+              <PropertyRef Name="UsuarioEstado" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_perfilUsuario">
+          <End Type="multiinterpretadorModel.perfil" Role="perfil" Multiplicity="1" />
+          <End Type="multiinterpretadorModel.usuario" Role="usuario" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="perfil">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="usuario">
+              <PropertyRef Name="UsuarioPerfilId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="multiinterpretadorModelStoreContainer" CdmEntityContainer="multiinterpretadorEntities">
+          <EntitySetMapping Name="estado">
+            <EntityTypeMapping TypeName="multiinterpretadorModel.estado">
+              <MappingFragment StoreEntitySet="estado">
+                <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="perfil">
+            <EntityTypeMapping TypeName="multiinterpretadorModel.perfil">
+              <MappingFragment StoreEntitySet="perfil">
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="rol">
+            <EntityTypeMapping TypeName="multiinterpretadorModel.rol">
+              <MappingFragment StoreEntitySet="rol">
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="rolperfil">
+            <EntityTypeMapping TypeName="multiinterpretadorModel.rolperfil">
+              <MappingFragment StoreEntitySet="rolperfil">
+                <ScalarProperty Name="RolId" ColumnName="RolId" />
+                <ScalarProperty Name="PerfilId" ColumnName="PerfilId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="usuario">
+            <EntityTypeMapping TypeName="multiinterpretadorModel.usuario">
+              <MappingFragment StoreEntitySet="usuario">
+                <ScalarProperty Name="UsuarioIsReset" ColumnName="UsuarioIsReset" />
+                <ScalarProperty Name="UsuarioEmail" ColumnName="UsuarioEmail" />
+                <ScalarProperty Name="UsuarioFoto" ColumnName="UsuarioFoto" />
+                <ScalarProperty Name="UsuarioNombre" ColumnName="UsuarioNombre" />
+                <ScalarProperty Name="UsuarioPerfilId" ColumnName="UsuarioPerfilId" />
+                <ScalarProperty Name="UsuarioEstado" ColumnName="UsuarioEstado" />
+                <ScalarProperty Name="UsuarioClave" ColumnName="UsuarioClave" />
+                <ScalarProperty Name="UsuarioNick" ColumnName="UsuarioNick" />
+                <ScalarProperty Name="UsuarioId" ColumnName="UsuarioId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="False" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams>
+      <Diagram Name="MultiInterpretadorEDM">
+        <EntityTypeShape EntityType="multiinterpretadorModel.estado" Width="1.5" PointX="6.625" PointY="4.5" Height="1.5956835937499996" />
+        <EntityTypeShape EntityType="multiinterpretadorModel.perfil" Width="1.5" PointX="1.25" PointY="0.75" Height="1.5956835937499994" />
+        <EntityTypeShape EntityType="multiinterpretadorModel.rol" Width="1.5" PointX="3.5" PointY="3.5" Height="1.5956835937499996" />
+        <EntityTypeShape EntityType="multiinterpretadorModel.rolperfil" Width="1.5" PointX="3.5" PointY="0.5" Height="1.9802864583333317" />
+        <AssociationConnector Association="multiinterpretadorModel.FK_PerfilId" >
+          <ConnectorPoint PointX="2.75" PointY="1.6151432291666659" />
+          <ConnectorPoint PointX="3.5" PointY="1.6151432291666659" />
+        </AssociationConnector>
+        <AssociationConnector Association="multiinterpretadorModel.FK_Rol_X_Id" >
+          <ConnectorPoint PointX="4.25" PointY="3.5" />
+          <ConnectorPoint PointX="4.25" PointY="2.4802864583333317" />
+        </AssociationConnector>
+        <EntityTypeShape EntityType="multiinterpretadorModel.usuario" Width="1.5" PointX="5.875" PointY="0.625" Height="3.1340950520833317" />
+        <AssociationConnector Association="multiinterpretadorModel.fk_estadoUsuario" >
+          <ConnectorPoint PointX="7" PointY="4.5" />
+          <ConnectorPoint PointX="7" PointY="3.7590950520833317" />
+        </AssociationConnector>
+        <AssociationConnector Association="multiinterpretadorModel.fk_perfilUsuario" >
+          <ConnectorPoint PointX="2" PointY="2.5379850260416665" />
+          <ConnectorPoint PointX="2" PointY="2.9877430130208333" />
+          <ConnectorPoint PointX="4.166666666666667" PointY="2.9877430130208329" />
+          <ConnectorPoint PointX="4.333333333333333" PointY="2.9877430130208333" />
+          <ConnectorPoint PointX="5.875" PointY="2.9877430130208333" />
+        </AssociationConnector>
+      </Diagram>
+    </Diagrams>
+  </Designer>
+</edmx:Edmx>
