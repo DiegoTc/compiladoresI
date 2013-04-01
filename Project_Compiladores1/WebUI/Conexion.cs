@@ -108,6 +108,32 @@ namespace WebUI
             return Convert.ToInt32(query);
         }
 
+        
+        //Funcion que inserta un nuevo Usuario
+        public static bool InsertarUsuario(string usuarioNick,string clave, string usuarioNombre, int usuarioPerfilId, string mail)
+        {
+            try
+            {
+                var query = new usuario
+                {
+                    UsuarioNick = usuarioNick,
+                    UsuarioNombre= usuarioNombre,
+                    UsuarioPerfilId = 1,
+                    UsuarioEstado = 1,
+                    UsuarioClave = EncriptacionMD5.CreateMd5Hash(clave),
+                    UsuarioEmail = mail
+                };
+                Bdd.AddTousuario(query);
+                Bdd.SaveChanges();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+        }
+
 
      
     }

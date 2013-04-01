@@ -25,6 +25,7 @@
                         <br />
                         <div class="row-fluid">
                             <div class="span8">
+                                <asp:HyperLink ID="HyperLink1"  runat="server" NavigateUrl="~/Registro.aspx">Registrate!</asp:HyperLink>
                             </div>
                             <div class="span4">
                                 <asp:Button ID="BtnIngresar" CssClass="btn btn-primary" OnClick="BtnIngresarOnClick"
