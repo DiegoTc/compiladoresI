@@ -23,6 +23,7 @@ using System.Xml.Serialization;
 [assembly: EdmRelationshipAttribute("multiinterpretadorModel", "FK_Rol_X_Id", "rol", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(WebUI.rol), "rolperfil", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(WebUI.rolperfil), true)]
 [assembly: EdmRelationshipAttribute("multiinterpretadorModel", "fk_estadoUsuario", "estado", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(WebUI.estado), "usuario", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(WebUI.usuario), true)]
 [assembly: EdmRelationshipAttribute("multiinterpretadorModel", "fk_perfilUsuario", "perfil", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(WebUI.perfil), "usuario", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(WebUI.usuario), true)]
+[assembly: EdmRelationshipAttribute("multiinterpretadorModel", "fk_bitacora", "usuario", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(WebUI.usuario), "bitacora", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(WebUI.bitacora), true)]
 
 #endregion
 
@@ -153,6 +154,22 @@ namespace WebUI
             }
         }
         private ObjectSet<usuario> _usuario;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<bitacora> bitacora
+        {
+            get
+            {
+                if ((_bitacora == null))
+                {
+                    _bitacora = base.CreateObjectSet<bitacora>("bitacora");
+                }
+                return _bitacora;
+            }
+        }
+        private ObjectSet<bitacora> _bitacora;
 
         #endregion
 
@@ -197,6 +214,14 @@ namespace WebUI
         {
             base.AddObject("usuario", usuario);
         }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the bitacora EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddTobitacora(bitacora bitacora)
+        {
+            base.AddObject("bitacora", bitacora);
+        }
 
         #endregion
 
@@ -205,6 +230,207 @@ namespace WebUI
     #endregion
 
     #region Entities
+    
+    /// <summary>
+    /// No Metadata Documentation available.
+    /// </summary>
+    [EdmEntityTypeAttribute(NamespaceName="multiinterpretadorModel", Name="bitacora")]
+    [Serializable()]
+    [DataContractAttribute(IsReference=true)]
+    public partial class bitacora : EntityObject
+    {
+        #region Factory Method
+    
+        /// <summary>
+        /// Create a new bitacora object.
+        /// </summary>
+        /// <param name="bitacoraId">Initial value of the BitacoraId property.</param>
+        /// <param name="bitacora_UsuarioId">Initial value of the Bitacora_UsuarioId property.</param>
+        /// <param name="bitacoraLenguaje">Initial value of the BitacoraLenguaje property.</param>
+        /// <param name="bitacoraDescripcionEvento">Initial value of the BitacoraDescripcionEvento property.</param>
+        public static bitacora Createbitacora(global::System.Int32 bitacoraId, global::System.Int32 bitacora_UsuarioId, global::System.String bitacoraLenguaje, global::System.String bitacoraDescripcionEvento)
+        {
+            bitacora bitacora = new bitacora();
+            bitacora.BitacoraId = bitacoraId;
+            bitacora.Bitacora_UsuarioId = bitacora_UsuarioId;
+            bitacora.BitacoraLenguaje = bitacoraLenguaje;
+            bitacora.BitacoraDescripcionEvento = bitacoraDescripcionEvento;
+            return bitacora;
+        }
+
+        #endregion
+
+        #region Primitive Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 BitacoraId
+        {
+            get
+            {
+                return _BitacoraId;
+            }
+            set
+            {
+                if (_BitacoraId != value)
+                {
+                    OnBitacoraIdChanging(value);
+                    ReportPropertyChanging("BitacoraId");
+                    _BitacoraId = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("BitacoraId");
+                    OnBitacoraIdChanged();
+                }
+            }
+        }
+        private global::System.Int32 _BitacoraId;
+        partial void OnBitacoraIdChanging(global::System.Int32 value);
+        partial void OnBitacoraIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 Bitacora_UsuarioId
+        {
+            get
+            {
+                return _Bitacora_UsuarioId;
+            }
+            set
+            {
+                OnBitacora_UsuarioIdChanging(value);
+                ReportPropertyChanging("Bitacora_UsuarioId");
+                _Bitacora_UsuarioId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Bitacora_UsuarioId");
+                OnBitacora_UsuarioIdChanged();
+            }
+        }
+        private global::System.Int32 _Bitacora_UsuarioId;
+        partial void OnBitacora_UsuarioIdChanging(global::System.Int32 value);
+        partial void OnBitacora_UsuarioIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String BitacoraLenguaje
+        {
+            get
+            {
+                return _BitacoraLenguaje;
+            }
+            set
+            {
+                OnBitacoraLenguajeChanging(value);
+                ReportPropertyChanging("BitacoraLenguaje");
+                _BitacoraLenguaje = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("BitacoraLenguaje");
+                OnBitacoraLenguajeChanged();
+            }
+        }
+        private global::System.String _BitacoraLenguaje;
+        partial void OnBitacoraLenguajeChanging(global::System.String value);
+        partial void OnBitacoraLenguajeChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String BitacoraDescripcionEvento
+        {
+            get
+            {
+                return _BitacoraDescripcionEvento;
+            }
+            set
+            {
+                OnBitacoraDescripcionEventoChanging(value);
+                ReportPropertyChanging("BitacoraDescripcionEvento");
+                _BitacoraDescripcionEvento = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("BitacoraDescripcionEvento");
+                OnBitacoraDescripcionEventoChanged();
+            }
+        }
+        private global::System.String _BitacoraDescripcionEvento;
+        partial void OnBitacoraDescripcionEventoChanging(global::System.String value);
+        partial void OnBitacoraDescripcionEventoChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String BitacoraSentencia
+        {
+            get
+            {
+                return _BitacoraSentencia;
+            }
+            set
+            {
+                OnBitacoraSentenciaChanging(value);
+                ReportPropertyChanging("BitacoraSentencia");
+                _BitacoraSentencia = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("BitacoraSentencia");
+                OnBitacoraSentenciaChanged();
+            }
+        }
+        private global::System.String _BitacoraSentencia;
+        partial void OnBitacoraSentenciaChanging(global::System.String value);
+        partial void OnBitacoraSentenciaChanged();
+
+        #endregion
+
+    
+        #region Navigation Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("multiinterpretadorModel", "fk_bitacora", "usuario")]
+        public usuario usuario
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<usuario>("multiinterpretadorModel.fk_bitacora", "usuario").Value;
+            }
+            set
+            {
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<usuario>("multiinterpretadorModel.fk_bitacora", "usuario").Value = value;
+            }
+        }
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [BrowsableAttribute(false)]
+        [DataMemberAttribute()]
+        public EntityReference<usuario> usuarioReference
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<usuario>("multiinterpretadorModel.fk_bitacora", "usuario");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<usuario>("multiinterpretadorModel.fk_bitacora", "usuario", value);
+                }
+            }
+        }
+
+        #endregion
+
+    }
     
     /// <summary>
     /// No Metadata Documentation available.
@@ -1075,6 +1301,28 @@ namespace WebUI
                 if ((value != null))
                 {
                     ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<perfil>("multiinterpretadorModel.fk_perfilUsuario", "perfil", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("multiinterpretadorModel", "fk_bitacora", "bitacora")]
+        public EntityCollection<bitacora> bitacora
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<bitacora>("multiinterpretadorModel.fk_bitacora", "bitacora");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<bitacora>("multiinterpretadorModel.fk_bitacora", "bitacora", value);
                 }
             }
         }

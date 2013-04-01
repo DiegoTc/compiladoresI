@@ -6,11 +6,16 @@
     <edmx:StorageModels>
     <Schema Namespace="multiinterpretadorModel.Store" Alias="Self" Provider="MySql.Data.MySqlClient" ProviderManifestToken="5.6" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
         <EntityContainer Name="multiinterpretadorModelStoreContainer">
+          <EntitySet Name="bitacora" EntityType="multiinterpretadorModel.Store.bitacora" store:Type="Tables" Schema="multiinterpretador" />
           <EntitySet Name="estado" EntityType="multiinterpretadorModel.Store.estado" store:Type="Tables" Schema="multiinterpretador" />
           <EntitySet Name="perfil" EntityType="multiinterpretadorModel.Store.perfil" store:Type="Tables" Schema="multiinterpretador" />
           <EntitySet Name="rol" EntityType="multiinterpretadorModel.Store.rol" store:Type="Tables" Schema="multiinterpretador" />
           <EntitySet Name="rolperfil" EntityType="multiinterpretadorModel.Store.rolperfil" store:Type="Tables" Schema="multiinterpretador" />
           <EntitySet Name="usuario" EntityType="multiinterpretadorModel.Store.usuario" store:Type="Tables" Schema="multiinterpretador" />
+          <AssociationSet Name="fk_bitacora" Association="multiinterpretadorModel.Store.fk_bitacora">
+            <End Role="usuario" EntitySet="usuario" />
+            <End Role="bitacora" EntitySet="bitacora" />
+          </AssociationSet>
           <AssociationSet Name="fk_estadoUsuario" Association="multiinterpretadorModel.Store.fk_estadoUsuario">
             <End Role="estado" EntitySet="estado" />
             <End Role="usuario" EntitySet="usuario" />
@@ -28,6 +33,16 @@
             <End Role="rolperfil" EntitySet="rolperfil" />
           </AssociationSet>
         </EntityContainer>
+        <EntityType Name="bitacora">
+          <Key>
+            <PropertyRef Name="BitacoraId" />
+          </Key>
+          <Property Name="BitacoraId" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Bitacora_UsuarioId" Type="int" Nullable="false" />
+          <Property Name="BitacoraLenguaje" Type="varchar" Nullable="false" MaxLength="45" />
+          <Property Name="BitacoraDescripcionEvento" Type="varchar" Nullable="false" MaxLength="250" />
+          <Property Name="BitacoraSentencia" Type="varchar" />
+        </EntityType>
         <EntityType Name="estado">
           <Key>
             <PropertyRef Name="Id" />
@@ -71,6 +86,18 @@
           <Property Name="UsuarioEmail" Type="varchar" MaxLength="50" />
           <Property Name="UsuarioIsReset" Type="int" />
         </EntityType>
+        <Association Name="fk_bitacora">
+          <End Role="usuario" Type="multiinterpretadorModel.Store.usuario" Multiplicity="1" />
+          <End Role="bitacora" Type="multiinterpretadorModel.Store.bitacora" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="usuario">
+              <PropertyRef Name="UsuarioId" />
+            </Principal>
+            <Dependent Role="bitacora">
+              <PropertyRef Name="Bitacora_UsuarioId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="fk_estadoUsuario">
           <End Role="estado" Type="multiinterpretadorModel.Store.estado" Multiplicity="1" />
           <End Role="usuario" Type="multiinterpretadorModel.Store.usuario" Multiplicity="*" />
@@ -144,6 +171,11 @@
           <AssociationSet Name="fk_perfilUsuario" Association="multiinterpretadorModel.fk_perfilUsuario">
             <End Role="perfil" EntitySet="perfil" />
             <End Role="usuario" EntitySet="usuario" />
+          </AssociationSet>
+          <EntitySet Name="bitacora" EntityType="multiinterpretadorModel.bitacora" />
+          <AssociationSet Name="fk_bitacora" Association="multiinterpretadorModel.fk_bitacora">
+            <End Role="usuario" EntitySet="usuario" />
+            <End Role="bitacora" EntitySet="bitacora" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="estado">
@@ -220,6 +252,7 @@
           <Property Type="Int32" Name="UsuarioIsReset" />
           <NavigationProperty Name="estado" Relationship="multiinterpretadorModel.fk_estadoUsuario" FromRole="usuario" ToRole="estado" />
           <NavigationProperty Name="perfil" Relationship="multiinterpretadorModel.fk_perfilUsuario" FromRole="usuario" ToRole="perfil" />
+          <NavigationProperty Name="bitacora" Relationship="multiinterpretadorModel.fk_bitacora" FromRole="usuario" ToRole="bitacora" />
         </EntityType>
         <Association Name="fk_estadoUsuario">
           <End Type="multiinterpretadorModel.estado" Role="estado" Multiplicity="1" />
@@ -242,6 +275,29 @@
             </Principal>
             <Dependent Role="usuario">
               <PropertyRef Name="UsuarioPerfilId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="bitacora">
+          <Key>
+            <PropertyRef Name="BitacoraId" />
+          </Key>
+          <Property Type="Int32" Name="BitacoraId" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Bitacora_UsuarioId" Nullable="false" />
+          <Property Type="String" Name="BitacoraLenguaje" Nullable="false" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="BitacoraDescripcionEvento" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="BitacoraSentencia" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="usuario" Relationship="multiinterpretadorModel.fk_bitacora" FromRole="bitacora" ToRole="usuario" />
+        </EntityType>
+        <Association Name="fk_bitacora">
+          <End Type="multiinterpretadorModel.usuario" Role="usuario" Multiplicity="1" />
+          <End Type="multiinterpretadorModel.bitacora" Role="bitacora" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="usuario">
+              <PropertyRef Name="UsuarioId" />
+            </Principal>
+            <Dependent Role="bitacora">
+              <PropertyRef Name="Bitacora_UsuarioId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -299,6 +355,17 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="bitacora">
+            <EntityTypeMapping TypeName="multiinterpretadorModel.bitacora">
+              <MappingFragment StoreEntitySet="bitacora">
+                <ScalarProperty Name="BitacoraSentencia" ColumnName="BitacoraSentencia" />
+                <ScalarProperty Name="BitacoraDescripcionEvento" ColumnName="BitacoraDescripcionEvento" />
+                <ScalarProperty Name="BitacoraLenguaje" ColumnName="BitacoraLenguaje" />
+                <ScalarProperty Name="Bitacora_UsuarioId" ColumnName="Bitacora_UsuarioId" />
+                <ScalarProperty Name="BitacoraId" ColumnName="BitacoraId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -320,31 +387,39 @@
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
       <Diagram Name="MultiInterpretadorEDM">
-        <EntityTypeShape EntityType="multiinterpretadorModel.estado" Width="1.5" PointX="6.625" PointY="4.5" Height="1.5956835937499996" />
-        <EntityTypeShape EntityType="multiinterpretadorModel.perfil" Width="1.5" PointX="1.25" PointY="0.75" Height="1.5956835937499994" />
-        <EntityTypeShape EntityType="multiinterpretadorModel.rol" Width="1.5" PointX="3.5" PointY="3.5" Height="1.5956835937499996" />
-        <EntityTypeShape EntityType="multiinterpretadorModel.rolperfil" Width="1.5" PointX="3.5" PointY="0.5" Height="1.9802864583333317" />
+        <EntityTypeShape EntityType="multiinterpretadorModel.estado" Width="1.5" PointX="5.875" PointY="4.375" Height="1.5956835937499996" />
+        <EntityTypeShape EntityType="multiinterpretadorModel.perfil" Width="1.5" PointX="1.375" PointY="0.5" Height="1.7879850260416665" />
+        <EntityTypeShape EntityType="multiinterpretadorModel.rol" Width="1.5" PointX="1.375" PointY="2.875" Height="1.5956835937499996" />
+        <EntityTypeShape EntityType="multiinterpretadorModel.rolperfil" Width="1.5" PointX="3.625" PointY="0.5" Height="1.9802864583333317" />
         <AssociationConnector Association="multiinterpretadorModel.FK_PerfilId" >
-          <ConnectorPoint PointX="2.75" PointY="1.6151432291666659" />
-          <ConnectorPoint PointX="3.5" PointY="1.6151432291666659" />
+          <ConnectorPoint PointX="2.875" PointY="1.3939925130208333" />
+          <ConnectorPoint PointX="3.625" PointY="1.3939925130208333" />
         </AssociationConnector>
         <AssociationConnector Association="multiinterpretadorModel.FK_Rol_X_Id" >
-          <ConnectorPoint PointX="4.25" PointY="3.5" />
-          <ConnectorPoint PointX="4.25" PointY="2.4802864583333317" />
+          <ConnectorPoint PointX="2.875" PointY="3.672841796875" />
+          <ConnectorPoint PointX="3.1666666666666665" PointY="3.6728417968749993" />
+          <ConnectorPoint PointX="3.3333333333333335" PointY="3.672841796875" />
+          <ConnectorPoint PointX="4.375" PointY="3.672841796875" />
+          <ConnectorPoint PointX="4.375" PointY="2.4802864583333317" />
         </AssociationConnector>
-        <EntityTypeShape EntityType="multiinterpretadorModel.usuario" Width="1.5" PointX="5.875" PointY="0.625" Height="3.1340950520833317" />
+        <EntityTypeShape EntityType="multiinterpretadorModel.usuario" Width="1.5" PointX="5.875" PointY="0.5" Height="3.326396484375" />
         <AssociationConnector Association="multiinterpretadorModel.fk_estadoUsuario" >
-          <ConnectorPoint PointX="7" PointY="4.5" />
-          <ConnectorPoint PointX="7" PointY="3.7590950520833317" />
+          <ConnectorPoint PointX="6.625" PointY="4.375" />
+          <ConnectorPoint PointX="6.625" PointY="3.826396484375" />
         </AssociationConnector>
         <AssociationConnector Association="multiinterpretadorModel.fk_perfilUsuario" >
-          <ConnectorPoint PointX="2" PointY="2.5379850260416665" />
-          <ConnectorPoint PointX="2" PointY="2.9877430130208333" />
-          <ConnectorPoint PointX="4.166666666666667" PointY="2.9877430130208329" />
-          <ConnectorPoint PointX="4.333333333333333" PointY="2.9877430130208333" />
-          <ConnectorPoint PointX="5.875" PointY="2.9877430130208333" />
+          <ConnectorPoint PointX="2.875" PointY="2.2879850260416665" />
+          <ConnectorPoint PointX="3.25" PointY="2.6629850260416665" />
+          <ConnectorPoint PointX="3.25" PointY="4.201396484375" />
+          <ConnectorPoint PointX="5.5" PointY="4.201396484375" />
+          <ConnectorPoint PointX="5.875" PointY="3.826396484375" />
         </AssociationConnector>
-      </Diagram>
+        <EntityTypeShape EntityType="multiinterpretadorModel.bitacora" Width="1.5" PointX="8.125" PointY="1.125" Height="2.1725878906249996" />
+        <AssociationConnector Association="multiinterpretadorModel.fk_bitacora" >
+          <ConnectorPoint PointX="7.375" PointY="2.2112939453125" />
+          <ConnectorPoint PointX="8.125" PointY="2.2112939453125" />
+        </AssociationConnector>
+        </Diagram>
     </Diagrams>
   </Designer>
 </edmx:Edmx>

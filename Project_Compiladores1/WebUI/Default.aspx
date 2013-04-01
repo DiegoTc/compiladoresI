@@ -93,7 +93,7 @@
                                         </div>
                                     </div>
                                     <div id="pane2" class="tab-pane">
-                                        <div class="row-fluidr">
+                                        <div class="row-fluid">
                                             <div class="row-fluid">
                                                 <textarea id="codec" name="codec" class="span12" rows="6"></textarea>
                                             </div>
@@ -135,7 +135,7 @@
                                             </div>
                                             <br />
                                             <div class="row-fluid">
-                                                <textarea id="txtResultadoPascal" disabled="True"  placeholder="El Resultado se muestra aqui!"
+                                                <textarea id="txtResultadoPascal" disabled="True" placeholder="El Resultado se muestra aqui!"
                                                     class="span12" rows="5"></textarea>
                                             </div>
                                         </div>
@@ -156,15 +156,16 @@
                                                     Bienvenido</h4>
                                             </div>
                                             <div class="span4">
-                                                <asp:Button runat="server" ID="BtnCerrarCesion" CssClass="btn btn-warning" Text="Salir" OnClick="BtnCerrarSesionOnClick"/>
+                                                <asp:Button runat="server" ID="BtnCerrarCesion" CssClass="btn btn-warning" Text="Salir"
+                                                    OnClick="BtnCerrarSesionOnClick" />
                                             </div>
                                         </tr>
                                     </tbody>
                                 </div>
                             </div>
-                            <br/>
-                            <br/>
-                            <br/>
+                            <br />
+                            <br />
+                            <br />
                             <table class="table table-striped table-bordered">
                                 <tr>
                                     <td style="text-align: right">
@@ -187,14 +188,72 @@
                                     </td>
                                 </tr>
                             </table>
-                            <label id="lblhdd" >Bitácora de Pruebas</label>
-                            <table class="table table-striped table-bordered">
+                            <br/>
+                            <table class="table table-bordered table-striped">
                                 <tbody>
-                                    <td>
-                                        <textarea id="txtLog" class="span12" rows="15"></textarea>
-                                    </td>
+                                    <tr>
+                                        <td>Integrantes:</td>
+                                    </tr>
+                                    <tr>
+                                        <td>- Diego Turcios</td>
+                                    </tr>
+                                    <tr>
+                                        <td>- Cristian Pineda</td>
+                                        
+                                    </tr>
+                                    <tr>
+                                        <td>- Erick Viera</td>
+                                        
+                                    </tr>
+                                    <tr>
+                                        <td>- Noel Recarte</td>
+                                    </tr>
                                 </tbody>
                             </table>
+                            <div style="text-align: center;" ><img src="img/LogoJaguares.png"/></div>
+                            
+                           
+                        </div>
+                        <div class="row-fluid">
+                            <div class="span12">
+                                <label id="lblhdd">
+                                    Bitácora de Pruebas</label>
+                                <div class="row-fluid">
+                                    <asp:GridView ID="gvBitacora" DataKeyNames="BitacoraId" AutoGenerateColumns="False"
+                                        BorderStyle="None" class="table table-striped table-bordered" runat="server">
+                                        <Columns>
+                                            <%--ID--%>
+                                            <asp:TemplateField HeaderText="ID" Visible="false" HeaderStyle-HorizontalAlign="Left">
+                                                <ItemTemplate>
+                                                    <asp:Label ID="lblId" runat="server" Text='<%# Bind("BitacoraId") %>'></asp:Label>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+                                            <%--Sentencia--%>
+                                            <asp:TemplateField HeaderText="Sentencia" Visible="true" HeaderStyle-HorizontalAlign="Left">
+                                                <ItemTemplate>
+                                                    <asp:Label ID="lblSentencia" runat="server" Text='<%# Bind("BitacoraSentencia") %>'></asp:Label>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+                                            <%--Lenguaje--%>
+                                            <asp:TemplateField HeaderText="Lenguaje">
+                                                <ItemTemplate>
+                                                    <asp:Label ID="lblUsuarioNick" runat="server" Text='<%#Eval("BitacoraLenguaje")%>'></asp:Label>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+                                            <%--Evento--%>
+                                            <asp:TemplateField HeaderText="Evento">
+                                                <ItemTemplate>
+                                                    <asp:Label ID="lblUsuarioNombre" runat="server" Text='<%#Eval("BitacoraDescripcionEvento")%>'></asp:Label>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+                                        </Columns>
+                                    </asp:GridView>
+                                    <label class="label label-important" id="msgTransac" visible="False" runat="server"
+                                        style="color: white; font-size: x-small; font-weight: normal; margin-right: 3px;
+                                        font-family: Arial, Helvetica, sans-serif;">
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                     </ContentTemplate>
                 </asp:UpdatePanel>

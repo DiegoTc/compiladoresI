@@ -63,6 +63,51 @@ namespace WebUI
             return query;
         }
 
+        //Obtengo la lista de Eventos
+        public static List<bitacora> ObtenerBitacoraUsuario(string usuario)
+        {
+            var query = from tbl in Bdd.bitacora.Include("usuario")
+                        where tbl.usuario.UsuarioNick == usuario
+                        orderby tbl.BitacoraId descending 
+                        select tbl;
+
+            return query.ToList();
+        }
+
+        //Adicion de un nuevo Evento
+        public static bool InsertarEvento(string usuarioNick, string lenguaje, string descripcionEvento,string sentencia)
+        {
+            try
+            {
+                var query = new bitacora
+                {
+                    Bitacora_UsuarioId = ObtenerIdUsuario(usuarioNick),
+                    BitacoraLenguaje = lenguaje,
+                    BitacoraDescripcionEvento = descripcionEvento,
+                    BitacoraSentencia = sentencia
+                };
+
+                Bdd.AddTobitacora(query);
+                Bdd.SaveChanges();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+        }
+
+        //Obtengo el Id del Usuario
+        public static int ObtenerIdUsuario(string usuarioNick)
+        {
+            var query = (from tbl in Bdd.usuario
+                         where tbl.UsuarioNick == usuarioNick
+                         select tbl.UsuarioId).Single();
+
+            return Convert.ToInt32(query);
+        }
+
 
      
     }

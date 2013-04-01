@@ -33,10 +33,17 @@ namespace WebUI
 
             }
 
+            CargarBitacoraUsuario();
+
             if (!IsPostBack)
             {
                 lblNombre.Text = Session["UsuarioNombre"].ToString();
                 lblPerfil.Text = ObtenerPerfil();
+            }
+            
+            if(IsPostBack)
+            {
+                CargarBitacoraUsuario();
             }
         }
 
@@ -44,6 +51,12 @@ namespace WebUI
         {
             var h = Conexion.ObtenerUsuarioAdministrativo(Session["UsuarioNick"].ToString());
             return h.perfil.Nombre;
+        }
+
+        public void CargarBitacoraUsuario()
+        {
+            gvBitacora.DataSource = Conexion.ObtenerBitacoraUsuario(Session["UsuarioNick"].ToString());
+            gvBitacora.DataBind();
         }
 
         [WebMethod(EnableSession = true)]
@@ -58,7 +71,12 @@ namespace WebUI
             //raizP.SentValSemantica();
             //raizP.interpretar();
 
-            return HttpContext.Current.Session["MsjPascal"].ToString()  ;
+            Conexion.InsertarEvento(HttpContext.Current.Session["UsuarioNick"].ToString(), "Pascal",
+                                    HttpContext.Current.Session["MsjPascal"].ToString(),sentencia);
+
+        
+            return HttpContext.Current.Session["MsjPascal"].ToString();
+
         }
 
 
@@ -75,6 +93,9 @@ namespace WebUI
             //raipzC.SentValSemantica();
             //raipzC.interpretar();
 
+            Conexion.InsertarEvento(HttpContext.Current.Session["UsuarioNick"].ToString(), "C",
+                                    HttpContext.Current.Session["MsjC"].ToString(),sentencia);
+
             return HttpContext.Current.Session["MsjC"].ToString();
         }
 
@@ -90,6 +111,9 @@ namespace WebUI
 
             //raizJ.SentValSemantica();
             //raizJ.interpretar();
+
+            Conexion.InsertarEvento(HttpContext.Current.Session["UsuarioNick"].ToString(), "Java",
+                                    HttpContext.Current.Session["MsjJava"].ToString(),sentencia);
 
             return HttpContext.Current.Session["MsjJava"].ToString();
            
