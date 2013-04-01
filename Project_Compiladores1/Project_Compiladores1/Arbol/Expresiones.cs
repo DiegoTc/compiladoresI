@@ -895,9 +895,18 @@ namespace Project_Compiladores1.Arbol
                     if (tmp is AccessMiembro)
                     {
                         Valor valcl = InfInterpretador.getInstance().getValor(id);
-                        ValorClase tmpvalcl = (ValorClase) valcl;
-                        AccessMiembro am = (AccessMiembro) tmp;
-                        return tmpvalcl.obtener(am.Id);
+                        if (valcl is ValorClase)
+                        {
+                            ValorClase tmpvalcl = (ValorClase) valcl;
+                            AccessMiembro am = (AccessMiembro) tmp;
+                            return tmpvalcl.obtener(am.Id);
+                        }
+                        else if (valcl is ValorRegistro)
+                        {
+                            ValorRegistro tmpvalcl = (ValorRegistro)valcl;
+                            AccessMiembro am = (AccessMiembro)tmp;
+                            return tmpvalcl.obtener(am.Id);
+                        }
                     }
                     tmp = tmp.Next;
                 }

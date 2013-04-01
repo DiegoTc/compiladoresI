@@ -28,11 +28,11 @@ namespace Project_Compiladores1.Interpretador
         {
             if (miembros.ContainsKey(mem))
             {
-                if (miembros[mem].Tipo.esEquivalente(val.Tipo))
-                {
+                //if (miembros[mem].Tipo.esEquivalente(val.Tipo))
+                //{
                     miembros[mem] = val;
-                }
-                else throw new Exception("Tipos incompatibles.");
+                //}
+                //else throw new Exception("Tipos incompatibles.");
             }
             else throw new Exception("No existe ese miembro.");
         }

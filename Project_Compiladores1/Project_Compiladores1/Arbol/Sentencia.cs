@@ -224,6 +224,13 @@ namespace Project_Compiladores1.Arbol
                     valclas.asignar(am.Id, val);
                     InfInterpretador.getInstance().asignarValor(id.id, valclas);
                 }
+                if (ident is ValorRegistro)
+                {
+                    ValorRegistro valreg = (ValorRegistro)ident;
+                    AccessMiembro am = (AccessMiembro)a;
+                    valreg.asignar(am.Id, val);
+                    InfInterpretador.getInstance().asignarValor(id.id, valreg);
+                }
                 a = a.Next;
             }
             if (id.accesor != null)//ACA ES DISTINTO
@@ -702,10 +709,24 @@ namespace Project_Compiladores1.Arbol
                     ValorClase valorClase = new ValorClase(miembrosc);
                     InfInterpretador.getInstance().asignarValor(Var.id, valorClase);
                 }
+                else if (Tip is Struct)
+                {
+                    Tipo TipTemp = InfSemantica.getInstance().tblTipos[((Struct) Tip).nombre];
+                    Struct TipReg = (Struct) TipTemp;
+                    Dictionary<string, Valor> miembrosStr = new Dictionary<string, Valor>();
+
+                    foreach (var VARIABLE in TipReg.Campos)
+                    {
+                        miembrosStr.Add(VARIABLE.Key, null);
+                    }
+                    ValorRegistro valorReg = new ValorRegistro(miembrosStr);
+                    InfInterpretador.getInstance().asignarValor(Var.id, valorReg);
+                }
                 else
                 {
                     InfInterpretador.getInstance().asignarValor(Var.id, null);
                 }
+                
             }
             else
             {
@@ -788,8 +809,7 @@ namespace Project_Compiladores1.Arbol
         //public Dictionary<string, Tipo> tblSimbolosClass = new Dictionary<string, Tipo>();
 
         public override void validarSemantica()
-        {
-            //FALTA
+        {            
             #region Validar Existe Variable
 
             Tipo var = null;
@@ -845,10 +865,7 @@ namespace Project_Compiladores1.Arbol
             {
                 throw new Exception("Error Semantico - La variable " + Var.id + " ya existe");
             }
-            #endregion
-
-           
-
+            #endregion           
         }
 
         protected override void interpretarSentencia()
