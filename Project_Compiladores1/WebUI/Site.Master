@@ -64,8 +64,8 @@
                 <div class="navbar-inner">
                     <div class="row-fluid">
                         <div style="margin: 5px 5px 5px 5px;">
-                            <h6>
-                                Cucarachas Fumadoras - YEAH!</h6>
+                            <div style="text-align: center;" ><h6>
+                                Cucarachas Fumadoras - YEAH!</h6></div> 
                         </div>
                     </div>
                 </div>

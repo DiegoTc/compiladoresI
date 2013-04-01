@@ -27,10 +27,30 @@
                             <div class="span8">
                             </div>
                             <div class="span4">
-                                <asp:Button ID="BtnIngresar" CssClass="btn btn-primary" OnClick="BtnIngresarOnClick" runat="server" Text="Ingresar" />
+                                <asp:Button ID="BtnIngresar" CssClass="btn btn-primary" OnClick="BtnIngresarOnClick"
+                                    runat="server" Text="Ingresar" />
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="span8">
+                    <legend>
+                        <h1>
+                            Bienvenido!</h1>
+                    </legend>
+                    <br />
+                    <blockquote>
+                        <p>
+                            <strong>Estimado Usuario te damos la cordial bienvenida
+                                a esta herramienta educativa!</strong></p>
+                        <br />
+                        <p>
+                            <strong>Objetivos del Proyecto</strong></p>
+                        <small>Conocer de forma rapida la sintaxis de los tres lenguajes soportados: Java, C y Pascal.</small>
+                        <small>Realizar pruebas rapidas de algunas Operaciones.</small>
+                        <small>Aprender interactuando.</small>
+                    </blockquote>
+                    <br />
                 </div>
             </div>
         </div>
