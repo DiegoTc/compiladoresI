@@ -894,6 +894,7 @@ namespace Project_Compiladores1.Sintactico
                     if (currentToken.Tipo != TipoToken.TK_CLOSELLAVE)
                         throw new Exception("Error Sintactico - Se esperaba simbolo }");
                     currentToken = lex.NextToken();
+                    //ACA METER A LA TABLA DE TIPOS
                     return sClass;
                 }
                 else if (currentToken.Tipo == TipoToken.TK_FINSENTENCIA)
