@@ -46,7 +46,8 @@ namespace Project_Compiladores1.Arbol
         }
 
         protected override void interpretarSentencia()
-        {            
+        {   
+            
             Valor tmp = Expr.interpretar();     
             if (tmp is ValorEntero)
                 Console.WriteLine(((ValorEntero)tmp).Valor.ToString());
@@ -215,6 +216,13 @@ namespace Project_Compiladores1.Arbol
                     {
                         ident = ((ValorArreglo) ident).get(lista);
                     } //TO DO ADD ELSE CLAUSE
+                }
+                if (ident is ValorClase)
+                {
+                    ValorClase valclas = (ValorClase) ident;
+                    AccessMiembro am = (AccessMiembro) a;                    
+                    valclas.asignar(am.Id, val);
+                    InfInterpretador.getInstance().asignarValor(id.id, valclas);
                 }
                 a = a.Next;
             }
@@ -627,6 +635,7 @@ namespace Project_Compiladores1.Arbol
                 {
                     throw new Exception("Error Semantico -- La clase "+ ctmp.Nombre+ " no a sido declarada");
                 }
+                Tip = InfSemantica.getInstance().tblTipos[ctmp.Nombre];
 
             }
             else if (Tip is Struct)
@@ -681,6 +690,17 @@ namespace Project_Compiladores1.Arbol
                     Arreglo tmptip = (Arreglo)Tip;                    
                     ValorArreglo tmp = new ValorArreglo(tmptip);
                     InfInterpretador.getInstance().asignarValor(Var.id, tmp);
+                }
+                else if (Tip is Class)
+                {
+                    Dictionary<string, Valor> miembrosc = new Dictionary<string, Valor>();
+                    Class tmpclass = (Class) Tip;
+                    foreach (var VARIABLE in tmpclass.Campos)
+                    {                                                
+                        miembrosc.Add(VARIABLE.Key,null);
+                    }                                        
+                    ValorClase valorClase = new ValorClase(miembrosc);
+                    InfInterpretador.getInstance().asignarValor(Var.id, valorClase);
                 }
                 else
                 {
@@ -765,7 +785,7 @@ namespace Project_Compiladores1.Arbol
     {
         public Variable Var = new Variable("", null);
         public Sentencia CamposClase;
-        public Dictionary<string, Tipo> tblSimbolosClass = new Dictionary<string, Tipo>();
+        //public Dictionary<string, Tipo> tblSimbolosClass = new Dictionary<string, Tipo>();
 
         public override void validarSemantica()
         {
@@ -785,6 +805,7 @@ namespace Project_Compiladores1.Arbol
             if (var == null)
             {
                 Class cl = new Class();
+                cl.Nombre = Var.id;
                 cl.Campos = new T_Campos();
                 Sentencia tmp=CamposClase;
                 while(tmp!=null)
@@ -832,8 +853,34 @@ namespace Project_Compiladores1.Arbol
 
         protected override void interpretarSentencia()
         {
-            Var.interpretar();
-            CamposClase.interpretar();
+            /*
+            Dictionary<string, Valor> miembrosc = new Dictionary<string, Valor>();
+            Sentencia tmp = CamposClase;
+            if (tmp != null)
+            {
+                while (tmp != null)
+                {
+                    if (tmp is Declaracion)
+                    {
+                        Declaracion tmpDecl = (Declaracion) tmp;
+
+                        #region Valor  
+                        if (tmpDecl.Tip is Arreglo)
+                        {
+                            Arreglo tmptip = (Arreglo) tmpDecl.Tip;
+                            ValorArreglo tmpvr = new ValorArreglo(tmptip);
+                            miembrosc.Add(Var.id, tmpvr);
+                            
+                        }
+                        else
+                        {
+                            miembrosc.Add(Var.id, null);                            
+                        }
+                        #endregion
+                    }
+                }
+            }
+            ValorClase valorClase = new ValorClase(miembrosc);   */         
         }
     }
 

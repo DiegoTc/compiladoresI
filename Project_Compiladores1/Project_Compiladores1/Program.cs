@@ -18,9 +18,9 @@ namespace Project_Compiladores1
             StreamReader streamReader = new StreamReader("C:\\Pascal.txt");
             string text = streamReader.ReadToEnd();
             streamReader.Close();
-            LexicoC C = new LexicoC(text);
+            LexicoJava C = new LexicoJava(text);
 
-            parserC s = new parserC(C);
+            javaParser s = new javaParser(C);
             Sentencia raiz = s.parse();
             raiz.SentValSemantica();
             raiz.interpretar();
