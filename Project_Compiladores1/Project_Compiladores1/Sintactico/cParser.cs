@@ -261,6 +261,7 @@ namespace Project_Compiladores1.Sintactico
                     this.currentToken = lex.NextToken();
                     sfor.Tip = new Entero();
                     sfor.S = CompoundStatement();
+                    sfor.Tip = new Entero();
                     return sfor;
                     #endregion
                 }
