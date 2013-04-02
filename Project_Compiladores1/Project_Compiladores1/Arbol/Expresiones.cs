@@ -810,39 +810,16 @@ namespace Project_Compiladores1.Arbol
             Tipo t;
 
             if (InfSemantica.getInstance().tblSimbolos.ContainsKey(id))
-            {
                 t = InfSemantica.getInstance().tblSimbolos[id];
-            }
             else
-            {
                 throw new Exception("Error Semantico - Variable " + id + " no existe");
-            }
-
-            #region Validacion Accessories
-
-            if (t == null)
-                throw new Exception("Variable " + id + " no existe!");
             Access tmp = accesor;
             while (tmp != null)
             {
-
                 if (tmp is AccessMiembro)
                 {
-                    #region Si es Registro
-
                     AccessMiembro am = ((AccessMiembro) tmp);
-                    
-                    if (!(t is Struct))
-                    {
-                        if (t is Class)
-                        {
-                            //TO DO
-                        }
-                        else
-                            throw new Exception(id + " No es Miembro de ningun objeto");
-                    }
-
-                    else
+                    if (t is Struct)
                     {
                         Struct regTmp=null;
                         Struct reg = ((Struct) t);
@@ -854,24 +831,48 @@ namespace Project_Compiladores1.Arbol
                         }
                         else
                             throw new Exception("Error Semantico -- El registro no a sido declarado");
-
                         t = regTmp.Campos[am.Id];
                         if (t == null)
                             throw new Exception("miembro " + am.Id + " no existe!");
                     }
-
-                    #endregion
-                }else if(tmp is AccessArreglo)
-                {
-                    #region Si es Arreglo
-                    #endregion
+                    else if (t is Class)
+                    {
+                        if (((Class)t).Campos.ContainsKey(am.Id))
+                        {
+                            t=((Class)t).Campos[am.Id];
+                        }
+                        else throw new Exception(((Class)t).Nombre+" no contiene a "+am.Id);
+                    }
+                    else
+                        throw new Exception(id + " No es Miembro de ningun objeto");
                 }
-
-
+                else if (tmp is AccessArreglo)
+                {
+                    if (t is Class)
+                    {
+                        if (((Class)t).Campos.ContainsKey(((AccessArreglo)tmp).nombre))
+                        {
+                            Tipo x = ((Class)t).Campos[((AccessArreglo)tmp).nombre];
+                            if (x is Arreglo)
+                                t = ((Arreglo)x).Contenido;
+                            else throw new Exception(((AccessArreglo)tmp).nombre+" no es arreglo.");
+                        }
+                        else throw new Exception(((AccessArreglo)tmp).nombre+" no existe en "+((Class)t).Nombre);
+                    }
+                    else if (t is Struct)
+                    {
+                        if (((Struct)t).Campos.ContainsKey(((AccessArreglo)tmp).nombre))
+                        {
+                            Tipo x = ((Struct)t).Campos[((AccessArreglo)tmp).nombre];
+                            if (x is Arreglo)
+                                t = ((Arreglo)x).Contenido;
+                            else throw new Exception(((AccessArreglo)tmp).nombre + " no es arreglo.");
+                        }
+                        else throw new Exception(((AccessArreglo)tmp).nombre + " no existe en " + ((Class)t).Nombre);
+                    }
+                }
                 tmp = tmp.Next;
             }
-            #endregion
-
             return t;
         }
 
@@ -1181,7 +1182,7 @@ namespace Project_Compiladores1.Arbol
             return null;
         }
     }
-
+    /*
     class AccessClass : Access
     {
         private String id;
@@ -1204,7 +1205,7 @@ namespace Project_Compiladores1.Arbol
             return valor;
         }
     }
-
+    */
     class AccessArreglo : Access
     {
         private ArrayList cont =new ArrayList();
