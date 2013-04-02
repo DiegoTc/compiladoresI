@@ -20,7 +20,7 @@ namespace WebUI
         protected void BtnIngresarOnClick(object sender, EventArgs e)
         {
             //Valido que el usuario existe
-            if (Conexion.ValidarUsuario(username.Value, EncriptacionMD5.CreateMd5Hash(password.Value)))
+            if (Conexion.ValidarUsuario(username.Value, password.Value))
             {
                 //Valido que el usuario este activo
                 if (Conexion.ValidarUsuarioActivo(username.Value))

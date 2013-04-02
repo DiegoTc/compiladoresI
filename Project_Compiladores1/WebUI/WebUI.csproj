@@ -408,6 +408,7 @@
     <Compile Include="Interpretador\ValorBooleano.cs" />
     <Compile Include="Interpretador\ValorCadena.cs" />
     <Compile Include="Interpretador\ValorCaracter.cs" />
+    <Compile Include="Interpretador\ValorClase.cs" />
     <Compile Include="Interpretador\ValorEntero.cs" />
     <Compile Include="Interpretador\ValorFlotante.cs" />
     <Compile Include="Interpretador\ValorRegistro.cs" />

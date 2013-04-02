@@ -48,6 +48,7 @@ namespace WebUI.Arbol
 
         protected override void interpretarSentencia()
         {
+
             Valor tmp = Expr.interpretar();
             if (tmp is ValorEntero)
                 Console.WriteLine(((ValorEntero)tmp).Valor.ToString());
@@ -217,6 +218,20 @@ namespace WebUI.Arbol
                         ident = ((ValorArreglo)ident).get(lista);
                     } //TO DO ADD ELSE CLAUSE
                 }
+                if (ident is ValorClase)
+                {
+                    ValorClase valclas = (ValorClase)ident;
+                    AccessMiembro am = (AccessMiembro)a;
+                    valclas.asignar(am.Id, val);
+                    InfInterpretador.getInstance().asignarValor(id.id, valclas);
+                }
+                if (ident is ValorRegistro)
+                {
+                    ValorRegistro valreg = (ValorRegistro)ident;
+                    AccessMiembro am = (AccessMiembro)a;
+                    valreg.asignar(am.Id, val);
+                    InfInterpretador.getInstance().asignarValor(id.id, valreg);
+                }
                 a = a.Next;
             }
             if (id.accesor != null)//ACA ES DISTINTO
@@ -365,7 +380,7 @@ namespace WebUI.Arbol
                 throw new Exception("Error Semantico - No se pueden asignar tipos diferentes " + var + " con " + val);
             }
             Condicion.validarSemantica();
-            Iteracion.validarSemantica();
+            //Iteracion.validarSemantica();
             if (S != null)
                 S.SentValSemantica();
 
@@ -373,7 +388,19 @@ namespace WebUI.Arbol
 
         protected override void interpretarSentencia()
         {
+            ValorEntero ini = (ValorEntero)Inicio.interpretar();
+            InfInterpretador.getInstance().asignarValor(Var.id, ini);
 
+
+            ValorBooleano Con = (ValorBooleano)Condicion.interpretar();
+            ValorEntero iter;// = (ValorEntero) Iteracion.interpretar();
+            while (Con.Valor)
+            {
+                S.interpretar();
+                iter = (ValorEntero)Iteracion.interpretar();
+                Con = (ValorBooleano)Condicion.interpretar();
+
+            }
         }
     }
 
@@ -628,6 +655,7 @@ namespace WebUI.Arbol
                 {
                     throw new Exception("Error Semantico -- La clase " + ctmp.Nombre + " no a sido declarada");
                 }
+                Tip = InfSemantica.getInstance().tblTipos[ctmp.Nombre];
 
             }
             else if (Tip is Struct)
@@ -683,10 +711,35 @@ namespace WebUI.Arbol
                     ValorArreglo tmp = new ValorArreglo(tmptip);
                     InfInterpretador.getInstance().asignarValor(Var.id, tmp);
                 }
+                else if (Tip is Class)
+                {
+                    Dictionary<string, Valor> miembrosc = new Dictionary<string, Valor>();
+                    Class tmpclass = (Class)Tip;
+                    foreach (var VARIABLE in tmpclass.Campos)
+                    {
+                        miembrosc.Add(VARIABLE.Key, null);
+                    }
+                    ValorClase valorClase = new ValorClase(miembrosc);
+                    InfInterpretador.getInstance().asignarValor(Var.id, valorClase);
+                }
+                else if (Tip is Struct)
+                {
+                    Tipo TipTemp = InfSemantica.getInstance().tblTipos[((Struct)Tip).nombre];
+                    Struct TipReg = (Struct)TipTemp;
+                    Dictionary<string, Valor> miembrosStr = new Dictionary<string, Valor>();
+
+                    foreach (var VARIABLE in TipReg.Campos)
+                    {
+                        miembrosStr.Add(VARIABLE.Key, null);
+                    }
+                    ValorRegistro valorReg = new ValorRegistro(miembrosStr);
+                    InfInterpretador.getInstance().asignarValor(Var.id, valorReg);
+                }
                 else
                 {
                     InfInterpretador.getInstance().asignarValor(Var.id, null);
                 }
+
             }
             else
             {
@@ -766,11 +819,10 @@ namespace WebUI.Arbol
     {
         public Variable Var = new Variable("", null);
         public Sentencia CamposClase;
-        public Dictionary<string, Tipo> tblSimbolosClass = new Dictionary<string, Tipo>();
+        //public Dictionary<string, Tipo> tblSimbolosClass = new Dictionary<string, Tipo>();
 
         public override void validarSemantica()
         {
-            //FALTA
             #region Validar Existe Variable
 
             Tipo var = null;
@@ -786,6 +838,7 @@ namespace WebUI.Arbol
             if (var == null)
             {
                 Class cl = new Class();
+                cl.Nombre = Var.id;
                 cl.Campos = new T_Campos();
                 Sentencia tmp = CamposClase;
                 while (tmp != null)
@@ -826,15 +879,38 @@ namespace WebUI.Arbol
                 throw new Exception("Error Semantico - La variable " + Var.id + " ya existe");
             }
             #endregion
-
-
-
         }
 
         protected override void interpretarSentencia()
         {
-            Var.interpretar();
-            CamposClase.interpretar();
+            /*
+            Dictionary<string, Valor> miembrosc = new Dictionary<string, Valor>();
+            Sentencia tmp = CamposClase;
+            if (tmp != null)
+            {
+                while (tmp != null)
+                {
+                    if (tmp is Declaracion)
+                    {
+                        Declaracion tmpDecl = (Declaracion) tmp;
+
+                        #region Valor  
+                        if (tmpDecl.Tip is Arreglo)
+                        {
+                            Arreglo tmptip = (Arreglo) tmpDecl.Tip;
+                            ValorArreglo tmpvr = new ValorArreglo(tmptip);
+                            miembrosc.Add(Var.id, tmpvr);
+                            
+                        }
+                        else
+                        {
+                            miembrosc.Add(Var.id, null);                            
+                        }
+                        #endregion
+                    }
+                }
+            }
+            ValorClase valorClase = new ValorClase(miembrosc);   */
         }
     }
 

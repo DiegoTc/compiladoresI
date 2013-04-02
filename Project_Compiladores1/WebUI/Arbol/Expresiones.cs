@@ -832,22 +832,34 @@ namespace WebUI.Arbol
                     #region Si es Registro
 
                     AccessMiembro am = ((AccessMiembro)tmp);
-                    Struct regTmp = null;
-                    if (!(t is Struct))
-                        throw new Exception(id + " no es un registro");
-                    Struct reg = ((Struct)t);
-                    Tipo tip;
-                    if (InfSemantica.getInstance().tblTipos.ContainsKey(reg.nombre))
-                    {
-                        tip = InfSemantica.getInstance().tblTipos[reg.nombre];
-                        regTmp = ((Struct)tip);
-                    }
-                    else
-                        throw new Exception("Error Semantico -- El registro no a sido declarado");
 
-                    t = regTmp.Campos[am.Id];
-                    if (t == null)
-                        throw new Exception("miembro " + am.Id + " no existe!");
+                    if (!(t is Struct))
+                    {
+                        if (t is Class)
+                        {
+                            //TO DO
+                        }
+                        else
+                            throw new Exception(id + " No es Miembro de ningun objeto");
+                    }
+
+                    else
+                    {
+                        Struct regTmp = null;
+                        Struct reg = ((Struct)t);
+                        Tipo tip;
+                        if (InfSemantica.getInstance().tblTipos.ContainsKey(reg.nombre))
+                        {
+                            tip = InfSemantica.getInstance().tblTipos[reg.nombre];
+                            regTmp = ((Struct)tip);
+                        }
+                        else
+                            throw new Exception("Error Semantico -- El registro no a sido declarado");
+
+                        t = regTmp.Campos[am.Id];
+                        if (t == null)
+                            throw new Exception("miembro " + am.Id + " no existe!");
+                    }
 
                     #endregion
                 }
@@ -881,6 +893,22 @@ namespace WebUI.Arbol
                     {
                         //((AccessArreglo) tmp).Cont
                         return InfInterpretador.getInstance().getValor(id);
+                    }
+                    if (tmp is AccessMiembro)
+                    {
+                        Valor valcl = InfInterpretador.getInstance().getValor(id);
+                        if (valcl is ValorClase)
+                        {
+                            ValorClase tmpvalcl = (ValorClase)valcl;
+                            AccessMiembro am = (AccessMiembro)tmp;
+                            return tmpvalcl.obtener(am.Id);
+                        }
+                        else if (valcl is ValorRegistro)
+                        {
+                            ValorRegistro tmpvalcl = (ValorRegistro)valcl;
+                            AccessMiembro am = (AccessMiembro)tmp;
+                            return tmpvalcl.obtener(am.Id);
+                        }
                     }
                     tmp = tmp.Next;
                 }

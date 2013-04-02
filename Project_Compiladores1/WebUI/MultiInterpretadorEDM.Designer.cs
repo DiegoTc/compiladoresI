@@ -19,11 +19,11 @@ using System.Xml.Serialization;
 [assembly: EdmSchemaAttribute()]
 #region EDM Relationship Metadata
 
-[assembly: EdmRelationshipAttribute("multiinterpretadorModel", "FK_PerfilId", "perfil", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(WebUI.perfil), "rolperfil", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(WebUI.rolperfil), true)]
-[assembly: EdmRelationshipAttribute("multiinterpretadorModel", "FK_Rol_X_Id", "rol", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(WebUI.rol), "rolperfil", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(WebUI.rolperfil), true)]
-[assembly: EdmRelationshipAttribute("multiinterpretadorModel", "fk_estadoUsuario", "estado", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(WebUI.estado), "usuario", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(WebUI.usuario), true)]
-[assembly: EdmRelationshipAttribute("multiinterpretadorModel", "fk_perfilUsuario", "perfil", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(WebUI.perfil), "usuario", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(WebUI.usuario), true)]
 [assembly: EdmRelationshipAttribute("multiinterpretadorModel", "fk_bitacora", "usuario", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(WebUI.usuario), "bitacora", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(WebUI.bitacora), true)]
+[assembly: EdmRelationshipAttribute("multiinterpretadorModel", "fk_estadoUsuario", "estado", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(WebUI.estado), "usuario", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(WebUI.usuario), true)]
+[assembly: EdmRelationshipAttribute("multiinterpretadorModel", "FK_PerfilId", "perfil", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(WebUI.perfil), "rolperfil", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(WebUI.rolperfil), true)]
+[assembly: EdmRelationshipAttribute("multiinterpretadorModel", "fk_perfilUsuario", "perfil", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(WebUI.perfil), "usuario", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(WebUI.usuario), true)]
+[assembly: EdmRelationshipAttribute("multiinterpretadorModel", "FK_Rol_X_Id", "rol", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(WebUI.rol), "rolperfil", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(WebUI.rolperfil), true)]
 
 #endregion
 
@@ -74,6 +74,22 @@ namespace WebUI
         #endregion
     
         #region ObjectSet Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<bitacora> bitacora
+        {
+            get
+            {
+                if ((_bitacora == null))
+                {
+                    _bitacora = base.CreateObjectSet<bitacora>("bitacora");
+                }
+                return _bitacora;
+            }
+        }
+        private ObjectSet<bitacora> _bitacora;
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -154,26 +170,18 @@ namespace WebUI
             }
         }
         private ObjectSet<usuario> _usuario;
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        public ObjectSet<bitacora> bitacora
-        {
-            get
-            {
-                if ((_bitacora == null))
-                {
-                    _bitacora = base.CreateObjectSet<bitacora>("bitacora");
-                }
-                return _bitacora;
-            }
-        }
-        private ObjectSet<bitacora> _bitacora;
 
         #endregion
 
         #region AddTo Methods
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the bitacora EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddTobitacora(bitacora bitacora)
+        {
+            base.AddObject("bitacora", bitacora);
+        }
     
         /// <summary>
         /// Deprecated Method for adding a new object to the estado EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
@@ -213,14 +221,6 @@ namespace WebUI
         public void AddTousuario(usuario usuario)
         {
             base.AddObject("usuario", usuario);
-        }
-    
-        /// <summary>
-        /// Deprecated Method for adding a new object to the bitacora EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
-        /// </summary>
-        public void AddTobitacora(bitacora bitacora)
-        {
-            base.AddObject("bitacora", bitacora);
         }
 
         #endregion
@@ -1235,6 +1235,28 @@ namespace WebUI
         [XmlIgnoreAttribute()]
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("multiinterpretadorModel", "fk_bitacora", "bitacora")]
+        public EntityCollection<bitacora> bitacora
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<bitacora>("multiinterpretadorModel.fk_bitacora", "bitacora");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<bitacora>("multiinterpretadorModel.fk_bitacora", "bitacora", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
         [EdmRelationshipNavigationPropertyAttribute("multiinterpretadorModel", "fk_estadoUsuario", "estado")]
         public estado estado
         {
@@ -1301,28 +1323,6 @@ namespace WebUI
                 if ((value != null))
                 {
                     ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<perfil>("multiinterpretadorModel.fk_perfilUsuario", "perfil", value);
-                }
-            }
-        }
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [XmlIgnoreAttribute()]
-        [SoapIgnoreAttribute()]
-        [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("multiinterpretadorModel", "fk_bitacora", "bitacora")]
-        public EntityCollection<bitacora> bitacora
-        {
-            get
-            {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<bitacora>("multiinterpretadorModel.fk_bitacora", "bitacora");
-            }
-            set
-            {
-                if ((value != null))
-                {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<bitacora>("multiinterpretadorModel.fk_bitacora", "bitacora", value);
                 }
             }
         }

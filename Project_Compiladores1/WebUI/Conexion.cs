@@ -44,7 +44,7 @@ namespace WebUI
                              where tbl.UsuarioNick == usuario
                              select tbl).Single();
 
-                return query.UsuarioEstado == 1;
+                return query.UsuarioEstado == 3;
             }
             catch (Exception)
             {
@@ -120,7 +120,7 @@ namespace WebUI
                     UsuarioNombre= usuarioNombre,
                     UsuarioPerfilId = 1,
                     UsuarioEstado = 1,
-                    UsuarioClave = EncriptacionMD5.CreateMd5Hash(clave),
+                    UsuarioClave = clave,
                     UsuarioEmail = mail
                 };
                 Bdd.AddTousuario(query);
