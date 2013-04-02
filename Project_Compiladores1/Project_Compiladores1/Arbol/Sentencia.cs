@@ -379,7 +379,7 @@ namespace Project_Compiladores1.Arbol
                 throw new Exception("Error Semantico - No se pueden asignar tipos diferentes " + var + " con " + val);
             }
             Condicion.validarSemantica();
-            Iteracion.validarSemantica();
+            //Iteracion.validarSemantica();
             if (S != null)
                 S.SentValSemantica();
 
@@ -387,7 +387,19 @@ namespace Project_Compiladores1.Arbol
 
         protected override void interpretarSentencia()
         {
+            ValorEntero ini = (ValorEntero) Inicio.interpretar();
+            InfInterpretador.getInstance().asignarValor(Var.id, ini);
             
+            
+            ValorBooleano Con = (ValorBooleano) Condicion.interpretar();
+            ValorEntero iter;// = (ValorEntero) Iteracion.interpretar();
+            while (Con.Valor)
+            {
+                S.interpretar();
+                iter = (ValorEntero) Iteracion.interpretar();
+                Con = (ValorBooleano)Condicion.interpretar();
+
+            }
         }
     }
 

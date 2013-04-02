@@ -259,6 +259,7 @@ namespace Project_Compiladores1.Sintactico
                         throw new Exception("Se esperaba un )");
 
                     this.currentToken = lex.NextToken();
+                    sfor.Tip = new Entero();
                     sfor.S = CompoundStatement();
                     return sfor;
                     #endregion

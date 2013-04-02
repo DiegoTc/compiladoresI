@@ -302,7 +302,7 @@ namespace Project_Compiladores1.Sintactico
                             currentToken = lex.NextToken();
                             try
                             {
-                                sFor.Inicio = Expr(); 
+                                sFor.Inicio = Expr();                                 
                             }
                             catch(Exception ex)
                             {
@@ -327,7 +327,7 @@ namespace Project_Compiladores1.Sintactico
                                     try
                                     {
                                         Expresiones e = Expr();
-                                        sFor.Iteracion = Expr();
+                                        sFor.Iteracion = e;
                                     }
                                     catch (Exception ex)
                                     {
@@ -345,7 +345,7 @@ namespace Project_Compiladores1.Sintactico
                                         {                                            
                                             throw ex;
                                         }
-                                        
+                                        sFor.Tip = new Entero();
                                         return sFor;
                                     }
                                     else
@@ -1502,10 +1502,25 @@ namespace Project_Compiladores1.Sintactico
             }
             else if (currentToken.Tipo == TipoToken.TK_ID)            
             {
+                
                 ExprFuncion V = new ExprFuncion();
                 V.ID = new Variable(currentToken.Lexema, null);
                 currentToken = lex.NextToken();
-                if (currentToken.Tipo == TipoToken.TK_PUNTO || currentToken.Tipo == TipoToken.TK_ID || currentToken.Tipo == TipoToken.TK_OPENPAR || currentToken.Tipo == TipoToken.TK_OPENCOR)
+                if (currentToken.Tipo == TipoToken.TK_MASMAS)
+                {
+                    currentToken = lex.NextToken();
+                    ExpMasMas expMasMas = new ExpMasMas();
+                    expMasMas.ID = V.ID;
+                    return expMasMas;
+                }
+                else if (currentToken.Tipo == TipoToken.TK_MENOSMENOS)
+                {
+                    currentToken = lex.NextToken();
+                    ExpMasMas expMasMas = new ExpMasMas();
+                    expMasMas.ID = V.ID;
+                    return expMasMas;
+                }
+                else if (currentToken.Tipo == TipoToken.TK_PUNTO || currentToken.Tipo == TipoToken.TK_ID || currentToken.Tipo == TipoToken.TK_OPENPAR || currentToken.Tipo == TipoToken.TK_OPENCOR)
                 {
                     try
                     {
